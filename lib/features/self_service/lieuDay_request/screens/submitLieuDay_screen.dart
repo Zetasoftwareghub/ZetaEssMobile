@@ -1,0 +1,497 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/common/widgets/customDatePicker_widget.dart';
+import 'package:zeta_ess/core/common/widgets/customDropDown_widget.dart';
+import 'package:zeta_ess/core/common/widgets/customFilePicker_widget.dart';
+import 'package:zeta_ess/core/providers/userContext_provider.dart';
+import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/core/utils/date_utils.dart';
+import 'package:zeta_ess/features/self_service/lieuDay_request/controller/lieuDay_notifier.dart';
+import 'package:zeta_ess/features/self_service/lieuDay_request/controller/lieuday_controller.dart';
+import 'package:zeta_ess/features/self_service/lieuDay_request/models/lieuDay_details_model.dart';
+
+import '../../../../core/common/alert_dialog/alertBox_function.dart';
+import '../../../../core/common/common_text.dart';
+import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/widgets/customElevatedButton_widget.dart';
+import '../../../../core/common/widgets/customTimePicker.dart';
+import '../../../../core/theme/common_theme.dart';
+import '../models/lieuDay_type.dart';
+import '../models/submit_lieuDay_model.dart';
+
+class SubmitLieuDayScreen extends ConsumerStatefulWidget {
+  final String? lieuDayId;
+  const SubmitLieuDayScreen({super.key, this.lieuDayId});
+
+  @override
+  ConsumerState<SubmitLieuDayScreen> createState() =>
+      _SubmitLieuDayScreenState();
+}
+
+class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
+  final List<LieuDayTypeModel> lieuDayTypes = [
+    LieuDayTypeModel(name: "Half Day", value: "0.5"),
+    LieuDayTypeModel(name: "Full Day", value: "1"),
+    LieuDayTypeModel(name: "Full Day + Half Day", value: "1.5"),
+    LieuDayTypeModel(name: "Full Day + Full Day", value: "2"),
+  ];
+  final TextEditingController _remarkController = TextEditingController();
+
+  final lieuDateProvider = StateProvider<String?>((ref) => null);
+  final selectedLieuDayTypeProvider = StateProvider<String?>((ref) => null);
+  final selectedFromTimeProvider = StateProvider<String?>((ref) => null);
+  final selectedToTimeProvider = StateProvider<String?>((ref) => null);
+
+  bool isEditMode = false;
+  bool hasPrefilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isEditMode = widget.lieuDayId != null;
+  }
+
+  void prefillIfEdit(LieuDayDetailsModel model) {
+    if (!isEditMode || hasPrefilled) return;
+
+    _remarkController.text = model.remark ?? '';
+    if (model.lieuDate.isNotEmpty) {
+      final parsedDate = DateFormat("dd MMM yyyy").parse(model.lieuDate);
+      final formattedDate = DateFormat("dd/MM/yyyy").format(parsedDate);
+      ref.read(lieuDateProvider.notifier).state = formattedDate;
+    }
+    ref.read(selectedFromTimeProvider.notifier).state = model.fromTime ?? '';
+    ref.read(selectedToTimeProvider.notifier).state = model.toTime ?? '';
+    final matchedType =
+        lieuDayTypes
+            .firstWhere(
+              (e) => e.name == model.type,
+              orElse: () => LieuDayTypeModel(name: '', value: ''),
+            )
+            .value;
+
+    ref.read(selectedLieuDayTypeProvider.notifier).state = matchedType;
+    hasPrefilled = true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = ref.watch(lieuDayControllerProvider);
+
+    final AsyncValue<LieuDayDetailsModel?>? details =
+        isEditMode
+            ? ref.watch(lieuDayDetailsFutureProvider(widget.lieuDayId ?? '0'))
+            : null;
+
+    final data = details?.maybeWhen(data: (d) => d, orElse: () => null);
+    if (data != null && !hasPrefilled) {
+      Future.microtask(() => prefillIfEdit(data));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: Text(
+          isEditMode
+              ? '${'Edit'.tr()} ${'lieu_day_request'.tr()}'
+              : '${submitText.tr()} ${'lieu_day_request'.tr()}',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        centerTitle: false,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child:
+            isLoading
+                ? Loader()
+                : Padding(
+                  padding: AppPadding.screenPadding,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isEditMode)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              labelText('submitted_date'.tr()),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 14.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: Text(
+                                  data != null
+                                      ? data.lieuDate
+                                      : formatDate(DateTime.now()),
+                                  style: TextStyle(fontSize: 14.sp),
+                                ),
+                              ),
+                              12.heightBox,
+                            ],
+                          ),
+                        labelText('date'.tr(), isRequired: true),
+                        CustomDateField(
+                          hintText: 'lieu_day_date'.tr(),
+                          onDateSelected: (date) {
+                            ref.read(lieuDateProvider.notifier).state = date;
+                          },
+                          initialDate: ref.watch(lieuDateProvider),
+                        ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final fromTime = ref.watch(
+                              selectedFromTimeProvider,
+                            );
+                            final toTime = ref.watch(selectedToTimeProvider);
+
+                            return CustomFromToTimePicker(
+                              fromTime: fromTime,
+                              toTime: toTime,
+
+                              onFromTimeChanged: (newFrom) {
+                                ref
+                                    .read(selectedFromTimeProvider.notifier)
+                                    .state = newFrom;
+                                ref
+                                    .read(selectedToTimeProvider.notifier)
+                                    .state = null;
+                              },
+                              onToTimeChanged: (newTo) {
+                                ref
+                                    .read(selectedToTimeProvider.notifier)
+                                    .state = newTo;
+                              },
+                            );
+                          },
+                        ),
+                        12.heightBox,
+                        labelText('type'.tr(), isRequired: true),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final selectedType = ref.watch(
+                              selectedLieuDayTypeProvider,
+                            );
+
+                            return CustomDropdown<String?>(
+                              onChanged:
+                                  (type) =>
+                                      ref
+                                          .read(
+                                            selectedLieuDayTypeProvider
+                                                .notifier,
+                                          )
+                                          .state = type,
+                              value: selectedType,
+                              hintText: "select_type".tr(),
+                              items:
+                                  lieuDayTypes
+                                      .map(
+                                        (type) => DropdownMenuItem(
+                                          value: type.value,
+                                          child: Text(type.name),
+                                        ),
+                                      )
+                                      .toList(),
+                            );
+                          },
+                        ),
+                        12.heightBox,
+                        labelText('remarks'.tr()),
+                        _buildRemarksField(),
+                        SizedBox(height: 16.h),
+                        FileUploadButton(),
+                        80.heightBox,
+                      ],
+                    ),
+                  ),
+                ),
+      ),
+      bottomSheet: SafeArea(
+        child: Padding(
+          padding: AppPadding.screenBottomSheetPadding,
+          child: CustomElevatedButton(
+            onPressed: () async {
+              final UserContext user = ref.watch(userContextProvider);
+
+              final fromTime = ref.watch(selectedFromTimeProvider);
+              final toTime = ref.watch(selectedToTimeProvider);
+              final date = ref.watch(lieuDateProvider);
+              final lieuDayType = ref.watch(selectedLieuDayTypeProvider);
+
+              if (date == null || date.isEmpty) {
+                showCustomAlertBox(
+                  context,
+                  title: 'Please select date',
+                  type: AlertType.error,
+                );
+                return;
+              }
+
+              if (fromTime == null || fromTime.isEmpty) {
+                showCustomAlertBox(
+                  context,
+                  title: 'Please select from time',
+                  type: AlertType.error,
+                );
+
+                return;
+              }
+
+              if (toTime == null || toTime.isEmpty) {
+                showCustomAlertBox(
+                  context,
+                  title: 'Please select to time',
+                  type: AlertType.error,
+                );
+
+                return;
+              }
+
+              if (lieuDayType == null || lieuDayType.isEmpty) {
+                showCustomAlertBox(
+                  context,
+                  title: 'Please select Lieu Day Type',
+                  type: AlertType.error,
+                );
+
+                return;
+              }
+              final fileData = ref.read(fileUploadProvider).value;
+
+              final request = SubmitLieuDayRequest(
+                rqldcode: isEditMode ? widget.lieuDayId ?? '0' : '0',
+                suconn: user.companyConnection,
+                emcode: user.empCode,
+                micode: '',
+                lieuDayDate: date,
+                fromTime: fromTime,
+                toTime: toTime,
+                lieuDayType: lieuDayType,
+                remarks: _remarkController.text.trim(),
+                mediafile: fileData?.base64 ?? '',
+                mediaExtension: fileData?.extension ?? '',
+                mediaName: fileData?.extension ?? '',
+                baseDirectory: ref.watch(userContextProvider).userBaseUrl ?? '',
+              );
+
+              await ref
+                  .read(lieuDayControllerProvider.notifier)
+                  .submitLieuDay(submitModel: request, context: context);
+            },
+            child: Text(
+              isEditMode ? 'update'.tr() : submitText.tr(),
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRemarksField() {
+    return TextFormField(
+      controller: _remarkController,
+      maxLines: 3,
+      decoration: InputDecoration(
+        hintText: 'enter'.tr(),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _remarkController.dispose();
+    super.dispose();
+  }
+}
+
+// class SubmitLieuDayScreen extends ConsumerStatefulWidget {
+//   const SubmitLieuDayScreen({super.key});
+//
+//   @override
+//   ConsumerState<SubmitLieuDayScreen> createState() =>
+//       _SubmitLieuDayScreenState();
+// }
+//
+// class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
+//   final List<LieuDayTypeModel> lieuDayTypes = [
+//     LieuDayTypeModel(name: "Half Day", value: "0.5"),
+//     LieuDayTypeModel(name: "Full Day", value: "1"),
+//     LieuDayTypeModel(name: "Full Day + Half Day", value: "1.5"),
+//     LieuDayTypeModel(name: "Full Day + Full Day", value: "2"),
+//   ];
+//   final TextEditingController _remarkController = TextEditingController();
+//
+//   final lieuDateProvider = StateProvider<String?>((ref) => null);
+//   final selectedLieuDayTypeProvider = StateProvider<String?>((ref) => null);
+//   final selectedFromTimeProvider = StateProvider<String?>((ref) => null);
+//   final selectedToTimeProvider = StateProvider<String?>((ref) => null);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         leading: const BackButton(),
+//         title: Text(
+//           '${submitText.tr()} ${'lieu_day_request'.tr()}',
+//           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+//         ),
+//         centerTitle: false,
+//         elevation: 0,
+//       ),
+//       body: SafeArea(
+//         child: Padding(
+//           padding: AppPadding.screenPadding,
+//           child: SingleChildScrollView(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 labelText('date', isRequired: true),
+//                 CustomDateField(
+//                   hintText: 'lieu_day_date'.tr(),
+//                   onDateSelected:
+//                       (date) =>
+//                           ref.read(lieuDateProvider.notifier).state = date,
+//                 ),
+//                 Consumer(
+//                   builder: (context, ref, _) {
+//                     final fromTime = ref.watch(selectedFromTimeProvider);
+//                     final toTime = ref.watch(selectedToTimeProvider);
+//
+//                     return CustomFromToTimePicker(
+//                       fromTime: fromTime,
+//                       toTime: toTime,
+//                       onFromTimeChanged: (newFrom) {
+//                         ref.read(selectedFromTimeProvider.notifier).state =
+//                             newFrom;
+//                         ref.read(selectedToTimeProvider.notifier).state =
+//                             null; // reset
+//                       },
+//                       onToTimeChanged: (newTo) {
+//                         ref.read(selectedToTimeProvider.notifier).state = newTo;
+//                       },
+//                     );
+//                   },
+//                 ),
+//
+//                 labelText('type', isRequired: true),
+//                 CustomDropdown<String?>(
+//                   onChanged:
+//                       (type) =>
+//                           ref.read(selectedLieuDayTypeProvider.notifier).state =
+//                               type,
+//                   hintText: "select_type".tr(),
+//                   items:
+//                       lieuDayTypes
+//                           .map(
+//                             (type) => DropdownMenuItem(
+//                               value: type.value,
+//                               child: Text(type.name),
+//                             ),
+//                           )
+//                           .toList(),
+//                 ),
+//
+//                 labelText('remarks'.tr()),
+//                 _buildRemarksField(),
+//                 SizedBox(height: 16.h),
+//                 FileUploadButton(),
+//                 80.heightBox,
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//       bottomSheet: Padding(
+//         padding: AppPadding.screenBottomSheetPadding,
+//         child: CustomElevatedButton(
+//           onPressed: () async {
+//             final UserContext user = ref.watch(userContextProvider);
+//
+//             final fromTime = ref.watch(selectedFromTimeProvider);
+//             final toTime = ref.watch(selectedToTimeProvider);
+//             final date = ref.watch(lieuDateProvider);
+//             final lieuDayType = ref.watch(selectedLieuDayTypeProvider);
+//
+//             if (date == null || date.isEmpty) {
+//               showSnackBar(context: context, content: "Please select date");
+//               return;
+//             }
+//
+//             if (fromTime == null || fromTime.isEmpty) {
+//               showSnackBar(
+//                 context: context,
+//                 content: "Please select from time",
+//               );
+//               return;
+//             }
+//
+//             if (toTime == null || toTime.isEmpty) {
+//               showSnackBar(context: context, content: "Please select to time");
+//               return;
+//             }
+//
+//             if (lieuDayType == null || lieuDayType.isEmpty) {
+//               showSnackBar(
+//                 context: context,
+//                 content: "Please select Lieu Day Type",
+//               );
+//               return;
+//             }
+//
+//             final request = SubmitLieuDayRequest(
+//               rqldcode: 0,
+//               suconn: user.companyConnection,
+//               emcode: user.empCode,
+//               micode: '',
+//               lieuDayDate: date,
+//               fromTime: fromTime,
+//               toTime: toTime,
+//               lieuDayType: lieuDayType,
+//               remarks: _remarkController.text.trim(),
+//               mediafile: '',
+//               mediaExtension: '',
+//               mediaName: '',
+//               baseDirectory: '',
+//             );
+//
+//             ref
+//                 .read(lieuDayControllerProvider.notifier)
+//                 .submitLieuDay(submitModel: request, context: context);
+//           },
+//
+//           child: Text(
+//             '${submitText.tr()} ',
+//             style: TextStyle(color: Colors.white),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildRemarksField() {
+//     return TextFormField(
+//       controller: _remarkController,
+//       maxLines: 3,
+//       decoration: InputDecoration(
+//         hintText: 'enter'.tr(),
+//         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     super.dispose();
+//     _remarkController.dispose();
+//   }
+// }

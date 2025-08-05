@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>234422163440-p3pqf9175setkjbfhe330sg8o2990kl4.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.234422163440-p3pqf9175setkjbfhe330sg8o2990kl4</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAYv0TXelGnefwGFpkJuSapUV44Bvq_nG8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>234422163440</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.zetaEss</string>
+	<key>PROJECT_ID</key>
+	<string>zeta-ess</string>
+	<key>STORAGE_BUCKET</key>
+	<string>zeta-ess.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:234422163440:ios:35cc614fc7ecc2794c2f35</string>
+	<key>DATABASE_URL</key>
+	<string>https://zeta-ess.firebaseio.com</string>
+</dict>
+</plist>

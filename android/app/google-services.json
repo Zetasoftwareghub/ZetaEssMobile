@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "234422163440",
+    "firebase_url": "https://zeta-ess.firebaseio.com",
+    "project_id": "zeta-ess",
+    "storage_bucket": "zeta-ess.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234422163440:android:d828c86022b0ca914c2f35",
+        "android_client_info": {
+          "package_name": "com.example.zeta_ess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234422163440-45m722gn07nq9nfpaq11s58fpa3297ep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVi1VwFdwKBK-osmIzmlsodDLpUPA6MFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234422163440-45m722gn07nq9nfpaq11s58fpa3297ep.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "234422163440-fuq6vll0bic6qiivg0hma1enhopog1n8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zetasoftwareuk.zeta",
+                "app_store_id": "1439102381"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
