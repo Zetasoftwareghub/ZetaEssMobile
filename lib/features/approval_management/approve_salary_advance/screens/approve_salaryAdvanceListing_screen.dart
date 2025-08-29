@@ -43,7 +43,10 @@ class ApproveSalaryAdvanceListingScreen extends ConsumerWidget {
                         isLineManger: true,
                       ),
                       SalaryAdvanceListView(salaryList: data.approved),
-                      SalaryAdvanceListView(salaryList: data.rejected),
+                      SalaryAdvanceListView(
+                        salaryList: data.rejected,
+                        showApproveAmount: false,
+                      ),
                     ],
                   );
                 },
@@ -62,10 +65,12 @@ class ApproveSalaryAdvanceListingScreen extends ConsumerWidget {
 class SalaryAdvanceListView extends StatelessWidget {
   final List<ApproveSalaryAdvanceListingModel> salaryList;
   final bool? isLineManger;
+  final bool showApproveAmount;
   const SalaryAdvanceListView({
     super.key,
     required this.salaryList,
     this.isLineManger,
+    this.showApproveAmount = true,
   });
 
   @override
@@ -85,12 +90,13 @@ class SalaryAdvanceListView extends StatelessWidget {
                 screen: SalaryAdvanceDetailScreen(
                   isLineManager: isLineManger,
                   advanceId: salary.id,
+                  showApproveAmount: showApproveAmount,
                 ),
               ),
           child: CustomTileListingWidget(
             text1: '  Month  ',
             subText1: salary.dateFrom,
-            text2: 'Name${salary.name ?? 'no name'}',
+            text2: 'Name: ${salary.name ?? 'no name'}',
             subText2: "Amount : ${salary.amount}",
           ),
         );

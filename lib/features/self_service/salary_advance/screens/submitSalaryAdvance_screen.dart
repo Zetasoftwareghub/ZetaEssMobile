@@ -43,8 +43,6 @@ class _SubmitSalaryAdvanceScreenState
   }
 
   void prefillFields(SalaryAdvanceDetailsModel? model) {
-    print(model?.dateFrom);
-    print('(model.dateFrom');
     if (hasPrefilled || model == null) return;
 
     monthYearController.text = convertMonthYearToMMYYYY(model.dateFrom);

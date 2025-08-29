@@ -45,84 +45,88 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
           child: result.when(
             loading: () => const Loader(),
             error: (err, _) => Center(child: Text('Error: $err')),
-            data:
-                (lieuDay) {
-              print('${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}');
-                  return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      titleHeaderText('lieu_day_details'.tr()),
-                      detailInfoRow(
-                        title: 'lieu_day_date'.tr(),
-                        subTitle: lieuDay.lieuDate,
-                      ),
-                      detailInfoRow(
-                        title: 'leave_type'.tr(),
-                        subTitle: lieuDay.type,
-                      ),
-                      detailInfoRow(
-                        title: 'time'.tr(),
-                        subTitle: "${lieuDay.fromTime} - ${lieuDay.toTime}",
-                      ),
-                      detailInfoRow(
-                        title: 'remarks'.tr(),
-                        belowValue:
-                            lieuDay.remark.isNotEmpty ? lieuDay.remark : '-',
-                      ),
-                      titleHeaderText('attachments'.tr()),
+            data: (lieuDay) {
+              print(
+                '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
+              );
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    titleHeaderText('lieu_day_details'.tr()),
+                    detailInfoRow(
+                      title: 'lieu_day_date'.tr(),
+                      subTitle: lieuDay.lieuDate,
+                    ),
+                    detailInfoRow(
+                      title: 'leave_type'.tr(),
+                      subTitle: lieuDay.type,
+                    ),
+                    detailInfoRow(
+                      title: 'time'.tr(),
+                      subTitle: "${lieuDay.fromTime} - ${lieuDay.toTime}",
+                    ),
+                    detailInfoRow(
+                      title: 'remarks'.tr(),
+                      belowValue:
+                          lieuDay.remark.isNotEmpty ? lieuDay.remark : '-',
+                    ),
+                    titleHeaderText('attachments'.tr()),
 
-                      AttachmentWidget(
-                        attachmentUrl:
-                            lieuDay.attachmentUrl.isEmpty
-                                ? null
-                                : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
+                    AttachmentWidget(
+                      attachmentUrl:
+                          lieuDay.attachmentUrl.isEmpty
+                              ? null
+                              : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
 
-                        height: 200.h,
-                      ),
+                      height: 200.h,
+                    ),
 
-                      // -- Employee Details section
-                      titleHeaderText('employee_details'.tr()),
-                      detailInfoRow(
-                        title: 'employee_id'.tr(),
-                        subTitle: lieuDay.employeeId,
-                      ),
-                      detailInfoRow(
-                        title: 'employee_name'.tr(),
-                        subTitle: lieuDay.employeeName,
-                      ),
-                      detailInfoRow(
-                        title: 'department'.tr(),
-                        subTitle: lieuDay.department,
-                      ),
-                      detailInfoRow(
-                        title: 'designation'.tr(),
-                        subTitle: lieuDay.designation,
-                      ),
-                      detailInfoRow(
-                        title: 'category'.tr(),
-                        subTitle: lieuDay.category,
-                      ),
-                      detailInfoRow(
-                        title: 'date_of_joining'.tr(),
-                        subTitle: lieuDay.dateOfJoining,
-                      ),
-                      10.heightBox,
-                      widget.isLineManager ?? false
-                          ? inputField(
-                            hint: 'Approve/Reject Comment'.tr(),
-                            controller: commentController,
-                          )
-                          : titleHeaderText('comment'.tr()),
-                      if (!(widget.isLineManager ?? false)) ...[
-                        Text(lieuDay.previousComment),
-                      ],
-
-                      100.heightBox,
+                    // -- Employee Details section
+                    titleHeaderText('employee_details'.tr()),
+                    detailInfoRow(
+                      title: 'employee_id'.tr(),
+                      subTitle: lieuDay.employeeId,
+                    ),
+                    detailInfoRow(
+                      title: 'employee_name'.tr(),
+                      subTitle: lieuDay.employeeName,
+                    ),
+                    detailInfoRow(
+                      title: 'department'.tr(),
+                      subTitle: lieuDay.department,
+                    ),
+                    detailInfoRow(
+                      title: 'designation'.tr(),
+                      subTitle: lieuDay.designation,
+                    ),
+                    detailInfoRow(
+                      title: 'category'.tr(),
+                      subTitle: lieuDay.category,
+                    ),
+                    detailInfoRow(
+                      title: 'date_of_joining'.tr(),
+                      subTitle: lieuDay.dateOfJoining,
+                    ),
+                    if (lieuDay.previousComment.isNotEmpty) ...[
+                      titleHeaderText('Comment'),
+                      Text(lieuDay.previousComment),
                     ],
-                  ),
-                );
-                },
+                    10.heightBox,
+                   if( widget.isLineManager ?? false)
+                        inputField(
+                          hint: 'Approve/Reject Comment'.tr(),
+                          controller: commentController,
+                        ),
+
+                    // if (!(widget.isLineManager ?? false)) ...[
+
+                    // ],
+                    100.heightBox,
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),

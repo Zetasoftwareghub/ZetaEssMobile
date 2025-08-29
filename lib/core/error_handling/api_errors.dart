@@ -47,7 +47,7 @@ class ApiErrors {
 
       showCustomAlertBox(
         context,
-        title: 'error'.tr(),
+        title: 'Alert'.tr(),
         content: errorMessage,
         type: AlertType.error,
       );

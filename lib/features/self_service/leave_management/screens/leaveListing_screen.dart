@@ -57,7 +57,11 @@ class _LeaveListingScreenState extends ConsumerState<LeaveListingScreen> {
                       ),
 
                   // 🔹 Approved
-                  _buildLeaveTab(ref: ref, provider: approvedLeavesProvider),
+                  _buildLeaveTab(
+                    ref: ref,
+                    provider: approvedLeavesProvider,
+                    showCancelLeave: true,
+                  ),
 
                   // 🔹 Rejected
                   _buildLeaveTab(ref: ref, provider: rejectedLeavesProvider),
@@ -83,6 +87,7 @@ class _LeaveListingScreenState extends ConsumerState<LeaveListingScreen> {
   }
 
   Widget _buildLeaveTab({
+    bool? showCancelLeave,
     required WidgetRef ref,
     required AutoDisposeAsyncNotifierProvider<
       AutoDisposeAsyncNotifier<List<LeaveModel>>,
@@ -94,7 +99,10 @@ class _LeaveListingScreenState extends ConsumerState<LeaveListingScreen> {
 
     return state.when(
       data: (leaves) {
-        return LeaveListView(leaveList: leaves);
+        return LeaveListView(
+          leaveList: leaves,
+          showCancelLeave: showCancelLeave,
+        );
       },
       error: (e, _) => ErrorText(error: e.toString()),
       loading: () => const Loader(),
@@ -105,7 +113,13 @@ class _LeaveListingScreenState extends ConsumerState<LeaveListingScreen> {
 class LeaveListView extends StatelessWidget {
   final List<LeaveModel> leaveList;
   final ListRightsModel? listRights;
-  const LeaveListView({super.key, required this.leaveList, this.listRights});
+  final bool? showCancelLeave;
+  const LeaveListView({
+    super.key,
+    required this.leaveList,
+    this.listRights,
+    this.showCancelLeave,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +134,10 @@ class LeaveListView extends StatelessWidget {
               onTap:
                   () => NavigationService.navigateToScreen(
                     context: context,
-                    screen: LeaveDetailsScreen(leaveId: leave.leaveId ?? ''),
+                    screen: LeaveDetailsScreen(
+                      leaveId: leave.leaveId ?? '',
+                      showCancelLeave: showCancelLeave,
+                    ),
                   ),
               child: Consumer(
                 builder: (context, ref, child) {

@@ -17,6 +17,7 @@ import 'package:zeta_ess/features/self_service/screens/widgets/customServiceList
 
 import '../../../core/services/NavigationService.dart';
 import '../attendance_regularisation/screens/attandanceRegularisation_datePick.dart';
+import '../change_request/screens/change_request_listing_screen.dart';
 import '../expense_claim/screens/expenseClaimListing_screen.dart';
 import '../leave_management/screens/leaveListing_screen.dart';
 import '../lieuDay_request/screens/lieuDayListing_screen.dart';
@@ -24,7 +25,6 @@ import '../loan/screens/loanListing_screen.dart';
 import '../other_request/screens/other_request_first_listing_screen.dart';
 import '../salary_advance/screens/salaryAdvanceListing_screen.dart';
 import '../salary_certificate/screens/salaryCertificateListing_screen.dart';
-import '../schooling_allowance/screens/schoolingAllowanceListing_screen.dart';
 
 class SelfServicesScreen extends ConsumerStatefulWidget {
   const SelfServicesScreen({super.key});
@@ -57,8 +57,7 @@ class _SelfServicesScreenState extends ConsumerState<SelfServicesScreen> {
     'attendance_regularisation_request':
         (key) => AttendanceRegularisationDatePick(),
     // (key) => AttendanceRegularisationDatePick(title: key),
-    'schooling_allowance_request':
-        (key) => SchoolingAllowanceListingScreen(title: key),
+    'change__request': (key) => ChangeRequestListingScreen(title: key),
     'salary_certificate_request':
         (key) => SalaryCertificateListingScreen(title: key),
   };

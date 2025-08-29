@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/buttons/approveReject_buttons.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/features/approval_management/approve_other_request/controller/approve_otherRequest_notifiers.dart';
 import 'package:zeta_ess/features/approval_management/approve_other_request/repository/approve_other_request_repository.dart';
 
+import '../../../../core/common/loader.dart';
 import '../../../../core/common/no_server_screen.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/utils.dart';
@@ -57,6 +59,7 @@ class _OtherRequestDetailScreenState
   String _lmComment = "";
   String _prevComment = "";
   String _appRejComment = "";
+  String _selfComment = "";
 
   static const _strings = {
     'approve': 'Approve',
@@ -101,6 +104,7 @@ class _OtherRequestDetailScreenState
         (l) => showSnackBar(context: context, content: 'error loading form'),
         (response) => _generateForms(response),
       );
+      setState(() => _isLoading = false);
     });
   }
 
@@ -139,32 +143,6 @@ class _OtherRequestDetailScreenState
       _setLoading(false);
     }
   }
-
-  //
-  // Future<void> _approveReject(String flag) async {
-  //   _setLoading(true);
-  //   try {
-  //     // TODO: Replace with actual API call
-  //     // var response = await approveOtherRq(
-  //     //   _commentController.text,
-  //     //   widget.primaryKey.toString(),
-  //     //   widget.menuId.toString(),
-  //     //   flag,
-  //     //   widget.menuName.toString(),
-  //     // ).timeout(const Duration(seconds: 60));
-  //
-  //     String message =
-  //         response.toString().isNotEmpty
-  //             ? response.toString()
-  //             : _strings['errorMessage']!;
-  //
-  //     _showAlertDialog("", message);
-  //   } catch (e) {
-  //     _navigateToNoServer();
-  //   } finally {
-  //     _setLoading(false);
-  //   }
-  // }
 
   // Utility Methods
   void _setLoading(bool loading) {
@@ -230,6 +208,7 @@ class _OtherRequestDetailScreenState
           _lmComment = (subList[0]['lmComment'] ?? "").toString();
           _prevComment = (subList[0]['prevComment'] ?? "").toString();
           _appRejComment = (subList[0]['appRejComment'] ?? "").toString();
+          _selfComment = (subList[0]['rqflnm'] ?? "").toString();
         });
       }
 
@@ -248,8 +227,9 @@ class _OtherRequestDetailScreenState
   }) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(left: 12.w, right: 12.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: Colors.grey.shade200),
       ),
@@ -573,7 +553,6 @@ class _OtherRequestDetailScreenState
         _formValues[fieldKey] as Map<String, dynamic>?;
     String fileName = fileData?['fileName'] ?? '';
     String filePath = fileData?['filePath'] ?? '';
-
     return Visibility(
       visible: fileName.isNotEmpty,
       child: _buildFieldContainer(
@@ -608,7 +587,7 @@ class _OtherRequestDetailScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fileName.isNotEmpty ? fileName : 'No file selected',
+                        'Attachments',
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
@@ -679,19 +658,6 @@ class _OtherRequestDetailScreenState
     );
   }
 
-  // Validation
-  String? _validateTextInput(String? value) {
-    if (value != null && value.isNotEmpty) {
-      if (_validateEmoji(value)) {
-        return _strings['emojisNotSupported'];
-      }
-      if (value.length > 500) {
-        return _strings['maximum500Character'];
-      }
-    }
-    return null;
-  }
-
   String? _validateComment(String? value) {
     if (value != null && value.isNotEmpty) {
       if (_validateEmoji(value)) {
@@ -710,15 +676,18 @@ class _OtherRequestDetailScreenState
     try {
       if (filePath.isNotEmpty) {
         // TODO: Implement file download/view logic
-        // String attachmentUrl = "${configController.baseUrl}/$filePath";
-        // var status = await getAttachmentStatus(attachmentUrl);
-        //
-        // if (status == "200") {
-        //   final Uri url = Uri.parse(attachmentUrl);
-        //   await launchUrl(url, mode: LaunchMode.externalApplication);
-        // } else {
-        //   _showAlertDialog("", _strings['uploadFileMissing']!);
-        // }
+        String attachmentUrl =
+            "${ref.watch(userContextProvider).userBaseUrl}/$filePath";
+        var status = await getAttachmentStatus(attachmentUrl);
+        if (status == "200") {
+          final Uri url = Uri.parse(attachmentUrl);
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          showSnackBar(
+            context: context,
+            content: _strings['uploadFileMissing'] ?? 'Eorror',
+          );
+        }
       }
     } finally {
       _setLoading(false);
@@ -771,13 +740,15 @@ class _OtherRequestDetailScreenState
         widgets.add(formWidget);
       }
     }
+    print(_strings);
 
     // Add comment sections
     widgets.add(
       _buildCommentSection(
         _prevComment,
         _strings['previousComment']!,
-        widget.fromSelf == false && _prevComment.isNotEmpty,
+        _prevComment.isNotEmpty,
+        // widget.fromSelf == false && _prevComment.isNotEmpty,
       ),
     );
 
@@ -785,7 +756,8 @@ class _OtherRequestDetailScreenState
       _buildCommentSection(
         _lmComment,
         _strings['comment']!,
-        widget.fromSelf == false && _lmComment.isNotEmpty,
+        _lmComment.isNotEmpty,
+        // widget.fromSelf == false && _lmComment.isNotEmpty,
       ),
     );
 
@@ -793,7 +765,17 @@ class _OtherRequestDetailScreenState
       _buildCommentSection(
         _appRejComment,
         _strings['comment']!,
-        widget.fromSelf == true && _appRejComment.isNotEmpty,
+        _appRejComment.isNotEmpty,
+        // widget.fromSelf == true && _appRejComment.isNotEmpty,
+      ),
+    );
+
+    widgets.add(
+      _buildCommentSection(
+        _selfComment,
+        _strings['comment']!,
+        _selfComment.isNotEmpty,
+        // widget.fromSelf == true && _appRejComment.isNotEmpty,
       ),
     );
 
@@ -880,31 +862,37 @@ class _OtherRequestDetailScreenState
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(title: Text(widget.menuName.toString())),
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _buildFormWidgets(),
+      body:
+          _isLoading
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenPadding,
+                  child: GestureDetector(
+                    onTap: () => FocusScope.of(context).unfocus(),
+                    child: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.all(16.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _buildFormWidgets(),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: Visibility(
+      bottomSheet: Visibility(
         visible: widget.show,
-        child: ApproveRejectButtons(
-          onApprove: () => _approveReject("A"),
-          onReject: () => _approveReject("R"),
+        child: Padding(
+          padding: AppPadding.screenBottomSheetPadding,
+          child: ApproveRejectButtons(
+            onApprove: () => _approveReject("A"),
+            onReject: () => _approveReject("R"),
+          ),
         ),
       ),
     );

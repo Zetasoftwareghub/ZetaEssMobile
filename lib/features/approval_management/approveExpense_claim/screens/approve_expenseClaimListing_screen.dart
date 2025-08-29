@@ -2,13 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/approval_management/approveExpense_claim/controller/approve_expense_claim_controller.dart';
 import 'package:zeta_ess/features/approval_management/approveExpense_claim/models/approve_expense_claim_listing_model.dart';
 
 import '../../../../core/common/error_text.dart';
 import '../../../../core/common/loader.dart';
 import '../../../../core/common/widgets/customTileListing_widget.dart';
+import '../../../../core/services/NavigationService.dart';
 import '../../../../core/utils.dart';
 import '../../../self_service/expense_claim/screens/expenseClaimDetails_screen.dart';
 
@@ -91,7 +91,7 @@ class ExpenseClaimListView extends StatelessWidget {
           child: CustomTileListingWidget(
             text1: '  Month  ',
             subText1: item.monthYear ?? '',
-            text2: item.emname ?? 'no name',
+            text2: '${'Name'.tr()}: ${item.emname ?? 'no name'}',
             subText2: "Amount: ${item.amount}",
           ),
         );

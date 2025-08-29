@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/features/self_service/lieuDay_request/providers/lieuDay_provider.dart';
 
+import '../../../../core/common/widgets/customFilePicker_widget.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/utils.dart';
 import '../models/submit_lieuDay_model.dart';
@@ -38,9 +39,11 @@ class LieuDayController extends Notifier<bool> {
         showCustomAlertBox(context, title: error.errMsg, type: AlertType.error);
       },
       (msg) {
-        ref.invalidate(lieuDayListProvider);
         if (msg?.toLowerCase() == 'saved successfully' ||
             msg?.toLowerCase() == 'updated successfully') {
+          ref.read(fileUploadProvider.notifier).clearFile();
+          ref.invalidate(lieuDayListProvider);
+
           Navigator.pop(context);
           showCustomAlertBox(
             context,

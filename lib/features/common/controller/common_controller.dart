@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
+import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/app_theme.dart';
+import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 import 'package:zeta_ess/features/common/repository/common_repository.dart';
 
 import '../../../core/providers/userContext_provider.dart';
 import '../../../core/utils.dart';
+import '../models/suggestion_model.dart';
 
 final commonControllerProvider = NotifierProvider<CommonController, bool>(
   () => CommonController(),
@@ -16,6 +19,33 @@ class CommonController extends Notifier<bool> {
   @override
   bool build() {
     return false;
+  }
+
+  Future<void> saveSuggestion({
+    required SuggestionModel suggestionModel,
+    required BuildContext context,
+  }) async {
+    state = true;
+    final res = await ref
+        .read(commonRepositoryProvider)
+        .saveSuggestion(
+          suggestion: suggestionModel,
+          userContext: ref.watch(userContextProvider),
+        );
+    state = false;
+    res.fold(
+      (l) => showSnackBar(
+        context: context,
+        content: l.errMsg,
+        color: AppTheme.errorColor,
+      ),
+      (msg) {
+        if (msg == 'Saved Successfully') {
+          Navigator.pop(context);
+        }
+        showCustomAlertBox(context, title: msg);
+      },
+    );
   }
 
   Future<void> launchPayslipDownloadUrl({
@@ -87,6 +117,12 @@ class CommonController extends Notifier<bool> {
         );
       },
       (changed) {
+        if (changed == '1') {
+          NavigationService.navigateRemoveUntil(
+            context: context,
+            screen: LoginScreen(),
+          );
+        }
         showCustomAlertBox(
           context,
           title:

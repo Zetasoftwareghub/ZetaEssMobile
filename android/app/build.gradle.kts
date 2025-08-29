@@ -34,6 +34,7 @@ android {
     }
 
     defaultConfig {
+
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.zeta_ess"
         // You can update the following values to match your application needs.
@@ -56,5 +57,3 @@ android {
 flutter {
     source = "../.."
 }
-
-//apply plugin: 'com.google.gms.google-services'

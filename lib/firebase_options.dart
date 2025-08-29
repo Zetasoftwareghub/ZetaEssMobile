@@ -65,6 +65,9 @@ class DefaultFirebaseOptions {
     projectId: 'zeta-ess',
     databaseURL: 'https://zeta-ess.firebaseio.com',
     storageBucket: 'zeta-ess.firebasestorage.app',
+    androidClientId: '234422163440-1h7t84vcvbm5f8t3i5coikde21etffta.apps.googleusercontent.com',
+    iosClientId: '234422163440-p3pqf9175setkjbfhe330sg8o2990kl4.apps.googleusercontent.com',
     iosBundleId: 'com.example.zetaEss',
   );
+
 }

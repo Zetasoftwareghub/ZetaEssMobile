@@ -31,6 +31,8 @@ class MainScreen extends ConsumerWidget {
     return menuAsync.when(
       loading: () => CustomScreenLoader(loadingText: 'loading_menus'.tr()),
       error: (e, st) {
+        print(e.toString());
+        print('Login eerrororo');
         WidgetsBinding.instance.addPostFrameCallback((_) {
           NavigationService.navigateRemoveUntil(
             context: context,
@@ -38,9 +40,16 @@ class MainScreen extends ConsumerWidget {
           );
         });
 
-        return const SizedBox();
+        return const Scaffold();
       },
       data: (menu) {
+        //TODO this if check in is true then calendar should be false and vice versa
+        Future.microtask(
+          () =>
+              ref.read(toggleCalendarProvider.notifier).state =
+                  !menu.showCheckInOut,
+        );
+
         final List<Widget> screens = [
           HomeScreen(
             showCheckInOut: menu.showCheckInOut,

@@ -8,6 +8,7 @@ import 'package:zeta_ess/features/self_service/expense_claim/controller/expenseC
 import 'package:zeta_ess/features/self_service/expense_claim/screens/submitExpenseClaim_screen.dart';
 import 'package:zeta_ess/models/listRights_model.dart';
 
+import '../../../../core/common/error_text.dart';
 import '../../../../core/common/widgets/customTileListing_widget.dart';
 import '../../../../core/utils.dart';
 import '../models/expense_claim_model.dart';
@@ -57,7 +58,7 @@ class _ExpenseClaimListingScreenState
                   );
                 },
                 loading: () => const Loader(),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, _) => ErrorText(error: e.toString()),
               ),
             ),
           ],
@@ -112,7 +113,7 @@ class ExpenseClaimListView extends StatelessWidget {
                     () => NavigationService.navigateToScreen(
                       context: context,
                       screen: SubmitExpenseClaimScreen(
-                        // claimId: claim.expenseClaimId.toString(),
+                        claimId: claim.expenseClaimId.toString(),
                       ),
                     ),
                 onDelete:

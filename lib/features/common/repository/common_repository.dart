@@ -11,6 +11,7 @@ import '../models/announcement_model.dart';
 import '../models/download_model.dart';
 import '../models/holiday_calendar_models.dart';
 import '../models/notification_model.dart';
+import '../models/suggestion_model.dart';
 
 final commonRepositoryProvider = Provider<CommonRepository>((ref) {
   return CommonRepository();
@@ -18,6 +19,26 @@ final commonRepositoryProvider = Provider<CommonRepository>((ref) {
 
 class CommonRepository {
   final dio = Dio();
+
+  FutureEither<String> saveSuggestion({
+    required SuggestionModel suggestion,
+    required UserContext userContext,
+  }) {
+    final baseUrl = userContext.baseUrl + CommonApis.saveSuggestion;
+
+    return handleApiCall(() async {
+      final response = await dio.post(
+        baseUrl,
+        data: suggestion.toJson(),
+        options: dioHeader(token: userContext.jwtToken),
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['data'];
+      } else {
+        throw Exception('Failed to load data');
+      }
+    });
+  }
 
   FutureEither<List<DocumentModel>> getDownloads({
     required UserContext userContext,
@@ -30,7 +51,6 @@ class CommonRepository {
         data: userContext.toJson(),
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> data = response.data['data'];
         return data.map((e) => DocumentModel.fromJson(e)).toList();
@@ -44,15 +64,12 @@ class CommonRepository {
     required UserContext userContext,
   }) {
     final baseUrl = userContext.baseUrl + CommonApis.getHolidayCalendarRegion;
-    print(userContext.toJson());
     return handleApiCall(() async {
       final response = await dio.post(
         baseUrl,
         data: userContext.toJson(),
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('regionn jollo');
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> data = response.data['data'];
         return data.map((e) => HolidayRegion.fromJson(e)).toList();
@@ -81,8 +98,6 @@ class CommonRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('calendar list');
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> data = response.data['data'];
         return data.map((e) => HolidayListModel.fromJson(e)).toList();
@@ -123,7 +138,6 @@ class CommonRepository {
     required String monthName,
   }) {
     final baseUrl = userContext.baseUrl + CommonApis.paySlipDownloadUrl;
-    print(baseUrl);
     final data = {
       "suconn": userContext.companyConnection,
       "emcode": userContext.empCode,
@@ -138,7 +152,6 @@ class CommonRepository {
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'];
       } else {

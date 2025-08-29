@@ -115,9 +115,9 @@ class OtherRequestListView extends StatelessWidget {
                 ),
               ),
           child: CustomTileListingWidget(
-            text1: '${'Submitted On'.tr()}\n${otherRequest.date ?? ''}',
+            text1:
+                '${'Submitted On'.tr()}\n${otherRequest.date?.split(' ')[0] ?? ''}',
             // text2: otherRequest.name ?? "Unknown",
-            subText1: "OtherRequests".tr(),
             text2: otherRequest.name ?? 'No name',
             subText2: otherRequest.requestName ?? 'requwtttt',
           ),

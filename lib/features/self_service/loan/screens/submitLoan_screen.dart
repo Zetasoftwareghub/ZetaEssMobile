@@ -52,8 +52,6 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
 
   void prefillFields(LoanDetailModel? model) {
     if (hasPrefilled || model == null) return;
-    print(model.submittedDate);
-    print("model.submittedDate");
     periodController.text = model.approvedMonths.toString();
     amountController.text = model.approvedAmount.toString();
     noteController.text = model.note;
@@ -115,7 +113,8 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                       labelText("loan_type".tr(), isRequired: true),
                       loanTypeAsync.when(
                         data: (loanTypes) {
-                          if (loanTypeID != null) {
+                          if (loanTypeID != null &&
+                              ref.watch(selectedLoanType) == null) {
                             Future.microtask(() {
                               final type = loanTypes.firstWhere(
                                 (t) => t.typeCode == loanTypeID.toString(),
@@ -152,7 +151,10 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                         isRequired: true,
                       ),
 
-                      labelText("repayment_period".tr(), isRequired: true),
+                      labelText(
+                        "repayment_period".tr() + ' (Months)'.tr(),
+                        isRequired: true,
+                      ),
                       inputField(
                         hint: "Enter Repayment Period",
                         controller: periodController,

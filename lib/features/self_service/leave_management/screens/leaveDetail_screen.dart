@@ -21,11 +21,13 @@ import '../providers/leave_providers.dart';
 
 class LeaveDetailsScreen extends StatefulWidget {
   final bool? isLineManager;
+  final bool? showCancelLeave;
   final String leaveId;
   const LeaveDetailsScreen({
     super.key,
     this.isLineManager,
     required this.leaveId,
+    this.showCancelLeave = false,
   });
 
   @override
@@ -90,19 +92,7 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                             ),
 
                             titleHeaderText('attachments'),
-                            // leave.lRTPAC == null || leave.lRTPAC == ''
-                            //     ? Padding(
-                            //       padding: EdgeInsets.symmetric(vertical: 4.h),
-                            //       child: Text(
-                            //         '*${'no_attachments'.tr()}',
-                            //         style: TextStyle(
-                            //           color: Colors.red,
-                            //           fontWeight: FontWeight.w600,
-                            //           fontSize: 14.sp,
-                            //         ),
-                            //       ),
-                            //     )
-                            //     :
+
                             AttachmentWidget(
                               attachmentUrl:
                                   leave.lRTPAC == null || leave.lRTPAC == ''
@@ -115,29 +105,30 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                               leave.emergencyContact?.isNotEmpty == true
                                   ? leave.emergencyContact!
                                   : 'N/A',
-                              style: TextStyle(fontSize: 15.sp),
+                              style: TextStyle(fontSize: 14.sp),
                             ),
 
                             titleHeaderText('reason_for_leave'),
                             Text(
                               leave.note == '' ? 'N/A' : leave.note ?? 'N/A',
+                              style: TextStyle(fontSize: 14.sp),
                             ),
-
-                            if (!(widget.isLineManager ?? false)) ...[
-                              titleHeaderText('comment'),
-                              Text(
-                                leave.appRejComment?.isNotEmpty == true
-                                    ? leave.appRejComment!
-                                    : leave.lmComment?.isNotEmpty == true
-                                    ? leave.lmComment!
-                                    : leave.prevComment?.isNotEmpty == true
-                                    ? leave.prevComment!
-                                    : leave.cancelComment?.isNotEmpty == true
-                                    ? leave.cancelComment!
-                                    : 'No comments',
-                                style: TextStyle(fontSize: 14.sp),
-                              ),
-                            ],
+                            10.heightBox,
+                            // if (!(widget.isLineManager ?? false)) ...[
+                            titleHeaderText('comment'),
+                            Text(
+                              leave.appRejComment?.isNotEmpty == true
+                                  ? leave.appRejComment!
+                                  : leave.lmComment?.isNotEmpty == true
+                                  ? leave.lmComment!
+                                  : leave.prevComment?.isNotEmpty == true
+                                  ? leave.prevComment!
+                                  : leave.cancelComment?.isNotEmpty == true
+                                  ? leave.cancelComment!
+                                  : 'No comments',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                            10.heightBox,
                             if (widget.isLineManager ?? false)
                               inputField(
                                 hint: 'Approve/Reject Comment'.tr(),
@@ -147,7 +138,7 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                             10.heightBox,
 
                             //TODO ! THIS IS ONLY FOR LINE MANAGERS YOU IDIOT
-                            if (widget.isLineManager ?? false)
+                            if (widget.showCancelLeave ?? false)
                               CustomElevatedButton(
                                 onPressed: () {
                                   ref

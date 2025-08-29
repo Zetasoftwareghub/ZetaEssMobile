@@ -249,8 +249,15 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                     selectedLeaveTypeProvider,
                                   ),
                                   isLieuDay:
-                                      false, //TODO find if its lieu or not
-                                  showSubmit: "true",
+                                      leaveTypeList
+                                          ?.firstWhere(
+                                            (element) =>
+                                                element.leaveTypeId ==
+                                                selectedLeaveType,
+                                          )
+                                          .ltlieu ==
+                                      'Y',
+                                  showSubmit: "",
                                   fromAppTab: false,
                                   selectedLeaveType: leaveTypeList?.firstWhere(
                                     (element) =>

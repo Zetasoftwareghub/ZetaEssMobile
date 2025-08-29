@@ -68,3 +68,14 @@ String convertRawDateToString(String? rawDate) {
   final date = DateTime.parse(rawDate);
   return DateFormat("MM/d/yyyy").format(date);
 }
+
+String convertRawDateAndTimeToDate(String rawDate) {
+  DateTime parsedDate = DateFormat("M/d/yyyy h:mm:ss a").parse(rawDate);
+
+  String formattedDate = DateFormat("dd/MM/yyyy").format(parsedDate);
+  return formattedDate;
+}
+
+String convertDateToYYmmDD(DateTime date) {
+  return DateFormat("yyyy/MM/dd").format(date);
+}

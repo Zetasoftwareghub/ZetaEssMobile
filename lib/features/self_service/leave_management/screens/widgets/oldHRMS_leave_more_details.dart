@@ -11,6 +11,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
 import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/common/widgets/customElevatedButton_widget.dart';
 import 'package:zeta_ess/features/self_service/leave_management/repository/leave_repository.dart';
 
 import '../../../../../core/api_constants/dio_headers.dart';
@@ -754,7 +755,10 @@ class _LeaveMoreDetailsScreenState
                               _buildEnhancedDataTable(),
                               SizedBox(height: 24.h),
                               if (widget.showSubmit != "")
-                                _buildEnhancedSubmitButton(),
+                                CustomElevatedButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('Go Back'),
+                                ),
                               SizedBox(height: 20.h),
                             ],
                           ),
@@ -1109,36 +1113,6 @@ class _LeaveMoreDetailsScreenState
                   ),
                 ),
               ),
-    );
-  }
-
-  Widget _buildEnhancedSubmitButton() {
-    return Container(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: HexColor("#10A0DB"),
-          foregroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 16.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          elevation: 0,
-          shadowColor: HexColor("#10A0DB").withOpacity(0.3),
-        ),
-        onPressed: () => Navigator.pop(context),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.arrow_back, size: 18.sp),
-            SizedBox(width: 8.w),
-            Text(
-              'Go Back',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

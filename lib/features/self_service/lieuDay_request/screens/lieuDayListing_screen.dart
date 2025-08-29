@@ -46,6 +46,7 @@ class LieuDayListingScreen extends ConsumerWidget {
                       LieuDayListView(
                         list: data.submitted.lieuDayList,
                         rightsModel: data.submitted.listRights,
+                        approveTab: true,
                       ),
                       LieuDayListView(list: data.approved),
                       LieuDayListView(list: data.rejected),
@@ -73,7 +74,13 @@ class LieuDayListingScreen extends ConsumerWidget {
 class LieuDayListView extends ConsumerWidget {
   final List<LieuDayListingModel> list;
   final ListRightsModel? rightsModel;
-  const LieuDayListView({super.key, required this.list, this.rightsModel});
+  final bool approveTab;
+  const LieuDayListView({
+    super.key,
+    required this.list,
+    this.rightsModel,
+    this.approveTab = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,7 +104,7 @@ class LieuDayListView extends ConsumerWidget {
             text1: item.ludate ?? '',
 
             text2: item.lulvtp ?? "Unknown",
-            subText2: "Status: ${item.apstat}",
+            subText2: approveTab ? "Status: ${item.apstat}" : "",
             listRights: rightsModel,
             onDelete:
                 () => ref

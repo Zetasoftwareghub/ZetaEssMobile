@@ -129,6 +129,8 @@ class LeaveConfigurationData {
       includeOff: json['includeOff']?.toString() ?? '',
       lsnote: json['lsnote']?.toString() ?? '',
       dLsdate: json['dLsdate']?.toString() ?? json['dLsrdtf']?.toString() ?? '',
+
+      //TODO is this needed?
       iLsslno: json['iLsslno']?.toString() ?? json['ILsslno']?.toString() ?? '',
       lieuday: json['ltlieu']?.toString() ?? '',
       glapho: json['glapho']?.toString() ?? '',

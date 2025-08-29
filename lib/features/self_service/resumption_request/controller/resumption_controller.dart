@@ -42,9 +42,10 @@ class ResumptionController extends Notifier<bool> {
       },
       (response) {
         ref.invalidate(resumptionListProvider);
-        ref.read(fileUploadProvider.notifier).clearFile();
         if (response?.toLowerCase() == 'saved successfully' ||
             response?.toLowerCase() == 'updated successfully') {
+          ref.read(fileUploadProvider.notifier).clearFile();
+
           Navigator.pop(context);
           showCustomAlertBox(
             context,

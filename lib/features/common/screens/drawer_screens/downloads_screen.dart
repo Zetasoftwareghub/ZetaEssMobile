@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
+import 'package:zeta_ess/features/common/models/download_model.dart';
 
 import '../../providers/common_ui_providers.dart';
 
@@ -216,22 +217,27 @@ class DownloadsScreen extends ConsumerWidget {
     );
   }
 
-  void _handleFileTap(BuildContext context, dynamic doc) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.open_in_new_rounded, color: Colors.white),
-            SizedBox(width: 8.w),
-            Expanded(child: Text('Opening ${doc.fileName}')),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-      ),
-    );
+  void _handleFileTap(BuildContext context, DocumentModel doc) {
+    doc.fileKey;
+    print(doc.fileKey);
+    print(doc.fileName);
+    print(doc.description);
+    print("doc.fileName");
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Row(
+    //       children: [
+    //         Icon(Icons.open_in_new_rounded, color: Colors.white),
+    //         SizedBox(width: 8.w),
+    //         Expanded(child: Text('Opening ${doc.fileName}')),
+    //       ],
+    //     ),
+    //     behavior: SnackBarBehavior.floating,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(12.r),
+    //     ),
+    //   ),
+    // );
   }
 }
 

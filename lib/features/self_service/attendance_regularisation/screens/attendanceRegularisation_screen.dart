@@ -132,7 +132,7 @@ class _AttendanceRegularisationScreenState
               Expanded(
                 child: _buildInfoCard(
                   context,
-                  "Date".tr(),
+                  "date".tr(),
                   convertDateYYYMMDDtoStringDate(widget.regulariseDay.date),
                   Icons.event,
                   const Color(0xFF4CAF50),
@@ -463,7 +463,7 @@ class _AttendanceRegularisationScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Date'.tr(),
+                            'date'.tr(),
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
@@ -483,7 +483,7 @@ class _AttendanceRegularisationScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Time'.tr(),
+                            'time'.tr(),
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
@@ -756,7 +756,7 @@ class _AttendanceRegularisationScreenState
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'IN',
+                    'in'.tr(),
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
@@ -803,7 +803,7 @@ class _AttendanceRegularisationScreenState
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'OUT',
+                    'out'.tr(),
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
@@ -856,7 +856,7 @@ class _AttendanceRegularisationScreenState
                         );
                       },
                       icon: const Icon(Icons.add, size: 20),
-                      label: const Text('Add New'),
+                      label: Text('Add New'.tr()),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade100,
                         foregroundColor: Colors.black87,
@@ -874,7 +874,7 @@ class _AttendanceRegularisationScreenState
                     child: ElevatedButton.icon(
                       onPressed: () => _showSubmitDialog(context, controller),
                       icon: const Icon(Icons.send, size: 20),
-                      label: const Text('Send for Approval'),
+                      label: Text('Send for Approval'.tr()),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF09A5D9),
                         foregroundColor: Colors.white,

@@ -61,6 +61,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     10.heightBox,
                     Text(
                       profile.employeeName,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.sp,
@@ -109,7 +110,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       if (profile.lineManagerName != null &&
                           (profile.lineManagerName ?? '').isNotEmpty)
                         employeeDetailTile(
-                          'Line manager name'.tr(),
+                          'line_manager'.tr(),
                           profile.lineManagerName ?? '',
                         ),
                       if (profile.gradeName != null &&
@@ -221,7 +222,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 14.sp, color: Colors.black54)),
+          Text(
+            label.tr(),
+            style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+          ),
           Text(value, style: TextStyle(fontSize: 14.sp, color: Colors.black)),
         ],
       ),

@@ -73,11 +73,13 @@ class AuthController extends Notifier<bool> {
 
     state = false;
     res.fold(
-      (l) => showSnackBar(
-        content: l.errMsg,
-        context: context,
-        color: AppTheme.errorColor,
-      ),
+      (l) {
+        showSnackBar(
+          content: l.errMsg,
+          context: context,
+          color: AppTheme.errorColor,
+        );
+      },
       (activateResponse) async {
         if (activateResponse != null) {
           ref.read(baseUrlProvider.notifier).state = url;
@@ -149,21 +151,34 @@ class AuthController extends Notifier<bool> {
           context: context,
         );
     state = false;
-    return res.fold((l) => null, (userData) async {
-      // TODO get the JWT token to local storage !
-      ref.read(userDataProvider.notifier).state = userData;
+    return res.fold(
+      (l) =>
+          l.errMsg != '-1' &&
+                  l.errMsg != '-2' &&
+                  l.errMsg != '-3' &&
+                  l.errMsg != '-4'
+              ? showSnackBar(
+                context: context,
+                content: l.errMsg,
+                color: AppTheme.errorColor,
+              )
+              : null,
+      (userData) async {
+        // TODO get the JWT token to local storage !
+        ref.read(userDataProvider.notifier).state = userData;
 
-      NavigationService.navigateRemoveUntil(
-        context: context,
-        screen: const CreatePinScreen(),
-      );
+        NavigationService.navigateRemoveUntil(
+          context: context,
+          screen: const CreatePinScreen(),
+        );
 
-      final userModel = jsonEncode(userData.toJson());
-      await SecureStorageService.write(
-        key: StorageKeys.userModel,
-        value: userModel,
-      );
-    });
+        final userModel = jsonEncode(userData.toJson());
+        await SecureStorageService.write(
+          key: StorageKeys.userModel,
+          value: userModel,
+        );
+      },
+    );
   }
 
   Future<void> ssoLogin({

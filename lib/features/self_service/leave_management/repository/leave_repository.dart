@@ -35,8 +35,6 @@ class LeaveRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('response.leave edit details');
       return response.data['data'];
     } catch (e) {
       print(e.toString());
@@ -87,6 +85,8 @@ class LeaveRepository {
         'escode': int.parse(userContext.esCode),
         'emcode': int.parse(userContext.empCode),
       };
+      print(data);
+      print('edit leave');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getSelfLeaveDetails,
         data: data,
@@ -167,14 +167,15 @@ class LeaveRepository {
     required UserContext userContext,
   }) async {
     return handleApiCall(() async {
+      final data = {
+        'suconn': userContext.companyConnection,
+        'emcode': userContext.empCode,
+        'escode': userContext.esCode,
+        'dtleave': formatDate(DateTime.now()),
+      };
       final response = await dio.post(
         userContext.baseUrl + endpoint,
-        data: {
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-          'escode': userContext.esCode,
-          'dtleave': formatDate(DateTime.now()),
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
 

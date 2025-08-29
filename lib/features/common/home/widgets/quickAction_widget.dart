@@ -195,6 +195,8 @@ class _QuickActionItemState extends State<_QuickActionItem>
   late Animation<double> _shadowAnimation;
   bool _isPressed = false;
 
+  //TODO change this with self service and approvals tabs
+
   final Map<String, Widget Function(String key)> quickActionTabs = {
     'submit_leave': (key) => LeaveListingScreen(title: key),
     'resumption_request': (key) => ResumptionListingScreen(title: key),
@@ -265,6 +267,9 @@ class _QuickActionItemState extends State<_QuickActionItem>
               onTapUp: _onTapUp,
               onTapCancel: _onTapCancel,
               onTap: () {
+                print(widget.action);
+                print("widget.action");
+                print(widget.action['title']);
                 final builder = quickActionTabs[widget.action['title']];
                 if (builder != null) {
                   NavigationService.navigateToScreen(

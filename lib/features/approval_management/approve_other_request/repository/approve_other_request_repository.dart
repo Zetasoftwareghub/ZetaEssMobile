@@ -31,7 +31,6 @@ class ApproveOtherRequestRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> dataList = response.data['data'];
         //TODO ithinte response model vere annu bro
@@ -133,8 +132,6 @@ class ApproveOtherRequestRepository {
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'];
       } else {

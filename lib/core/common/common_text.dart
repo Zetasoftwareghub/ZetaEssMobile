@@ -1,5 +1,7 @@
-String submitText = "submit";
-String updateText = "Update";
+const String submitText = "submit";
+const String updateText = "Update";
 
-String detailAppBarText = 'details';
-String requiredFieldsText = 'pleaseFillRequiredFields';
+const String noValueFound = 'No value found';
+
+const String detailAppBarText = 'details';
+const String requiredFieldsText = 'pleaseFillRequiredFields';

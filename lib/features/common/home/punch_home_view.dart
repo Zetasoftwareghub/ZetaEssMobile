@@ -11,21 +11,17 @@ import 'package:zeta_ess/services/location_service.dart';
 
 import '../../../../core/common/error_text.dart';
 import '../../../../core/common/loader.dart';
-import '../../../../core/common/widgets/showCase_widget.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/common_theme.dart';
 import '../../../core/utils/date_utils.dart';
 import '../models/punch_model.dart';
 import '../screens/widgets/clock.dart';
 import 'controller/liveLocation_controller.dart';
-import 'home_screen.dart';
 
 //TODO is this correct or not? IDK
 
 class PunchHomeView extends ConsumerStatefulWidget {
-  final ShowcaseKeys showcaseKeys;
-
-  const PunchHomeView({super.key, required this.showcaseKeys});
+  const PunchHomeView({super.key});
 
   @override
   ConsumerState<PunchHomeView> createState() => _PunchHomeViewState();
@@ -235,18 +231,12 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                               ref.read(isPunchingProvider.notifier).state =
                                   false;
                             },
-                    child: CustomShowcaseWidget(
-                      showcaseKey: widget.showcaseKeys.punchKey,
-                      title: "Attendance Tracker",
-                      description: "Tap here to punch in or out.",
-
-                      child: Text(
-                        isCheckIn ? "check_in".tr() : "check_out".tr(),
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                    child: Text(
+                      isCheckIn ? "check_in".tr() : "check_out".tr(),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                   ),

@@ -27,7 +27,7 @@ class _AttendanceRegularisationDatePickState
     with WidgetsBindingObserver {
   // Constants
   static const _dojString =
-      '30-06-2000 09:00:00'; //TODO give this as a date of joining
+      '30-06-1500 09:00:00'; //TODO give this as a date of joining
   static const _dateFormat = "dd-MM-yyyy HH:mm:ss";
   static const _maxFutureDays = 365;
   static const _requestTimeout = Duration(seconds: 60);

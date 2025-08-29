@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 
 import '../../../../core/providers/userContext_provider.dart';
@@ -80,7 +84,6 @@ class _SubmitEditOtherRequestState
     // Initialize controllers and default values
     for (var field in formData.formFieldList) {
       String fieldKey = field.generateFieldId();
-
       // Initialize text controllers for text fields
       if (field.fieldTypeCases == FormFieldType.textField ||
           field.fieldTypeCases == FormFieldType.textArea) {
@@ -281,21 +284,19 @@ class _SubmitEditOtherRequestState
                 field.fieldName + (field.isRequired ? ' *' : ''),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-              ...field.options
-                  .map(
-                    (option) => RadioListTile<String>(
-                      title: Text(option),
-                      value: option,
-                      groupValue: _formValues[fieldKey],
-                      onChanged: (value) {
-                        setState(() {
-                          _formValues[fieldKey] = value;
-                        });
-                        state.didChange(value);
-                      },
-                    ),
-                  )
-                  .toList(),
+              ...field.options.map(
+                (option) => RadioListTile<String>(
+                  title: Text(option),
+                  value: option,
+                  groupValue: _formValues[fieldKey],
+                  onChanged: (value) {
+                    setState(() {
+                      _formValues[fieldKey] = value;
+                    });
+                    state.didChange(value);
+                  },
+                ),
+              ),
               if (state.hasError)
                 Padding(
                   padding: const EdgeInsets.only(left: 12.0),
@@ -323,8 +324,10 @@ class _SubmitEditOtherRequestState
         items:
             field.options
                 .map(
-                  (option) =>
-                      DropdownMenuItem(value: option, child: Text(option)),
+                  (option) => DropdownMenuItem(
+                    value: option,
+                    child: SizedBox(width: 290.w, child: Text(option)),
+                  ),
                 )
                 .toList(),
         onChanged: (value) {
@@ -403,8 +406,8 @@ class _SubmitEditOtherRequestState
               SizedBox(height: 8),
               InkWell(
                 onTap: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
+                  FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(withData: true);
                   if (result != null) {
                     setState(() {
                       _selectedFiles[fieldKey] = result.files.single;
@@ -496,32 +499,77 @@ class _SubmitEditOtherRequestState
     return field.fieldID.toString();
   }
 
-  List<SubmitOtherRequestModel> _buildSubmissionData() {
+  // List<SubmitOtherRequestModel> _buildSubmissionData() {
+  //   final List<SubmitOtherRequestModel> formData = [];
+  //
+  //   _formData?.formFieldList.forEach((field) async {
+  //     String fieldKey = field.generateFieldId();
+  //     dynamic value = _formValues[fieldKey];
+  //
+  //     final rqtscd = _extractRqtscd(field);
+  //
+  //     String rtcont = "";
+  //     String rtflnm = "";
+  //
+  //     if (field.fieldTypeCases == FormFieldType.fileUpload && value != null) {
+  //       final file = value as PlatformFile;
+  //       rtflnm = file.extension ?? 'extension';
+  //       final bytes = await File(file.path!).readAsBytes();
+  //       print(bytes);
+  //       rtcont = base64Encode(bytes);
+  //     }
+  //
+  //     // Convert value to string based on field type
+  //     String rtenvl = "";
+  //     if (field.fieldTypeCases == FormFieldType.checkbox) {
+  //       rtenvl = (value as List<String>).join(',');
+  //     } else if (value != null) {
+  //       rtenvl = value.toString();
+  //     }
+  //
+  //     formData.add(
+  //       SubmitOtherRequestModel(
+  //         rqtscd: rqtscd,
+  //         rtenvl: rtenvl,
+  //         rtcont: rtcont,
+  //         rtflnm: rtflnm,
+  //         rtescd: "0",
+  //       ),
+  //     );
+  //   });
+  //
+  //   return formData;
+  // }
+
+  Future<List<SubmitOtherRequestModel>> _buildSubmissionData() async {
     final List<SubmitOtherRequestModel> formData = [];
 
-    _formData?.formFieldList.forEach((field) {
+    for (final field in _formData?.formFieldList ?? []) {
       String fieldKey = field.generateFieldId();
       dynamic value = _formValues[fieldKey];
 
-      // Get the field ID (rqtscd)
       final rqtscd = _extractRqtscd(field);
 
-      // Initialize file data
       String rtcont = "";
       String rtflnm = "";
+      String rtenvl = "";
 
-      // Handle file upload fields
       if (field.fieldTypeCases == FormFieldType.fileUpload && value != null) {
         final file = value as PlatformFile;
-        rtflnm = file.name;
-        // If you need to encode file content to base64
-        // rtcont = base64Encode(file.bytes ?? []);
-        // For now, we'll keep it empty as per your original code
-      }
+        rtflnm = file.extension ?? 'extension';
 
-      // Convert value to string based on field type
-      String rtenvl = "";
-      if (field.fieldTypeCases == FormFieldType.checkbox) {
+        // ✅ Add file name (without extension) to rtenvl
+        rtenvl = file.name.split('.').first;
+
+        if (file.bytes != null) {
+          // if filePicker had withData: true
+          rtcont = base64Encode(file.bytes!);
+        } else if (file.path != null) {
+          // fallback: read from path
+          final bytes = await File(file.path!).readAsBytes();
+          rtcont = base64Encode(bytes);
+        }
+      } else if (field.fieldTypeCases == FormFieldType.checkbox) {
         rtenvl = (value as List<String>).join(',');
       } else if (value != null) {
         rtenvl = value.toString();
@@ -536,12 +584,12 @@ class _SubmitEditOtherRequestState
           rtescd: "0",
         ),
       );
-    });
+    }
 
     return formData;
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       Map<String, dynamic> requestBody = _generateRequestBody();
 
@@ -556,7 +604,7 @@ class _SubmitEditOtherRequestState
       });
 
       // Build the submission data
-      final formData = _buildSubmissionData();
+      final formData = await _buildSubmissionData();
 
       // Print submission data for debugging
       print(
@@ -601,7 +649,9 @@ class _SubmitEditOtherRequestState
                 ),
               ),
       bottomSheet:
-          _isLoading
+          ref.watch(otherRequestControllerProvider)
+              ? Loader()
+              : _isLoading
               ? null
               : Padding(
                 padding: EdgeInsets.all(16),
@@ -616,490 +666,3 @@ class _SubmitEditOtherRequestState
     );
   }
 }
-
-/*
-FORM is loading perefectly
-class SubmitEditOtherRequest extends ConsumerStatefulWidget {
-  final String? title, micode, requestId;
-  const SubmitEditOtherRequest({
-    super.key,
-    required this.title,
-    required this.micode,
-    required this.requestId,
-  });
-
-  @override
-  ConsumerState<SubmitEditOtherRequest> createState() =>
-      _SubmitEditOtherRequestState();
-}
-
-class _SubmitEditOtherRequestState
-    extends ConsumerState<SubmitEditOtherRequest> {
-  final _formKey = GlobalKey<FormState>();
-  FormResponseModel? _formData;
-  bool _isLoading = true;
-
-  // Dynamic form data storage
-  Map<String, dynamic> _formValues = {};
-  Map<String, TextEditingController> _controllers = {};
-  Map<String, List<String>> _selectedCheckboxValues = {};
-  Map<String, PlatformFile?> _selectedFiles = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _loadForm();
-  }
-
-  @override
-  void dispose() {
-    // Dispose all controllers
-    _controllers.values.forEach((controller) => controller.dispose());
-    super.dispose();
-  }
-
-  Future<void> _loadForm() async {
-    setState(() => _isLoading = true);
-    Future.delayed(Duration.zero, () async {
-      final formData = await ref
-          .read(otherRequestRepositoryProvider)
-          .getOtherRequestForm(
-            userContext: ref.watch(userContextProvider),
-            requestId: widget.requestId,
-            micode: widget.micode,
-          );
-      print(formData);
-      print("formData");
-      formData.fold(
-        (l) => showSnackBar(context: context, content: 'error loading form'),
-        (response) => _initializeForm(response),
-      );
-    });
-  }
-
-  void _initializeForm(FormResponseModel formData) {
-    print(formData.formFieldList.first);
-    setState(() {
-      _formData = formData;
-      _isLoading = false;
-    });
-
-    // Initialize controllers and default values
-    for (var field in formData.formFieldList) {
-      String fieldKey = field.generateFieldId();
-
-      // Initialize text controllers for text fields
-      if (field.fieldTypeCases == FormFieldType.textField ||
-          field.fieldTypeCases == FormFieldType.textArea) {
-        _controllers[fieldKey] = TextEditingController();
-      }
-
-      // Initialize checkbox values
-      if (field.fieldTypeCases == FormFieldType.checkbox) {
-        _selectedCheckboxValues[fieldKey] = [];
-      }
-
-      // Initialize default values
-      _formValues[fieldKey] = _getDefaultValue(field);
-    }
-  }
-
-  dynamic _getDefaultValue(FormFieldModel field) {
-    switch (field.fieldTypeCases) {
-      case FormFieldType.textField:
-      case FormFieldType.textArea:
-        return '';
-      case FormFieldType.radio:
-      case FormFieldType.dropdown:
-        return null;
-      case FormFieldType.checkbox:
-        return <String>[];
-      case FormFieldType.fileUpload:
-        return null;
-    }
-  }
-
-  String? _validateField(FormFieldModel field, dynamic value) {
-    if (field.isRequired) {
-      if (value == null ||
-          (value is String && value.isEmpty) ||
-          (value is List && value.isEmpty)) {
-        return '${field.fieldName} is required';
-      }
-    }
-
-    if (value != null && value is String && value.isNotEmpty) {
-      if (field.isNumberField) {
-        if (double.tryParse(value) == null) {
-          return '${field.fieldName} must be a valid number';
-        }
-      }
-
-      if (field.isDateField) {
-        try {
-          DateTime.parse(value);
-        } catch (e) {
-          return '${field.fieldName} must be a valid date';
-        }
-      }
-    }
-
-    return null;
-  }
-
-  Widget _buildFormField(FormFieldModel field) {
-    String fieldKey = field.generateFieldId();
-
-    switch (field.fieldTypeCases) {
-      case FormFieldType.textField:
-        return _buildTextField(field, fieldKey);
-      case FormFieldType.textArea:
-        return _buildTextArea(field, fieldKey);
-      case FormFieldType.radio:
-        return _buildRadioField(field, fieldKey);
-      case FormFieldType.dropdown:
-        return _buildDropdownField(field, fieldKey);
-      case FormFieldType.checkbox:
-        return _buildCheckboxField(field, fieldKey);
-      case FormFieldType.fileUpload:
-        return _buildFileUploadField(field, fieldKey);
-    }
-  }
-
-  Widget _buildTextField(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: _controllers[fieldKey],
-        keyboardType:
-            field.isNumberField ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: field.fieldName + (field.isRequired ? ' *' : ''),
-          hintText: 'Enter ${field.fieldName.toLowerCase()}',
-        ),
-        validator: (value) => _validateField(field, value),
-        onChanged: (value) {
-          _formValues[fieldKey] = value;
-        },
-        readOnly: field.isDateField,
-        onTap: field.isDateField ? () => _selectDate(field, fieldKey) : null,
-      ),
-    );
-  }
-
-  Widget _buildTextArea(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-
-        controller: _controllers[fieldKey],
-        maxLines: 4,
-        decoration: InputDecoration(
-          labelText: field.fieldName + (field.isRequired ? ' *' : ''),
-          hintText: 'Enter ${field.fieldName.toLowerCase()}',
-        ),
-        validator: (value) => _validateField(field, value),
-        onChanged: (value) {
-          _formValues[fieldKey] = value;
-        },
-      ),
-    );
-  }
-
-  Widget _buildRadioField(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: FormField<String>(
-        validator: (value) => _validateField(field, value),
-        builder: (FormFieldState<String> state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                field.fieldName + (field.isRequired ? ' *' : ''),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              ...field.options
-                  .map(
-                    (option) => RadioListTile<String>(
-                      title: Text(option),
-                      value: option,
-                      groupValue: _formValues[fieldKey],
-                      onChanged: (value) {
-                        setState(() {
-                          _formValues[fieldKey] = value;
-                        });
-                        state.didChange(value);
-                      },
-                    ),
-                  )
-                  .toList(),
-              if (state.hasError)
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    state.errorText!,
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildDropdownField(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: _formValues[fieldKey],
-        decoration: InputDecoration(
-          labelText: field.fieldName + (field.isRequired ? ' *' : ''),
-          border: OutlineInputBorder(),
-        ),
-        items:
-            field.options
-                .map(
-                  (option) =>
-                      DropdownMenuItem(value: option, child: Text(option)),
-                )
-                .toList(),
-        onChanged: (value) {
-          setState(() {
-            _formValues[fieldKey] = value;
-          });
-        },
-        validator: (value) => _validateField(field, value),
-      ),
-    );
-  }
-
-  Widget _buildCheckboxField(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: FormField<List<String>>(
-        validator: (value) => _validateField(field, value),
-        builder: (FormFieldState<List<String>> state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                field.fieldName + (field.isRequired ? ' *' : ''),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              ...field.options
-                  .map(
-                    (option) => CheckboxListTile(
-                      title: Text(option),
-                      value:
-                          _selectedCheckboxValues[fieldKey]?.contains(option) ??
-                          false,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            _selectedCheckboxValues[fieldKey]?.add(option);
-                          } else {
-                            _selectedCheckboxValues[fieldKey]?.remove(option);
-                          }
-                          _formValues[fieldKey] =
-                              _selectedCheckboxValues[fieldKey];
-                        });
-                        state.didChange(_selectedCheckboxValues[fieldKey]);
-                      },
-                    ),
-                  )
-                  .toList(),
-              if (state.hasError)
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    state.errorText!,
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildFileUploadField(FormFieldModel field, String fieldKey) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: FormField<PlatformFile?>(
-        validator: (value) => _validateField(field, value),
-        builder: (FormFieldState<PlatformFile?> state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                field.fieldName + (field.isRequired ? ' *' : ''),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 8),
-              InkWell(
-                onTap: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
-                  if (result != null) {
-                    setState(() {
-                      _selectedFiles[fieldKey] = result.files.single;
-                      _formValues[fieldKey] = result.files.single;
-                    });
-                    state.didChange(result.files.single);
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.attach_file),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _selectedFiles[fieldKey]?.name ?? 'Select file',
-                          style: TextStyle(
-                            color:
-                                _selectedFiles[fieldKey] != null
-                                    ? Colors.black
-                                    : Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (state.hasError)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    state.errorText!,
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Future<void> _selectDate(FormFieldModel field, String fieldKey) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
-      _controllers[fieldKey]?.text = formattedDate;
-      _formValues[fieldKey] = formattedDate;
-    }
-  }
-
-  Map<String, dynamic> _generateRequestBody() {
-    Map<String, dynamic> body = {};
-
-    _formData?.formFieldList.forEach((field) {
-      String fieldKey = field.generateFieldId();
-      dynamic value = _formValues[fieldKey];
-
-      // Convert values based on field type
-      if (field.fieldTypeCases == FormFieldType.checkbox) {
-        body[field.fieldID.toString()] = (value as List<String>).join(',');
-      } else if (field.fieldTypeCases == FormFieldType.fileUpload) {
-        // Handle file upload separately in your API call
-        if (value != null) {
-          body[field.fieldID.toString()] = (value as PlatformFile).name;
-        }
-      } else {
-        body[field.fieldID.toString()] = value?.toString() ?? '';
-      }
-    });
-
-    return body;
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Map<String, dynamic> requestBody = _generateRequestBody();
-
-      // TODO: Submit the form data
-      print('Form submitted with data: $requestBody');
-
-      // Example of how to access files for upload
-      _selectedFiles.forEach((key, file) {
-        if (file != null) {
-          print('File to upload: ${file.name}, path: ${file.path}');
-        }
-      });
-
-      final formData = _buildSubmissionData();
-      ref
-          .read(otherRequestControllerProvider.notifier)
-          .submitOtherRequest(
-            submitModel: formData,
-            context: context,
-            // "rtencd": micode,
-            //           "rqtmcd": requestId,
-            rtencd: widget.micode ?? '',
-            rqtmcd: widget.requestId ?? '',
-            menuName: widget.title,
-            // isEditMode: false,
-          );
-      // Call your API here
-      // _submitToApi(requestBody);
-    }
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title ?? 'other_requests')),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child:
-              _formData != null
-                  ? Column(
-                    children: [
-                      ..._formData!.formFieldList.map(
-                        (field) => _buildFormField(field),
-                      ),
-                      SizedBox(height: 100), // Space for bottom sheet
-                    ],
-                  )
-                  : Text('No data'),
-        ),
-      ),
-      bottomSheet:
-          _isLoading
-              ? null
-              : Padding(
-                padding: EdgeInsets.all(16),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    child: Text('Submit'),
-                  ),
-                ),
-              ),
-    );
-  }
-}
-*/

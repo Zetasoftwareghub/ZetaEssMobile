@@ -20,5 +20,8 @@ class CommonApis {
   static const String getLeaveBalance = '/api/Leave/GetLeaveBalance';
   static const String getPunchDetails =
       '/api/Dash/Get_AttendanceLocn_MbappNW/getPunchDetails';
+
   static const String savePunch = '/api/Dash/INS_ATTDNCE_WTH_LOCN/savePunch';
+
+  static const String saveSuggestion = '/api/Suggestion/SaveSuggestion';
 }

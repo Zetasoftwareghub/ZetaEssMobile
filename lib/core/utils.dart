@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,3 +30,16 @@ extension SpaceExtensions on num {
 
 final listTabs = ["submitted".tr(), "approved".tr(), "rejected".tr()];
 final approvalListTabs = ["Pending".tr(), "approved".tr(), "rejected".tr()];
+
+final now = DateTime.now();
+final greeting =
+    now.hour < 12
+        ? "Good Morning"
+        : now.hour < 17
+        ? "Good Afternoon"
+        : "Good Evening";
+
+void printFullJson(dynamic json) {
+  final prettyString = const JsonEncoder.withIndent('  ').convert(json);
+  debugPrint(prettyString, wrapWidth: 1024); // wrap prevents truncation
+}

@@ -22,16 +22,20 @@ class ExpenseClaimRepository {
     required UserContext userContext,
   }) async {
     try {
+      final data = {
+        'suconn': userContext.companyConnection,
+        'emcode': int.parse(userContext.empCode),
+        'userid': int.parse(userContext.esCode),
+      };
+      print(data);
+      print('123123');
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.getExpenseClaims,
-        data: {
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-          'userid': userContext.esCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
+        print(response.data);
         return right(ExpenseClaimListResponse.fromJson(response.data));
       } else {
         return left(Failure(errMsg: 'Unknown error occurred'));

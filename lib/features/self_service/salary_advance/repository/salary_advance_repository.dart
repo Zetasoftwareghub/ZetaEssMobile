@@ -39,16 +39,19 @@ class SalaryAdvanceRepository {
   FutureEither<SalaryAdvanceListResponse> getSalaryAdvanceList({
     required UserContext userContext,
   }) async {
+    final data = {
+      'suconn': userContext.companyConnection,
+      'emcode': userContext.empCode,
+      'userid': userContext.esCode,
+      'micode': 84,
+    };
+    print(data);
+    print('tabbsbs');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + SalaryAdvanceApis.getSalaryAdvanceList,
 
-        data: {
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-          'userid': userContext.esCode,
-          'micode': 84,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

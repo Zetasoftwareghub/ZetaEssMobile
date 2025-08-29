@@ -41,6 +41,8 @@ class _ExpenseClaimDetailsScreenState
   ExpenseClaimModel? expenseClaimModel;
   @override
   Widget build(BuildContext context) {
+    print(widget.expenseClaimId);
+    print('widget.expenseClaimId');
     final details = ref.watch(
       expenseClaimDetailsProvider(widget.expenseClaimId ?? 0),
     );
@@ -78,19 +80,26 @@ class _ExpenseClaimDetailsScreenState
                       subTitle: claimDetail.monthyear,
                     ),
                     detailInfoRow(
-                      title: 'approved_month_and_year',
+                      title: 'approved_month_and_year'.tr(),
                       subTitle: claimDetail.approveMonthYear,
                     ),
                     detailInfoRow(
-                      title: 'approveExpense_claim',
+                      title: 'Approve Expense claim',
                       subTitle: claimDetail.expenseClaimName,
                     ),
                     detailInfoRow(
                       title: 'requested_amount',
                       subTitle: claimDetail.amount,
                     ),
+                    detailInfoRow(
+                      title: 'approved_amount',
+                      subTitle: claimDetail.approveAmount,
+                    ),
+                    detailInfoRow(title: "note", subTitle: claimDetail.note),
 
-                    detailInfoRow(title: "note", belowValue: claimDetail.note),
+                    titleHeaderText('comment'.tr()),
+                    Text(claimDetail.comment ?? ''),
+                    10.heightBox,
                     if (widget.isLineManager ?? false) ...[
                       Form(
                         key: _formKey,
@@ -133,6 +142,14 @@ class _ExpenseClaimDetailsScreenState
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
+                    if (approveRejectMonthYear.text.isEmpty) {
+                      showSnackBar(
+                        context: context,
+                        content: 'Select month and year',
+                        color: AppTheme.errorColor,
+                      );
+                      return;
+                    }
                     if (approveRejectMonthYear.text.isNotEmpty ||
                         _formKey.currentState!.validate()) {
                       if (expenseClaimModel != null) {

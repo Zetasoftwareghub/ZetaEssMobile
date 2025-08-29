@@ -69,8 +69,8 @@ class ExpenseClaimController extends Notifier<bool> {
             context: context,
             content:
                 isEditMode
-                    ? 'expense_claim'.tr() + 'updated successfully'.tr()
-                    : 'expense_claim'.tr() + 'submitted'.tr(),
+                    ? '${'expense_claim'.tr()} ${'updated successfully'.tr()}'
+                    : '${'expense_claim'.tr()} ${'submitted'.tr()}',
           );
         } else {
           showCustomAlertBox(context, title: response.toString());
@@ -136,7 +136,7 @@ class ExpenseClaimController extends Notifier<bool> {
       },
       (response) {
         ref.invalidate(approveExpenseClaimListProvider);
-        if (response == '1' || (response ?? 'not').contains('Approved')) {
+        if (response == '1' || (response ?? 'not').contains('Successfully')) {
           Navigator.pop(context);
         }
         showSnackBar(
@@ -181,7 +181,8 @@ class ExpenseClaimController extends Notifier<bool> {
   } //TODO check
 }
 
-class ExpenseClaimListNotifier extends AsyncNotifier<ExpenseClaimListResponse> {
+class ExpenseClaimListNotifier
+    extends AutoDisposeAsyncNotifier<ExpenseClaimListResponse> {
   @override
   Future<ExpenseClaimListResponse> build() async {
     final repo = ref.read(expenseClaimRepositoryProvider);

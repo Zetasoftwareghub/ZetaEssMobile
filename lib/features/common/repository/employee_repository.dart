@@ -119,7 +119,6 @@ class EmployeeRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
       if (response.statusCode == 200 && response.data['success'] == true) {
         final List<dynamic> data = response.data['data'];
         return data.map((e) => LeaveBalanceModel.fromJson(e)).toList();

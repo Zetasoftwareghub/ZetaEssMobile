@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../controller/holiday_notifier.dart';
@@ -578,41 +579,24 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 16),
+              10.widthBox,
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.holidayReason ?? 'Holiday',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _formatDate(item.date),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF64748B),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  (item.holidayReason ?? 'Holiday'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                  ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.bookmark_outline_rounded,
+              6.widthBox,
+              Text(
+                item.date.split(" ")[0],
+                style: const TextStyle(
+                  fontSize: 14,
                   color: Color(0xFF64748B),
-                  size: 20,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],

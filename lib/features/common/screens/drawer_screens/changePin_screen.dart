@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
+import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/features/auth/screens/createPin_screen.dart';
 
 import '../../../../core/common/widgets/customElevatedButton_widget.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -66,16 +68,15 @@ class _ChangePinScreenState extends ConsumerState<ChangePinScreen> {
                     primaryButtonText: 'confirm'.tr(),
                     secondaryButtonText: 'cancel'.tr(),
                     onPrimaryPressed: () {
-                      print(authState.savedPin);
-                      print('authState.savedPin');
-
                       showSnackBar(
                         content: 'Pin updated successfully',
                         context: context,
                       );
                       authNotifier.savePin(pinController.text);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      NavigationService.navigateRemoveUntil(
+                        context: context,
+                        screen: CreatePinScreen(),
+                      );
                     },
                   );
                 },

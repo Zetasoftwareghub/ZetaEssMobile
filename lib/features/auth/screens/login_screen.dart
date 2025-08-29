@@ -149,6 +149,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ] else ...[
                     CustomElevatedButton(
                       onPressed: () {
+                        if (ref.read(userCompanyProvider) == null) {
+                          showSnackBar(
+                            context: context,
+                            content: 'Please select company',
+                            color: AppTheme.errorColor,
+                          );
+                          return;
+                        }
                         if (_formKey.currentState!.validate() &&
                             ref.watch(userCompanyProvider) != null) {
                           ref
@@ -186,16 +194,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         // ref.read(provider)
                       },
                     ),
-                    10.heightBox,
-                    _buildSocialLoginButton(
-                      icon: Constants.microsoftPath,
-                      label: "microsoft".tr(),
-                      onPressed: () {
-                        ref
-                            .read(authControllerProvider.notifier)
-                            .loginWithMicrosoft(context: context);
-                      },
-                    ),
+                    // 10.heightBox,
+                    // _buildSocialLoginButton(
+                    //   icon: Constants.microsoftPath,
+                    //   label: "microsoft".tr(),
+                    //   onPressed: () {
+                    //     ref
+                    //         .read(authControllerProvider.notifier)
+                    //         .loginWithMicrosoft(context: context);
+                    //   },
+                    // ),
                   ],
                   25.heightBox,
 
@@ -228,7 +236,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(hintText: hint);
+    return InputDecoration(labelText: hint);
   }
 
   Widget _buildSocialLoginButton({

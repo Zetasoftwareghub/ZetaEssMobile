@@ -7,20 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zeta_ess/features/splash_screen.dart';
-import 'package:zeta_ess/services/firebase_notification.dart';
 
 import 'core/theme/app_theme.dart';
+import 'features/splash_screen.dart';
 import 'firebase_options.dart';
 
-//https://12c0-103-191-187-9.ngrok-free.app
+//https://edc20c575821.ngrok-free.app/
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await _initialise();
   await _setPreferredOrientations();
   await _configureSystemUI();
-
   runApp(const ZetaApp());
 }
 
@@ -38,8 +35,16 @@ Future<void> _configureSystemUI() async {
 
 Future<void> _initialise() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  //
+  // // Capture async errors
+  // PlatformDispatcher.instance.onError = (error, stack) {
+  //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+  //   return true;
+  // };
 
-  await FirebaseNotificationService.initialize();
+  // await FirebaseNotificationService.initialize();
 
   await EasyLocalization.ensureInitialized();
 }
@@ -67,11 +72,12 @@ class ZetaApp extends StatelessWidget {
       fallbackLocale: const Locale('en'),
       child: ProviderScope(
         child: ScreenUtilInit(
-          designSize: const Size(393, 851), //SAMSUNG
+          designSize: const Size(393, 851),
           builder:
               (context, child) => MaterialApp(
                 builder:
                     (context, child) => SafeArea(
+                      // child: child!,
                       child: Directionality(
                         textDirection: ui.TextDirection.ltr,
                         child: child!,

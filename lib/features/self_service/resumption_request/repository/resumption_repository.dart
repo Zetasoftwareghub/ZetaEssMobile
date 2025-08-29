@@ -30,8 +30,6 @@ class ResumptionRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print(response.data['data']['subLst']);
       if (response.statusCode == 200 && response.data['success'] == true) {
         return (response.data['data']['subLst'] as List? ?? [])
             .map((e) => ResumptionLeaveModel.fromJson(e))
@@ -66,8 +64,6 @@ class ResumptionRepository {
     required int resumptionId,
   }) {
     return handleApiCall(() async {
-      print(resumptionId);
-      print("resumptionId");
       final response = await dio.post(
         userContext.baseUrl + ResumptionApis.getResumptionLeaveDetails,
         data: {
@@ -77,8 +73,6 @@ class ResumptionRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print("ressump");
       if (response.statusCode == 200 && response.data['success'] == true) {
         return ResumptionDetailModel.fromJson(
           response.data['data']['subLst'][0],
@@ -93,7 +87,6 @@ class ResumptionRepository {
     required UserContext userContext,
   }) {
     return handleApiCall(() async {
-      print(userContext.toJson());
       final response = await dio.post(
         userContext.baseUrl + ResumptionApis.getResumptionList,
         data: {
@@ -104,8 +97,6 @@ class ResumptionRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('eresss');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return ResumptionListResponse.fromJson(response.data);
       } else {
@@ -118,6 +109,8 @@ class ResumptionRepository {
     required UserContext userContext,
     required SubmitResumptionModel resumptionModel,
   }) async {
+    print(resumptionModel.toJson());
+    print("resumptionModel.toJson()");
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ResumptionApis.submitResumptionLeave,

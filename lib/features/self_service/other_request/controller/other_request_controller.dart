@@ -40,7 +40,7 @@ class OtherRequestController extends Notifier<bool> {
           micode: micode ?? '',
           suconn: ref.watch(userContextProvider).companyConnection ?? '',
           requestName: menuName ?? 'Other Request',
-          baseDirectory: ref.watch(userContextProvider).baseDirectory ?? '',
+          baseDirectory: ref.watch(userContextProvider).userBaseUrl ?? '',
           emmail: ref.watch(userContextProvider).empEminid,
           empMail: ref.watch(userContextProvider).empEminid,
         );

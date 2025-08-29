@@ -781,7 +781,6 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 30);
-
     return Scaffold(
       appBar: AppBar(title: Text('leaveConfiguration')),
       body: SafeArea(
@@ -836,7 +835,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                                 DataColumn(
                                   label: Expanded(
                                     child: Text(
-                                      'full day',
+                                      'Full\nday',
                                       style: AppTextStyles.smallFont(),
                                     ),
                                   ),
@@ -844,7 +843,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                                 DataColumn(
                                   label: Expanded(
                                     child: Text(
-                                      'half day',
+                                      'Half\nday',
                                       style: AppTextStyles.smallFont(),
                                     ),
                                   ),
@@ -921,6 +920,206 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     return "#ffffff";
   }
 
+  // List<DataRow> leaveConfigDetailRow(
+  //   List<LeaveConfigurationData> leaveConfigList,
+  // ) {
+  //   List<DataRow> ConfigList = [];
+  //   int index = 0;
+  //   for (var i in leaveConfigList) {
+  //     var item = leaveController.leaveConfigurationData.where(
+  //       (x) => x.dLsdate == i.dLsdate,
+  //     );
+  //     ConfigList.add(
+  //       DataRow(
+  //         color: MaterialStateColor.resolveWith((states) {
+  //           return HexColor('#F3F3F3');
+  //         }),
+  //         cells: [
+  //           DataCell(
+  //             Container(
+  //               padding: EdgeInsets.only(
+  //                 top: 8.h,
+  //                 bottom: 8.h,
+  //                 left: 10.w,
+  //                 right: 10.w,
+  //               ),
+  //               decoration: BoxDecoration(
+  //                 color: HexColor(_getColor(i.dayType.toString())),
+  //                 borderRadius: BorderRadius.circular(20.r),
+  //               ),
+  //               child: Text(
+  //                 i.date.toString(),
+  //                 style: AppTextStyles.smallFont(),
+  //               ),
+  //             ),
+  //           ),
+  //           DataCell(
+  //             Container(
+  //               width: 20.h,
+  //               height: 20.h,
+  //               padding: const EdgeInsets.all(4),
+  //               decoration: BoxDecoration(
+  //                 color: HexColor("#aee2f5"),
+  //                 borderRadius: BorderRadius.circular(10),
+  //               ),
+  //               child:
+  //                   i.dayFlag == "F"
+  //                       ? Container(
+  //                         width: 10.h,
+  //                         height: 10.h,
+  //                         decoration: BoxDecoration(
+  //                           color: HexColor("#10A0DB"),
+  //                           borderRadius: BorderRadius.circular(10),
+  //                         ),
+  //                       )
+  //                       : const Text(""),
+  //             ),
+  //             onTap: () {
+  //               if (widget.showDetail) {
+  //                 return;
+  //               }
+  //               if (i.dayType == 3 || i.dayType == 4) {
+  //                 return;
+  //               }
+  //               _fullDay(i);
+  //             },
+  //           ),
+  //           DataCell(
+  //             SingleChildScrollView(
+  //               child: Column(
+  //                 children: [
+  //                   Padding(
+  //                     padding: EdgeInsets.only(top: i.dayFlag == "H" ? 10 : 0),
+  //                     child: Container(
+  //                       width: 20.h,
+  //                       height: 20.h,
+  //                       padding: const EdgeInsets.all(4),
+  //                       decoration: BoxDecoration(
+  //                         color: HexColor("#aee2f5"),
+  //                         borderRadius: BorderRadius.circular(10),
+  //                       ),
+  //                       child:
+  //                           i.dayFlag == "H"
+  //                               ? Container(
+  //                                 width: 10.h,
+  //                                 height: 10.h,
+  //                                 decoration: BoxDecoration(
+  //                                   color: HexColor("#10A0DB"),
+  //                                   borderRadius: BorderRadius.circular(10),
+  //                                 ),
+  //                               )
+  //                               : const Text(""),
+  //                     ),
+  //                   ),
+  //                   i.dayFlag == "H"
+  //                       ? InkWell(
+  //                         onTap: () {
+  //                           if (widget.showDetail) {
+  //                             return;
+  //                           }
+  //                           _halfDay(i);
+  //                         },
+  //                         child: Text(
+  //                           i.halfType == "1" ? 'First Half' : 'Second Half',
+  //                           style: AppTextStyles.smallFont(),
+  //                         ),
+  //                       )
+  //                       : Visibility(
+  //                         visible: false,
+  //                         child: Text("", style: AppTextStyles.smallFont()),
+  //                       ),
+  //                 ],
+  //               ),
+  //             ),
+  //             onTap: () {
+  //               if (widget.showDetail) {
+  //                 return;
+  //               }
+  //               if (i.dayType == 3 || i.dayType == 4) {
+  //                 return;
+  //               }
+  //
+  //               _halfDay(i);
+  //             },
+  //           ),
+  //           DataCell(
+  //             (leaveConfigDataSubLst[0].lsnote ?? 'N') == "Y"
+  //                 ? Container(
+  //                   width: 120.w,
+  //                   padding: EdgeInsets.symmetric(
+  //                     horizontal: 12.w,
+  //                     vertical: 6.h,
+  //                   ),
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.blue.shade50,
+  //                     borderRadius: BorderRadius.circular(20.r), // Curved edges
+  //                     border: Border.all(
+  //                       color: HexColor('#0887A1'), // Themed border
+  //                       width: 1.w,
+  //                     ),
+  //                     boxShadow: [
+  //                       BoxShadow(
+  //                         color: Colors.blue.withOpacity(0.1),
+  //                         blurRadius: 6,
+  //                         offset: const Offset(0, 3),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   child: DropdownButtonFormField(
+  //                     isExpanded: true,
+  //                     icon: Icon(
+  //                       Icons.keyboard_arrow_down,
+  //                       color: HexColor('#0887A1'),
+  //                     ),
+  //                     decoration: const InputDecoration(
+  //                       border: InputBorder.none, // Remove underline
+  //                       isDense: true,
+  //                       contentPadding: EdgeInsets.zero,
+  //                     ),
+  //                     hint: Text(
+  //                       "-- Select --",
+  //                       style: AppTextStyles.smallFont().copyWith(
+  //                         color: Colors.grey.shade600,
+  //                       ),
+  //                     ),
+  //                     items:
+  //                         leaveConfigDataCanLst.map((dropDown) {
+  //                           return DropdownMenuItem(
+  //                             value: dropDown.iLsslno ?? '9090',
+  //                             child: Text(
+  //                               '   ${dropDown.dLsdate ?? ''}',
+  //                               style: AppTextStyles.smallFont(),
+  //                             ),
+  //                           );
+  //                         }).toList(),
+  //                     value:
+  //                         (item.first.lieuday == null ||
+  //                                 item.first.lieuday == "" ||
+  //                                 item.first.lieuday?.toLowerCase() == "null")
+  //                             ? null
+  //                             : item.first.lieuday,
+  //                     onChanged: (value) {
+  //                       print(item.first.lieuday);
+  //                       print("item.first.lieuday");
+  //                       print(value);
+  //                       print("value");
+  //                       setState(() {
+  //                         i.lieuday = value.toString();
+  //                       });
+  //                     },
+  //                   ),
+  //                 )
+  //                 : const Text(""),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //
+  //     index++;
+  //   }
+  //
+  //   return ConfigList;
+  // }
   List<DataRow> leaveConfigDetailRow(
     List<LeaveConfigurationData> leaveConfigList,
   ) {
@@ -1084,7 +1283,9 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                               )
                               .toList(),
                       value:
-                          item.first.lieuday == "null"
+                          (item.first.lieuday == null ||
+                                  item.first.lieuday == "" ||
+                                  item.first.lieuday?.toLowerCase() == "null")
                               ? null
                               : item.first.lieuday,
                       // value: i.lieuday,
@@ -1115,15 +1316,18 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     UserContext userContext,
   ) async {
     try {
+      final data = {
+        "suconn": ref.watch(userContextProvider).companyConnection,
+        "emcode": ref.watch(userContextProvider).empCode,
+        "dtfrm": dateFrom,
+        "dtto": dateTo,
+        "leavcode": leaveType,
+      };
+      print(data);
+      print('data');
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",
-        data: {
-          "suconn": ref.watch(userContextProvider).companyConnection,
-          "emcode": ref.watch(userContextProvider).empCode,
-          "dtfrm": dateFrom,
-          "dtto": dateTo,
-          "leavcode": leaveType,
-        },
+        data: data,
         options: dioHeader(token: ref.watch(userContextProvider).jwtToken),
       );
 

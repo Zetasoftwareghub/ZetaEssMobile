@@ -27,8 +27,6 @@ class ApproveAttendanceRegularisationRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return ApproveAttendanceRegularisationListResponse.fromJson(
           response.data,

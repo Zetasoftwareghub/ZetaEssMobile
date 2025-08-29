@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
@@ -21,6 +24,11 @@ class LieuDayRepository {
     required UserContext userContext,
   }) async {
     return handleApiCall(() async {
+      final prettyJson = const JsonEncoder.withIndent(
+        '  ',
+      ).convert(submitModel.toJson());
+      debugPrint(prettyJson, wrapWidth: 1024);
+
       final response = await dio.post(
         userContext.baseUrl + LieuDayApis.submitLieuDay,
         data: submitModel.toJson(),

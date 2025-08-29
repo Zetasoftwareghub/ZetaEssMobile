@@ -66,11 +66,11 @@ class SalaryAdvanceListResponse {
     return SalaryAdvanceListResponse(
       submitted: SubmittedSalaryAdvanceResponse.fromJson(json),
       approved:
-          (json['appLst'] as List<dynamic>? ?? [])
+          (json['subLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryAdvanceListingModel.fromJson(e))
               .toList(),
       cancelled:
-          (json['canLst'] as List<dynamic>? ?? [])
+          (json['appLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryAdvanceListingModel.fromJson(e))
               .toList(),
       rejected:

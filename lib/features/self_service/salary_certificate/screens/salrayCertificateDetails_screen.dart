@@ -106,13 +106,14 @@ class _SalaryCertificateDetailsScreenState
 
                     titleHeaderText("comment".tr()),
                     Text(
-                      details.lineManagerComment ??
-                          details.previousComment ??
-                          details.approvalOrRejectionComment ??
-                          details.approvalOrRejectionComment ??
-                          details.requestedAppointment ??
-                          '',
+                      details.approvalOrRejectionComment?.isNotEmpty == true
+                          ? details.approvalOrRejectionComment!
+                          : details.lineManagerComment?.isNotEmpty == true
+                          ? details.lineManagerComment!
+                          : details.previousComment ?? '',
                     ),
+
+                    10.heightBox,
                     if (widget.isLineManager ?? false)
                       inputField(
                         hint: 'Approve/Reject Comment'.tr(),

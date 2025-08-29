@@ -43,12 +43,48 @@ class AuthRepository {
         return left(Failure(errMsg: 'Unknown error occurred'));
       }
     } on DioException catch (dioError) {
-      final errMsg = handleDioException(dioError);
       return left(Failure(errMsg: 'Invalid Activation Url'));
     } catch (e) {
       return left(Failure(errMsg: 'Invalid Activation Url'));
     }
   }
+
+  // FutureEither activateUrl({required String url}) async {
+  //   Future<Response<dynamic>?> tryRequest(String baseUrl) async {
+  //     try {
+  //       final response = await dio.get('$baseUrl${AuthApis.activateUrl}');
+  //       if (response.statusCode == 200 && response.data != null) {
+  //         return response;
+  //       }
+  //     } catch (_) {
+  //       // swallow error → return null
+  //     }
+  //     return null;
+  //   }
+  //
+  //   // First attempt
+  //   final firstResponse = await tryRequest(url);
+  //   // If first failed, flip scheme
+  //   final alternativeUrl =
+  //       url.startsWith('http://')
+  //           ? url.replaceFirst('http://', 'https://')
+  //           : url.startsWith('https://')
+  //           ? url.replaceFirst('https://', 'http://')
+  //           : null;
+  //
+  //   Response<dynamic>? secondResponse;
+  //   if (firstResponse == null && alternativeUrl != null) {
+  //     secondResponse = await tryRequest(alternativeUrl);
+  //   }
+  //
+  //   final result = firstResponse ?? secondResponse;
+  //
+  //   if (result != null) {
+  //     return right(result.data);
+  //   } else {
+  //     return left(Failure(errMsg: 'Invalid Activation Url'));
+  //   }
+  // }
 
   FutureEither<UserModel> loginUser({
     required UserContext userContext,
@@ -58,8 +94,8 @@ class AuthRepository {
     required BuildContext context,
   }) async {
     try {
+      print('object');
       final deviceType = Platform.isAndroid ? 'android' : 'ios';
-
       final payloadData = {
         'userId': userName,
         'password': password.toLowerCase(),
@@ -67,7 +103,6 @@ class AuthRepository {
         'deviceType': deviceType,
         'suconn': userContext.companyConnection,
       };
-
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.loginInApi}',
         data: payloadData,
@@ -83,7 +118,6 @@ class AuthRepository {
           return left(Failure(errMsg: "$errorCode"));
         }
       }
-
       if (response.statusCode == 200 && data['success'] == true) {
         final user = data['data'] as List<dynamic>;
         return right(UserModel.fromJson(user.first));

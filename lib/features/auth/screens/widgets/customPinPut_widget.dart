@@ -20,6 +20,13 @@ class CustomPinPutWidget extends StatelessWidget {
       length: 4,
       onCompleted: onCompleted,
       pinAnimationType: PinAnimationType.rotation,
+      obscureText: true,
+      obscuringWidget: Icon(
+        Icons.circle,
+        size: 8.sp,
+        color: Colors.blue.shade800,
+      ),
+
       defaultPinTheme: PinTheme(
         width: 55.w,
         height: 55.h,

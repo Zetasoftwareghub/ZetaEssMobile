@@ -40,9 +40,7 @@ class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        throw Exception(
-          'Location permissions are permanently denied, please enable manually in settings.',
-        );
+        throw Exception('Location permissions are permanently denied.');
       }
 
       // ✅ This will show the **default system dialog** if location is OFF
@@ -120,11 +118,24 @@ final liveLocationFutureProvider = FutureProvider<LiveLocation>((ref) async {
     throw Exception('Location permissions are permanently denied');
   }
 
-  // Get current position
-  Position position = await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
-    timeLimit: const Duration(seconds: 10),
-  );
+  //TODO check this is right or wrtong newly given code !
+  // Position position = await Geolocator.getCurrentPosition(
+  //   desiredAccuracy: LocationAccuracy.high,
+  //   timeLimit: const Duration(seconds: 10),
+  // );
+
+  Position? position;
+  try {
+    position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+      timeLimit: const Duration(seconds: 10),
+    );
+  } on TimeoutException {
+    position = await Geolocator.getLastKnownPosition();
+    if (position == null) {
+      throw Exception('Unable to get location..');
+    }
+  }
 
   // Get place name
   String placeName = 'Unknown location';

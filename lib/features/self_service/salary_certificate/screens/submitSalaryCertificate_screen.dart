@@ -133,7 +133,7 @@ class _SubmitSalaryCertificateScreenState
               controller: addressNameController,
             ),
 
-            50.heightBox,
+            90.heightBox,
           ],
         ),
       ),

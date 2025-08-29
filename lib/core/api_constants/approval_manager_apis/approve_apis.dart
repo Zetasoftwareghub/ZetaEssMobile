@@ -32,16 +32,33 @@ class ApproveApis {
   //GET LIST APIS
   static const String getApproveRegulariseDetails =
       '/api/Leave/Get_AttReg_AppData_MobileApp/getLMAttendanceRegularizationDetails';
+  static const String getApproveRegularisationList =
+      '/api/Leave/Get_AttendanceRegularization_AllList/getLMAttendanceRegularization';
+
+  //Cancel leave approve
+
+  static const String approveCancelLeave =
+      '/api/Leave/ApproveCancelReq_MobileApp/approveCancelReq';
+  static const String rejectCancelLeave =
+      '/api/Leave/RejectCancelReq_MobileApp/rejectCancelReq';
+  static const String getApproveCancelLeaveDetails =
+      '/api/Leave/Get_CancelReq_AppData_MobileApp/getLMCancelRequestDetails';
+  static const String getApproveCancelLeaveList =
+      '/api/Leave/Get_CancelRequest_LMAllList/getLMCancelRequest';
+
+  //Leave
   static const String getApproveLeaveList =
       '/api/Leave/Get_LM_AllList/getLMLeaves';
   static const String getApproveLieuDayList =
       '/api/Leave/Get_LieudayRequest_LMAllList/getLMLieudayRequest';
+
+  //OTHER
   static const String getApproveSalaryAdvanceList =
       '/api/Leave/Get_LM_AllListSaladvance/getLMSalaryAdvance';
+
   static const String getApproveExpenseClaimList =
       '/api/ExpClaim/Get_LM_AllList/getLMExpenseClaimList';
-  static const String getApproveRegularisationList =
-      '/api/Leave/Get_AttendanceRegularization_AllList/getLMAttendanceRegularization';
+
   static const String getApproveOtherRequestList =
       '/api/Leave/Get_OTHER_LMList/lMGetOtherRqLst';
 
@@ -55,4 +72,10 @@ class ApproveApis {
 
   static String get getApproveLoanListApi =>
       '/api/LoanRequest/Get_LM_LoanRequestList';
+
+  static const String getApproveChangeRequestList =
+      '/api/ChangeRequest/get_lm_changerequestlist';
+
+  static const String approveRejectChangeRequest =
+      '/api/ChangeRequest/ApproveRejectChangeRequest';
 }

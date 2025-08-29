@@ -29,7 +29,6 @@ class ApproveExpenseClaimRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
       if (response.statusCode == 200 && response.data['success'] == true) {
         return ApproveExpenseClaimListResponse.fromJson(response.data);
       } else {
@@ -47,7 +46,6 @@ class ApproveExpenseClaimRepository {
     required ExpenseClaimModel expenseClaim,
   }) {
     return handleApiCall(() async {
-      print('1111');
       final data = {
         "suconn": userContext.companyConnection,
         "id": requestId,
@@ -68,15 +66,11 @@ class ApproveExpenseClaimRepository {
         "apprMonthYear": approveMonthYear,
         "baseDirectory": "string",
       };
-      print(data);
-      print('payload');
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveExpenseClaim,
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'];
       } else {
@@ -91,27 +85,7 @@ class ApproveExpenseClaimRepository {
     required ExpenseClaimModel expenseClaim,
   }) {
     return handleApiCall(() async {
-      final data = {
-        "suconn": userContext.companyConnection,
-        "id": expenseClaim.expenseClaimId,
-        "apremcode": userContext.empCode,
-        "emcode": expenseClaim.empCode,
-        "uname": expenseClaim.employeeName,
-        "rqnote": expenseClaim.note,
-        "apnote": note,
-        "mnth": expenseClaim.month,
-        "year": expenseClaim.year,
-        "crcode": "INR",
-        "conrate": "1.00",
-        "apramnt": 0,
-        "rqdt": expenseClaim.reqdate,
-        "rqamt": expenseClaim.amount,
-        "cocode": 0,
-        "mnthyr": "string",
-        "url": "string",
-        "apprMonthYear": "string",
-        "baseDirectory": "string",
-      };
+      final data = {};
       print(data);
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.rejectExpenseClaim,

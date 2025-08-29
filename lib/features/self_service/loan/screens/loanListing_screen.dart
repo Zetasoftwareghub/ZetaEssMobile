@@ -84,7 +84,7 @@ class LoanListView extends ConsumerWidget {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.all(12.r),
+      padding: EdgeInsets.all(12.r).copyWith(bottom: 80.h),
       itemCount: loanList.length,
       itemBuilder: (context, index) {
         final loan = loanList[index];

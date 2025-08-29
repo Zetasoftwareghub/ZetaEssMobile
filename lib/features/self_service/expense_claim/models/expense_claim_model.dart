@@ -149,6 +149,7 @@ class ExpenseClaimModel {
   String? approveMonthYear;
   String? approveAmount;
   String? requestedDate;
+  String? comment;
 
   ExpenseClaimModel({
     this.iEcid = 0,
@@ -173,6 +174,7 @@ class ExpenseClaimModel {
     this.month,
     this.year,
     this.empCode,
+    this.comment,
   });
 
   /// 🔄 Your toJson for submission – **DO NOT CHANGE**
@@ -218,6 +220,10 @@ class ExpenseClaimModel {
       employeeName: json['empName'].toString(),
       currency: json['cCrcode'].toString(),
       requestedDate: json['sCldate'].toString(),
+      comment:
+          (json['lmComment'] ?? '').toString().isEmpty
+              ? (json['prevComment'] ?? '').toString()
+              : (json['lmComment'] ?? '').toString(),
     );
   }
 }

@@ -133,23 +133,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 }
 */
-
-// TODO THIS SPLASH IS AWESOME BUT ACTIVATION URL IS NOT WORKING !!!
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
 import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 
 import '../core/constants/constants.dart';
-import '../core/theme/app_theme.dart';
+import '../core/providers/storage_repository_provider.dart';
 import 'auth/controller/localAuth_controller.dart';
 import 'auth/screens/createPin_screen.dart';
 
@@ -163,51 +159,63 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   // Animation Controllers
-  late AnimationController _masterController;
+  late AnimationController _mainController;
   late AnimationController _logoController;
-  late AnimationController _particleController;
-  late AnimationController _textController;
-  late AnimationController _progressController;
-  late AnimationController _glowController;
-  late AnimationController _wavesController;
+  late AnimationController _toolsController;
+  late AnimationController _particlesController;
+  late AnimationController _pulseController;
 
   // Logo Animations
   late Animation<double> _logoFadeAnimation;
   late Animation<double> _logoScaleAnimation;
-  late Animation<double> _logoGlowAnimation;
-  late Animation<double> _logoRotationAnimation;
+  late Animation<double> _logoRotateAnimation;
 
-  // Text Animations
-  late Animation<double> _titleFadeAnimation;
-  late Animation<double> _titleSlideAnimation;
-  late Animation<double> _subtitleFadeAnimation;
-  late Animation<double> _taglineFadeAnimation;
+  // Tools Showcase Animations
+  late Animation<double> _toolsRevealAnimation;
+  late Animation<double> _toolsOrbitAnimation;
+  late Animation<double> _toolsGlowAnimation;
 
   // Background Animations
   late Animation<double> _particleAnimation;
-  late Animation<double> _waveAnimation;
   late Animation<double> _gradientAnimation;
+  late Animation<double> _pulseAnimation;
 
-  // Progress Animations
-  late Animation<double> _progressFadeAnimation;
-  late Animation<double> _progressValueAnimation;
-
-  // Loading States
-  bool _showProgress = false;
-  String _loadingText = 'Initializing Enterprise Systems...';
-  double _progressValue = 0.0;
-
-  final List<String> _loadingStages = [
-    'Initializing Enterprise Systems...',
-    'Securing Authentication Layer...',
-    'Loading User Configurations...',
-    'Synchronizing Global Data...',
-    'Optimizing Performance...',
-    'Finalizing Setup...',
-    'Welcome to Zeta HRMS',
+  // HR Tools Data
+  final List<HRTool> _hrTools = [
+    HRTool(
+      icon: Icons.group,
+      label: 'Employee\nManagement',
+      color: const Color(0xFF4CAF50),
+    ),
+    HRTool(
+      icon: Icons.event_available,
+      label: 'Attendance\nTracking',
+      color: const Color(0xFF2196F3),
+    ),
+    HRTool(
+      icon: Icons.payment,
+      label: 'Payroll\nSystem',
+      color: const Color(0xFFFF9800),
+    ),
+    HRTool(
+      icon: Icons.assessment,
+      label: 'Salary\nAnalytics',
+      color: const Color(0xFF9C27B0),
+    ),
+    HRTool(
+      icon: Icons.schedule,
+      label: 'Leave\nManagement',
+      color: const Color(0xFFF44336),
+    ),
+    HRTool(
+      icon: Icons.bar_chart,
+      label: 'HR\nReports',
+      color: const Color(0xFF00BCD4),
+    ),
   ];
 
-  int _currentStage = 0;
+  int _currentToolIndex = 0;
+  String _currentStatus = 'Initializing Modern HRMS...';
 
   @override
   void initState() {
@@ -219,56 +227,48 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
     _initializeAnimations();
-    _startEnterpriseAnimation();
+    _startModernAnimation();
   }
 
   void _initializeAnimations() {
-    // Master controller for overall timing
-    _masterController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4000),
-    );
-
-    // Individual controllers
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2500),
-    );
-
-    _particleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 8000),
-    )..repeat();
-
-    _textController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-
-    _progressController = AnimationController(
+    // Main controller - 3 seconds total
+    _mainController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
 
-    _glowController = AnimationController(
+    // Logo controller
+    _logoController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    // Tools showcase controller
+    _toolsController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
-    )..repeat(reverse: true);
+    );
 
-    _wavesController = AnimationController(
+    // Continuous animations
+    _particlesController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 6000),
+      duration: const Duration(milliseconds: 3000),
     )..repeat();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
 
     _initializeAnimationTweens();
   }
 
   void _initializeAnimationTweens() {
-    // Logo Animations
+    // Logo animations
     _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _logoController,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeInOut),
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
       ),
     );
 
@@ -279,154 +279,111 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
 
-    _logoGlowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
-    );
-
-    _logoRotationAnimation = Tween<double>(begin: 0.0, end: 0.05).animate(
+    _logoRotateAnimation = Tween<double>(begin: 0.0, end: 0.1).animate(
       CurvedAnimation(
         parent: _logoController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
+        curve: const Interval(0.4, 0.8, curve: Curves.easeInOut),
       ),
     );
 
-    // Text Animations
-    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // Tools animations
+    _toolsRevealAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        parent: _toolsController,
+        curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
       ),
     );
 
-    _titleSlideAnimation = Tween<double>(begin: 100.0, end: 0.0).animate(
+    _toolsOrbitAnimation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
       CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
+        parent: _toolsController,
+        curve: const Interval(0.4, 1.0, curve: Curves.easeInOutSine),
       ),
     );
 
-    _subtitleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.3, 0.7, curve: Curves.easeOut),
-      ),
+    _toolsGlowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _taglineFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: const Interval(0.5, 0.9, curve: Curves.easeOut),
-      ),
-    );
-
-    // Background Animations
+    // Background animations
     _particleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _particleController, curve: Curves.linear),
+      CurvedAnimation(parent: _particlesController, curve: Curves.linear),
     );
-
-    _waveAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2 * math.pi,
-    ).animate(CurvedAnimation(parent: _wavesController, curve: Curves.linear));
 
     _gradientAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _masterController,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeInOut),
+        parent: _mainController,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeInOut),
       ),
     );
 
-    // Progress Animations
-    _progressFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _progressController,
-        curve: const Interval(0.0, 0.2, curve: Curves.easeOut),
-      ),
-    );
-
-    _progressValueAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _progressController,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeInOut),
-      ),
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
 
-  Future<void> _startEnterpriseAnimation() async {
-    // Start master animation
-    _masterController.forward();
+  Future<void> _startModernAnimation() async {
+    _mainController.forward();
 
-    // Staggered animation start
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Start logo animation immediately
     _logoController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 800));
-    _textController.forward();
+    // Add delay before tools showcase starts
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) {
+      _toolsController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 1200));
+      // Add additional delay before tools showcase begins
+      await Future.delayed(const Duration(milliseconds: 400));
+      if (mounted) {
+        await _startToolsShowcase(); // Wait for tools showcase to complete
+      }
+    }
+
+    // Show welcome message and navigate
     if (mounted) {
       setState(() {
-        _showProgress = true;
+        _currentStatus = 'Welcome to Modern HRMS';
       });
-      _progressController.forward();
-      await _performEnterpriseInitialization();
+      await Future.delayed(const Duration(milliseconds: 400));
+      _navigateWithEnterpriseTransition();
     }
   }
 
-  Future<void> _performEnterpriseInitialization() async {
-    try {
-      for (int i = 0; i < _loadingStages.length; i++) {
-        if (!mounted) return;
+  Future<void> _startToolsShowcase() async {
+    for (int i = 0; i < _hrTools.length; i++) {
+      if (!mounted) return;
 
-        setState(() {
-          _currentStage = i;
-          _loadingText = _loadingStages[i];
-          _progressValue = (i + 1) / _loadingStages.length;
-        });
+      setState(() {
+        _currentToolIndex = i + 1;
+        _currentStatus =
+            'Loading ${_hrTools[i].label.replaceAll('\n', ' ')}...';
+      });
 
-        // Simulate enterprise-level loading with different durations
-        switch (i) {
-          case 0: // Initializing
-            await Future.delayed(const Duration(milliseconds: 800));
-            break;
-          case 1: // Authentication
+      // Handle authentication loading for specific tools
+      switch (i) {
+        case 1: // Authentication/Attendance Tracking
+          try {
             await ref.read(localAuthProvider.notifier).loadInitialAuthState();
-            await Future.delayed(const Duration(milliseconds: 600));
-            break;
-          case 2: // User Config
+          } catch (e) {
+            // Continue with fallback if auth loading fails
+          }
+          break;
+        case 2: // User Config/Payroll System
+          try {
             await ref
                 .read(storageRepositoryProvider.notifier)
                 .loadLocalStorageValues();
-            await Future.delayed(const Duration(milliseconds: 700));
-            break;
-          case 3: // Global Data
-            await Future.delayed(const Duration(milliseconds: 900));
-            break;
-          case 4: // Performance
-            await Future.delayed(const Duration(milliseconds: 500));
-            break;
-          case 5: // Finalizing
-            await Future.delayed(const Duration(milliseconds: 600));
-            break;
-          case 6: // Welcome
-            await Future.delayed(const Duration(milliseconds: 800));
-            break;
-        }
+          } catch (e) {
+            // Continue with fallback if storage loading fails
+          }
+          break;
+        default:
+          // Regular delay for other tools
+          break;
       }
 
-      if (mounted) {
-        await Future.delayed(const Duration(milliseconds: 500));
-        _navigateWithEnterpriseTransition();
-      }
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          _loadingText = 'Enterprise system ready with fallback mode';
-          _progressValue = 1.0;
-        });
-        await Future.delayed(const Duration(milliseconds: 1000));
-        _navigateWithEnterpriseTransition();
-      }
+      await Future.delayed(const Duration(milliseconds: 300));
     }
   }
 
@@ -446,13 +403,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   void dispose() {
-    _masterController.dispose();
+    _mainController.dispose();
     _logoController.dispose();
-    _particleController.dispose();
-    _textController.dispose();
-    _progressController.dispose();
-    _glowController.dispose();
-    _wavesController.dispose();
+    _toolsController.dispose();
+    _particlesController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -463,13 +418,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       body: AnimatedBuilder(
         animation: Listenable.merge([
-          _masterController,
+          _mainController,
           _logoController,
-          _particleController,
-          _textController,
-          _progressController,
-          _glowController,
-          _wavesController,
+          _toolsController,
+          _particlesController,
+          _pulseController,
         ]),
         builder: (context, child) {
           return Container(
@@ -479,68 +432,56 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   Color.lerp(
-                    const Color(0xFF1A1A2E),
-                    AppTheme.primaryColor,
+                    const Color(0xFF0D1421),
+                    const Color(0xFF1A237E),
+                    _gradientAnimation.value * 0.6,
+                  )!,
+                  Color.lerp(
+                    const Color(0xFF1A237E),
+                    const Color(0xFF3949AB),
+                    _gradientAnimation.value * 0.4,
+                  )!,
+                  Color.lerp(
+                    const Color(0xFF3949AB),
+                    const Color(0xFF5C6BC0),
                     _gradientAnimation.value * 0.3,
                   )!,
-                  Color.lerp(
-                    const Color(0xFF16213E),
-                    AppTheme.primaryColor.withOpacity(0.8),
-                    _gradientAnimation.value * 0.2,
-                  )!,
-                  Color.lerp(
-                    const Color(0xFF0F3460),
-                    AppTheme.primaryColor.withOpacity(0.6),
-                    _gradientAnimation.value * 0.1,
-                  )!,
                 ],
-                stops: const [0.0, 0.5, 1.0],
               ),
             ),
             child: Stack(
               children: [
-                // Animated waves background
-                _buildAnimatedWaves(),
+                // Animated particles background
+                _buildModernParticles(screenSize),
 
-                // Floating particles
-                _buildFloatingParticles(),
-
-                // Main content with glassmorphism
+                // Main content
                 Center(
-                  child: Container(
-                    width: screenSize.width * 0.9,
-                    height: screenSize.height * 0.7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withOpacity(0.1),
-                                Colors.white.withOpacity(0.05),
-                              ],
-                            ),
-                          ),
-                          child: _buildMainContent(screenSize),
-                        ),
-                      ),
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Modern logo with pulse effect
+                      _buildModernLogo(screenSize),
+
+                      SizedBox(height: 40.h),
+
+                      // Brand text
+                      _buildBrandText(),
+
+                      SizedBox(height: 60.h),
+
+                      // HR Tools showcase
+                      _buildToolsShowcase(screenSize),
+
+                      SizedBox(height: 80.h),
+
+                      // Status text
+                      _buildStatusText(),
+                    ],
                   ),
                 ),
 
-                // Enterprise branding elements
-                _buildEnterpriseBranding(),
+                // Modern branding
+                _buildModernBranding(),
               ],
             ),
           );
@@ -549,263 +490,255 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 
-  Widget _buildMainContent(Size screenSize) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Premium logo with glow effect
-        Transform.rotate(
-          angle: _logoRotationAnimation.value,
-          child: FadeTransition(
-            opacity: _logoFadeAnimation,
-            child: ScaleTransition(
-              scale: _logoScaleAnimation,
+  Widget _buildModernLogo(Size screenSize) {
+    return Transform.rotate(
+      angle: _logoRotateAnimation.value,
+      child: FadeTransition(
+        opacity: _logoFadeAnimation,
+        child: ScaleTransition(
+          scale: _logoScaleAnimation,
+          child: Container(
+            width: screenSize.width * 0.25,
+            height: screenSize.width * 0.25,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [Colors.white.withOpacity(0.3), Colors.transparent],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(
+                    0xFF5C6BC0,
+                  ).withOpacity(0.4 + _pulseAnimation.value * 0.3),
+                  blurRadius: 40 + (_pulseAnimation.value * 30),
+                  spreadRadius: 10 + (_pulseAnimation.value * 10),
+                ),
+              ],
+            ),
+            child: Center(
               child: Container(
-                padding: EdgeInsets.all(30.w),
-                decoration: BoxDecoration(
+                padding: EdgeInsets.all(20.w),
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [Colors.white.withOpacity(0.2), Colors.transparent],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(
-                        0.3 + (_logoGlowAnimation.value * 0.4),
-                      ),
-                      blurRadius: 40 + (_logoGlowAnimation.value * 20),
-                      spreadRadius: 10,
-                    ),
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.1),
-                      blurRadius: 60,
-                      spreadRadius: 20,
-                    ),
-                  ],
+                  color: Colors.white,
                 ),
                 child: Image.asset(
                   Constants.logoPath,
-                  height: screenSize.width * 0.3,
-                  width: screenSize.width * 0.3,
+                  width: screenSize.width * 0.15,
+                  height: screenSize.width * 0.15,
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
 
-        SizedBox(height: 50.h),
-
-        // Enterprise title with premium styling
-        Transform.translate(
-          offset: Offset(0, _titleSlideAnimation.value),
-          child: FadeTransition(
-            opacity: _titleFadeAnimation,
-            child: Column(
-              children: [
-                ShaderMask(
-                  shaderCallback:
-                      (bounds) => LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white.withOpacity(0.8),
-                          AppTheme.primaryColor.withOpacity(0.6),
-                        ],
-                        stops: const [0.0, 0.7, 1.0],
-                      ).createShader(bounds),
-                  child: Text(
-                    'ZETA',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 48.sp,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 8.0,
-                      height: 1.0,
-                    ),
-                  ),
-                ),
-                Transform.translate(
-                  offset: const Offset(0, -8),
-                  child: Text(
-                    'HRMS',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 12.0,
-                    ),
-                  ),
-                ),
-              ],
+  Widget _buildBrandText() {
+    return FadeTransition(
+      opacity: _logoFadeAnimation,
+      child: Column(
+        children: [
+          ShaderMask(
+            shaderCallback:
+                (bounds) => LinearGradient(
+                  colors: [
+                    Colors.white,
+                    const Color(0xFF5C6BC0),
+                    const Color(0xFF3949AB),
+                  ],
+                ).createShader(bounds),
+            child: Text(
+              'ZETA HRMS',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 42.sp,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 4.0,
+              ),
             ),
           ),
-        ),
-
-        SizedBox(height: 20.h),
-
-        // Enterprise subtitle
-        FadeTransition(
-          opacity: _subtitleFadeAnimation,
-          child: Text(
-            'ENTERPRISE HUMAN RESOURCE',
+          SizedBox(height: 8.h),
+          Text(
+            'Next-Generation HR Management',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 2.0,
-            ),
-          ),
-        ),
-
-        SizedBox(height: 8.h),
-
-        // Tagline
-        FadeTransition(
-          opacity: _taglineFadeAnimation,
-          child: Text(
-            'MANAGEMENT SYSTEM',
-            style: TextStyle(
-              color: AppTheme.primaryColor.withOpacity(0.8),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w300,
               letterSpacing: 1.5,
             ),
           ),
-        ),
-
-        SizedBox(height: 80.h),
-
-        // Enterprise progress indicator
-        AnimatedOpacity(
-          opacity: _showProgress ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 800),
-          child: _buildEnterpriseProgress(),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildEnterpriseProgress() {
-    return Column(
-      children: [
-        // Progress bar with glow
-        Container(
-          width: 280.w,
-          height: 6.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.3),
-                blurRadius: 20,
-                spreadRadius: 2,
+  Widget _buildToolsShowcase(Size screenSize) {
+    return Container(
+      width: screenSize.width * 0.7,
+      height: screenSize.width * 0.7,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Central hub
+          FadeTransition(
+            opacity: _toolsRevealAnimation,
+            child: Container(
+              width: 80.w,
+              height: 80.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF5C6BC0).withOpacity(0.8),
+                    const Color(0xFF3949AB).withOpacity(0.6),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF5C6BC0).withOpacity(0.5),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: _progressValue,
-              backgroundColor: Colors.white.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                AppTheme.primaryColor.withOpacity(0.9),
-              ),
+              child: Icon(Icons.hub, color: Colors.white, size: 32.w),
             ),
           ),
-        ),
 
-        SizedBox(height: 24.h),
+          // Orbiting tools
+          ...List.generate(_hrTools.length, (index) {
+            final angle =
+                (index * 2 * math.pi / _hrTools.length) +
+                _toolsOrbitAnimation.value;
+            final radius = screenSize.width * 0.25;
+            final x = math.cos(angle) * radius;
+            final y = math.sin(angle) * radius;
+            final tool = _hrTools[index];
+            final isActive = index < _currentToolIndex;
 
-        // Loading text with typewriter effect
-        Container(
-          height: 30.h,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: Text(
-              _loadingText,
-              key: ValueKey(_loadingText),
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
+            return Transform.translate(
+              offset: Offset(x, y),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: isActive ? 70.w : 50.w,
+                height: isActive ? 70.w : 50.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color:
+                      isActive
+                          ? tool.color.withOpacity(0.9)
+                          : Colors.white.withOpacity(0.1),
+                  border: Border.all(
+                    color:
+                        isActive ? Colors.white : Colors.white.withOpacity(0.3),
+                    width: isActive ? 2 : 1,
+                  ),
+                  boxShadow:
+                      isActive
+                          ? [
+                            BoxShadow(
+                              color: tool.color.withOpacity(0.6),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                            ),
+                          ]
+                          : null,
+                ),
+                child: ScaleTransition(
+                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: _toolsRevealAnimation,
+                      curve: Interval(
+                        index * 0.1,
+                        0.8 + (index * 0.02),
+                        curve: Curves.elasticOut,
+                      ),
+                    ),
+                  ),
+                  child: Icon(
+                    tool.icon,
+                    color:
+                        isActive ? Colors.white : Colors.white.withOpacity(0.5),
+                    size: isActive ? 28.w : 20.w,
+                  ),
+                ),
               ),
-              textAlign: TextAlign.center,
+            );
+          }),
+
+          // Connection lines
+          if (_toolsRevealAnimation.value > 0.5)
+            CustomPaint(
+              size: Size(screenSize.width * 0.7, screenSize.width * 0.7),
+              painter: ConnectionLinesPainter(
+                _toolsOrbitAnimation.value,
+                _currentToolIndex,
+                _hrTools.length,
+                screenSize.width * 0.25,
+              ),
             ),
-          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusText() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      child: Text(
+        _currentStatus,
+        key: ValueKey(_currentStatus),
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.9),
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
         ),
-
-        SizedBox(height: 12.h),
-
-        // Progress percentage
-        Text(
-          '${(_progressValue * 100).toInt()}%',
-          style: TextStyle(
-            color: AppTheme.primaryColor.withOpacity(0.9),
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
-  Widget _buildAnimatedWaves() {
+  Widget _buildModernParticles(Size screenSize) {
     return Positioned.fill(
-      child: CustomPaint(painter: WavesPainter(_waveAnimation.value)),
+      child: CustomPaint(
+        painter: ModernParticlesPainter(_particleAnimation.value, screenSize),
+      ),
     );
   }
 
-  Widget _buildFloatingParticles() {
-    return Positioned.fill(
-      child: CustomPaint(painter: ParticlesPainter(_particleAnimation.value)),
-    );
-  }
-
-  Widget _buildEnterpriseBranding() {
+  Widget _buildModernBranding() {
     return Positioned(
-      bottom: 40.h,
+      bottom: 110.h,
       left: 0,
       right: 0,
       child: FadeTransition(
-        opacity: _taglineFadeAnimation,
+        opacity: _logoFadeAnimation,
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 30.w,
-                  height: 1,
-                  color: Colors.white.withOpacity(0.3),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white.withOpacity(0.1),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Text(
-                    'POWERED BY ZETA SOFTWARES',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
+              ),
+              child: Text(
+                'Powered by Zeta Softwares',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.8),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.0,
                 ),
-                Container(
-                  width: 30.w,
-                  height: 1,
-                  color: Colors.white.withOpacity(0.3),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'Enterprise Grade • Global Scale • Secure',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.4),
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w300,
-                letterSpacing: 0.5,
               ),
             ),
+            SizedBox(height: 10.h),
           ],
         ),
       ),
@@ -813,43 +746,58 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 }
 
-// Custom Painters for advanced graphics
-class WavesPainter extends CustomPainter {
-  final double animation;
+// HR Tool Data Model
+class HRTool {
+  final IconData icon;
+  final String label;
+  final Color color;
 
-  WavesPainter(this.animation);
+  HRTool({required this.icon, required this.label, required this.color});
+}
+
+// Custom Painters
+class ModernParticlesPainter extends CustomPainter {
+  final double animation;
+  final Size screenSize;
+
+  ModernParticlesPainter(this.animation, this.screenSize);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.white.withOpacity(0.05)
-          ..style = PaintingStyle.fill;
+    final paint = Paint()..style = PaintingStyle.fill;
 
-    final path = Path();
+    // Draw modern geometric particles
+    for (int i = 0; i < 40; i++) {
+      final progress = (animation + i * 0.1) % 1.0;
+      final x = (size.width * (i * 0.15 + progress * 0.3)) % size.width;
+      final y = (size.height * (i * 0.08 + progress * 0.2)) % size.height;
+      final opacity = (math.sin(animation * 3 + i * 0.5) + 1) / 2;
+      final size_particle = 2.0 + math.sin(animation * 2 + i) * 1.0;
 
-    // Create flowing waves
-    for (int i = 0; i < 3; i++) {
-      path.reset();
-      final waveHeight = 60.0 + (i * 20);
-      final frequency = 0.02 + (i * 0.01);
-      final phase = animation * 2 * math.pi + (i * math.pi / 3);
+      paint.color = Colors.white.withOpacity(opacity * 0.4);
 
-      path.moveTo(0, size.height);
-
-      for (double x = 0; x <= size.width; x += 2) {
-        final y =
-            size.height -
-            waveHeight +
-            math.sin(x * frequency + phase) * (30 + i * 10);
-        path.lineTo(x, y);
+      if (i % 3 == 0) {
+        // Circles
+        canvas.drawCircle(Offset(x, y), size_particle, paint);
+      } else if (i % 3 == 1) {
+        // Squares
+        canvas.drawRect(
+          Rect.fromCenter(
+            center: Offset(x, y),
+            width: size_particle * 2,
+            height: size_particle * 2,
+          ),
+          paint,
+        );
+      } else {
+        // Triangles
+        final path = Path();
+        path.moveTo(x, y - size_particle);
+        path.lineTo(x - size_particle, y + size_particle);
+        path.lineTo(x + size_particle, y + size_particle);
+        path.close();
+        canvas.drawPath(path, paint);
       }
-
-      path.lineTo(size.width, size.height);
-      path.close();
-
-      paint.color = Colors.white.withOpacity(0.02 + i * 0.01);
-      canvas.drawPath(path, paint);
     }
   }
 
@@ -857,27 +805,39 @@ class WavesPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-class ParticlesPainter extends CustomPainter {
-  final double animation;
+class ConnectionLinesPainter extends CustomPainter {
+  final double orbitAnimation;
+  final int activeToolsCount;
+  final int totalTools;
+  final double radius;
 
-  ParticlesPainter(this.animation);
+  ConnectionLinesPainter(
+    this.orbitAnimation,
+    this.activeToolsCount,
+    this.totalTools,
+    this.radius,
+  );
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.white.withOpacity(0.6)
-          ..style = PaintingStyle.fill;
+          ..color = Colors.white.withOpacity(0.2)
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.stroke;
 
-    // Draw floating particles
-    for (int i = 0; i < 30; i++) {
-      final x = (size.width * (i * 0.1 + animation * 0.1)) % size.width;
-      final y = (size.height * (i * 0.05 + animation * 0.05)) % size.height;
-      final opacity = (math.sin(animation * 2 + i) + 1) / 2;
-      final radius = 1.0 + math.sin(animation + i) * 0.5;
+    final center = Offset(size.width / 2, size.height / 2);
 
-      paint.color = Colors.white.withOpacity(opacity * 0.3);
-      canvas.drawCircle(Offset(x, y), radius, paint);
+    // Draw connection lines from center to active tools
+    for (int i = 0; i < math.min(activeToolsCount, totalTools); i++) {
+      final angle = (i * 2 * math.pi / totalTools) + orbitAnimation;
+      final endPoint = Offset(
+        center.dx + math.cos(angle) * radius,
+        center.dy + math.sin(angle) * radius,
+      );
+
+      paint.color = Colors.white.withOpacity(0.3);
+      canvas.drawLine(center, endPoint, paint);
     }
   }
 

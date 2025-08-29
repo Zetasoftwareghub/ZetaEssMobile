@@ -63,14 +63,15 @@ class LoanRepository {
     required UserContext userContext,
     required String loanId,
   }) async {
+    final data = {
+      'suconn': userContext.companyConnection,
+      'emcode': userContext.empCode,
+      'iLqslno': loanId,
+    };
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanDetailsApi,
-        data: {
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-          'iLqslno': loanId,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

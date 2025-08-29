@@ -14,10 +14,14 @@ import 'package:zeta_ess/features/providers/employeeSelfLineMenu_provider.dart';
 import 'package:zeta_ess/features/self_service/screens/widgets/customServiceListing_widget.dart';
 
 import '../../../core/services/NavigationService.dart';
+import '../approveExpense_claim/controller/approve_expense_claim_controller.dart';
 import '../approveExpense_claim/screens/approve_expenseClaimListing_screen.dart';
+import '../approveLeave_management/controller/approve_leave_controller.dart';
 import '../approveLeave_management/screens/approve_leaveListing_screen.dart';
 import '../approveLieuDay_request/screens/approve_lieuDayListing_screen.dart';
+import '../approve_attendance_regularisation/controller/approve_attendance_regularisation_controller.dart';
 import '../approve_attendance_regularisation/screens/approve_attendanceRegularisationListing_screen.dart';
+import '../approve_change_request/screens/approve_change_request_listing.dart';
 import '../approve_loan/screens/approve_loanListing_screen.dart';
 import '../approve_other_request/screens/approve_first_otherRequestListing_screen.dart';
 import '../approve_resumption_request/screens/approve_resumptionListing_screen.dart';
@@ -41,6 +45,7 @@ class ApprovalManagementScreen extends ConsumerWidget {
 
   final Map<String, Widget Function(String key)> lineManagerRoutes = {
     'approve_leave': (key) => ApproveLeaveListingScreen(title: key),
+    // 'approve_cancelled_leave' ()=>ApproveCancelledLeave(), TODO create this
     'resumption_approve': (key) => ApproveResumptionListingScreen(title: key),
     'lieu_day_approve': (key) => ApproveLieuDayListingScreen(title: key),
     'expense_claim_approve':
@@ -52,12 +57,17 @@ class ApprovalManagementScreen extends ConsumerWidget {
         (key) => ApproveAttendanceRegularisationListingScreen(title: key),
     'schooling_allowance_approve':
         (key) => ApproveSchoolingAllowanceListingScreen(title: key),
+    'change_request_approve': (key) => ApproveChangeRequestListing(title: key),
     'salary_certificate_approve':
         (key) => ApproveSalaryCertificateListingScreen(title: key),
   };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final leaveListAsync = ref.watch(approveLeaveListProvider);
+    final regList = ref.watch(approveAttendanceRegularisationListProvider);
+    final expenseClaimList = ref.watch(approveExpenseClaimListProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -83,8 +93,12 @@ class ApprovalManagementScreen extends ConsumerWidget {
                       flex: 3,
                       child: buildLineManagerTopTile(
                         icon: Icons.logout_sharp,
-                        title: '${'approve'.tr()}\n${'leave'.tr()}',
-                        value: '12',
+                        title: 'leave'.tr(),
+                        value: leaveListAsync.when(
+                          data: (data) => "(${data.submitted.length})",
+                          loading: () => "(...)",
+                          error: (e, _) => "0",
+                        ),
                         height: 210.h,
                         bgImagePath: "assets/images/approvalOrangeCard.png",
                         firstColTile: true,
@@ -98,7 +112,11 @@ class ApprovalManagementScreen extends ConsumerWidget {
                           buildLineManagerTopTile(
                             icon: Icons.group,
                             title: 'attendance'.tr(),
-                            value: '1234',
+                            value: regList.when(
+                              data: (data) => "(${data.submitted.length})",
+                              loading: () => "(...)",
+                              error: (e, _) => "0",
+                            ),
                             height: 100.h,
                             bgImagePath: "assets/images/approvalBlueCard.png",
                           ),
@@ -106,7 +124,11 @@ class ApprovalManagementScreen extends ConsumerWidget {
                           buildLineManagerTopTile(
                             icon: Icons.money,
                             title: 'expenses'.tr(),
-                            value: '1234',
+                            value: expenseClaimList.when(
+                              data: (data) => "(${data.submitted.length})",
+                              loading: () => "(...)",
+                              error: (e, _) => "0",
+                            ),
                             height: 100.h,
                             bgImagePath: "assets/images/approvalYellowCard.png",
                           ),

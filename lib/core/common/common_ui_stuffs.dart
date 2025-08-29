@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/common_text.dart';
 import 'package:zeta_ess/core/utils.dart';
 
 import '../theme/app_theme.dart';
@@ -31,9 +32,12 @@ Widget inputField({
   TextEditingController? controller,
   int? minLines,
   bool isRequired = false,
+  bool readOnly = false,
   TextInputType? keyboardType = TextInputType.text,
+  void Function(String)? onChanged,
 }) {
   return TextFormField(
+    readOnly: readOnly,
     validator:
         (value) =>
             isRequired
@@ -42,7 +46,7 @@ Widget inputField({
                     : null
                 : null,
     controller: controller,
-    onChanged: (s) {},
+    onChanged: onChanged,
     maxLines: minLines,
     autovalidateMode: AutovalidateMode.onUserInteraction,
     minLines: 1,
@@ -93,7 +97,9 @@ Widget detailInfoRow({
             ),
             Expanded(
               child: Text(
-                subTitle?.tr() ?? "",
+                (subTitle?.tr() ?? "").isEmpty
+                    ? noValueFound.tr()
+                    : subTitle!.tr(),
                 style: TextStyle(fontSize: 14.sp),
                 textAlign: TextAlign.end,
               ),

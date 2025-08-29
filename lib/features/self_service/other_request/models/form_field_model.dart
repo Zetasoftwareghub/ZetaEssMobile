@@ -58,7 +58,11 @@ class FormFieldModel {
   }
 
   String generateFieldId() {
-    return "${fieldName.toLowerCase().replaceAll(" ", "_")}_$fieldName";
+    print(
+      "${fieldName.toLowerCase().replaceAll(" ", "_")}_${fieldID.toString()}",
+    );
+    // return "${fieldName.toLowerCase().replaceAll(" ", "_")}_$fieldName";
+    return "${fieldName.toLowerCase().replaceAll(" ", "_")}_${fieldID.toString()}";
   }
 }
 
@@ -94,8 +98,4 @@ class FormResponseModel {
       subLst: (json['subLst'] as List<dynamic>?) ?? [],
     );
   }
-
-  // Map<String, dynamic> toJson() {
-  //   return {'canLst': canLst.map((field) => field.toJson()).toList()};
-  // }
 }

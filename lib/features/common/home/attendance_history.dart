@@ -7,10 +7,7 @@ import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
 import 'package:zeta_ess/features/common/home/widgets/todayPunch_widget.dart';
 
-import '../../../../core/common/widgets/showCase_widget.dart';
-import '../../../../core/services/NavigationService.dart';
 import '../../../../core/theme/common_theme.dart';
-import '../screens/attendanceHistory_screen.dart';
 
 class AttendanceHistorySection extends StatelessWidget {
   final GlobalKey showcaseKey;
@@ -41,20 +38,20 @@ class AttendanceHistorySection extends StatelessWidget {
           // Text("today_punc_history".tr(), style: AppTextStyles.mediumFont()),
           Spacer(),
           //TODO give this if you integrate the history!
-          CustomShowcaseWidget(
-            showcaseKey: showcaseKey,
-            title: "Attendance History",
-            description: "Click here to view attendance history.",
-            child: TextButton.icon(
-              onPressed:
-                  () => NavigationService.navigateToScreen(
-                    context: context,
-                    screen: AttendanceHistoryScreen(),
-                  ),
-              icon: const Icon(Icons.history),
-              label: Text("view_all".tr()),
-            ),
-          ),
+          // CustomShowcaseWidget(
+          //   showcaseKey: showcaseKey,
+          //   title: "Attendance History",
+          //   description: "Click here to view attendance history.",
+          //   child: TextButton.icon(
+          //     onPressed:
+          //         () => NavigationService.navigateToScreen(
+          //           context: context,
+          //           screen: AttendanceHistoryScreen(),
+          //         ),
+          //     icon: const Icon(Icons.history),
+          //     label: Text("view_all".tr()),
+          //   ),
+          // ),
         ],
       ),
     );

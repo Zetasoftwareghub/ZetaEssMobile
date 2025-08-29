@@ -16,11 +16,13 @@ import '../providers/salaryAdvance_provider.dart';
 
 class SalaryAdvanceDetailScreen extends ConsumerStatefulWidget {
   final bool? isLineManager;
+  final bool showApproveAmount;
   final String? advanceId;
   const SalaryAdvanceDetailScreen({
     super.key,
     this.isLineManager,
     this.advanceId,
+    this.showApproveAmount = false,
   });
 
   @override
@@ -60,10 +62,11 @@ class _SalaryAdvanceDetailScreenState
                         subTitle: advance.name,
                       ),
                       detailInfoRow(
-                        title: 'requested'.tr() + 'amount'.tr(),
+                        title: '${'requested'.tr()} ${'amount'.tr()}',
                         subTitle: advance.amount,
                       ),
-                      if (!(widget.isLineManager ?? false))
+
+                      if (widget.showApproveAmount)
                         detailInfoRow(
                           title: '${'approved'.tr()} ${'amount'.tr()}',
                           subTitle: advance.appAmount,
@@ -82,12 +85,15 @@ class _SalaryAdvanceDetailScreenState
                       ),
                       detailInfoRow(
                         title: 'note'.tr(),
-                        belowValue:
-                            advance.note.isNotEmpty ? advance.note : '--',
+                        subTitle: advance.note.isNotEmpty ? advance.note : '--',
                       ),
-                      if (!(widget.isLineManager ?? false))
-                        titleHeaderText("comment".tr()),
-                      Text(advance.lmComment),
+
+                      titleHeaderText("comment".tr()),
+                      Text(
+                        advance.appRejComment.isEmpty
+                            ? advance.prevComment
+                            : advance.appRejComment,
+                      ),
 
                       if (widget.isLineManager ?? false) ...[
                         inputField(

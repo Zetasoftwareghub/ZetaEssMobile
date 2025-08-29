@@ -44,8 +44,9 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.loanId);
+    print('widget.loanId23');
     final loanDetailsAsync = ref.watch(loanDetailsProvider(widget.loanId));
-
     return Scaffold(
       appBar: AppBar(title: Text('details'.tr())),
       body: loanDetailsAsync.when(
@@ -78,7 +79,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                     subTitle: widget.loanListModel?.loanType,
                   ), // Replace if available
                   detailInfoRow(
-                    title: 'loan_tenure'.tr(),
+                    title: "repayment_period".tr(),
                     subTitle: '${loan.approvedMonths} Months',
                   ),
                   detailInfoRow(
@@ -95,11 +96,18 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                     title: 'status'.tr(),
                     subTitle: widget.loanListModel?.loanStatus ?? 'N/A',
                   ),
+                  detailInfoRow(title: "note".tr(), subTitle: loan.note ?? '—'),
                   detailInfoRow(
-                    title: "note".tr(),
-                    belowValue: loan.note ?? '—',
+                    title: "Approved Date".tr(),
+                    subTitle: loan.approvedDate ?? '—',
+                  ),
+                  detailInfoRow(
+                    title: "Approved amount".tr(),
+                    subTitle: loan.approvedAmount.toString() ?? '—',
                   ),
 
+                  titleHeaderText("comment".tr()),
+                  Text(loan.approverNote),
                   titleHeaderText("attachments".tr()),
                   AttachmentWidget(
                     attachmentUrl:
@@ -112,6 +120,9 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                   if (widget.isLineManager ?? false) ...[
                     CustomDateField(
                       hintText: 'Approve date',
+                      initialDate:
+                          ref.watch(selectedDateProvider) ??
+                          formatDate(DateTime.now()),
                       onDateSelected: (date) {
                         ref.read(selectedDateProvider.notifier).state = date;
                       },
@@ -153,7 +164,9 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                     final userContext = ref.watch(userContextProvider);
                     final approveLoanModel = ApproveLoanModel(
                       suconn: userContext.companyConnection,
-                      aprDate: ref.watch(selectedDateProvider),
+                      aprDate:
+                          ref.watch(selectedDateProvider) ??
+                          formatDate(DateTime.now()),
                       reqDate: loan?.repaymentStartDate,
                       amount: double.parse(approveAmountController.text),
                       username: userContext.empName,

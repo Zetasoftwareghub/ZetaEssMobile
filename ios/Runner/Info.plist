@@ -64,6 +64,7 @@
         <string>_http._tcp</string>
     </array>
 
+
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>We need your location to provide location-based services.</string>
 	<key>NSFaceIDUsageDescription</key>

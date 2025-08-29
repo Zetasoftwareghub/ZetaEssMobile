@@ -8,6 +8,7 @@ import 'package:zeta_ess/features/self_service/salary_advance/models/salaryAdvan
 import 'package:zeta_ess/features/self_service/salary_advance/screens/salaryAdvanceDetail_screen.dart';
 import 'package:zeta_ess/features/self_service/salary_advance/screens/submitSalaryAdvance_screen.dart';
 
+import '../../../../core/common/error_text.dart';
 import '../../../../core/common/loader.dart';
 import '../../../../core/common/widgets/customTileListing_widget.dart';
 import '../../../../core/utils.dart';
@@ -51,13 +52,16 @@ class _SalaryAdvanceListingScreenState
                         items: data.submitted.salaryAdvanceList,
                         listRights: data.submitted.listRights,
                       ),
-                      SalaryAdvanceListView(items: data.approved),
+                      SalaryAdvanceListView(
+                        items: data.approved,
+                        showApproveAmount: true,
+                      ),
                       SalaryAdvanceListView(items: data.rejected),
                     ],
                   );
                 },
                 loading: () => const Loader(),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, _) => ErrorText(error: e.toString()),
               ),
             ),
           ],
@@ -79,11 +83,13 @@ class _SalaryAdvanceListingScreenState
 class SalaryAdvanceListView extends ConsumerWidget {
   final List<SalaryAdvanceListingModel> items;
   final ListRightsModel? listRights;
+  final bool showApproveAmount;
 
   const SalaryAdvanceListView({
     super.key,
     required this.items,
     this.listRights,
+    this.showApproveAmount = false,
   });
 
   @override
@@ -99,14 +105,21 @@ class SalaryAdvanceListView extends ConsumerWidget {
         final item = items[index];
 
         return InkWell(
-          onTap: () => navigateToDetail(item.id ?? '0', context),
+          onTap:
+              () =>
+                  navigateToDetail(item.id ?? '0', context, showApproveAmount),
 
           child: CustomTileListingWidget(
             text1: item.date ?? '',
             text2: item.amount ?? '',
             subText2: 'Note: ${item.note ?? ''}',
             listRights: listRights,
-            onView: () => navigateToDetail(item.id ?? '0', context),
+            onView:
+                () => navigateToDetail(
+                  item.id ?? '0',
+                  context,
+                  showApproveAmount,
+                ),
             onEdit:
                 () => NavigationService.navigateToScreen(
                   context: context,
@@ -125,10 +138,17 @@ class SalaryAdvanceListView extends ConsumerWidget {
     );
   }
 
-  void navigateToDetail(String advanceId, BuildContext context) {
+  void navigateToDetail(
+    String advanceId,
+    BuildContext context,
+    bool showApproveAmount,
+  ) {
     NavigationService.navigateToScreen(
       context: context,
-      screen: SalaryAdvanceDetailScreen(advanceId: advanceId),
+      screen: SalaryAdvanceDetailScreen(
+        advanceId: advanceId,
+        showApproveAmount: showApproveAmount,
+      ),
     );
   }
 }

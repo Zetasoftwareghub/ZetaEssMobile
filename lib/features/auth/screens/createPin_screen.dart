@@ -14,6 +14,146 @@ import '../../../core/theme/app_theme.dart';
 import '../../../services/secure_stroage_service.dart';
 import '../../common/screens/main_screen.dart';
 import '../controller/localAuth_controller.dart';
+//
+// //TODO old perfect working code
+// class CreatePinScreen extends ConsumerStatefulWidget {
+//   const CreatePinScreen({super.key});
+//
+//   @override
+//   ConsumerState<CreatePinScreen> createState() => _CreatePinScreenState();
+// }
+//
+// class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
+//   final TextEditingController pinController = TextEditingController();
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       ref.read(localAuthProvider.notifier).authenticateWithBiometrics(context);
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final authState = ref.watch(localAuthProvider);
+//
+//     return Scaffold(
+//       body: SafeArea(
+//         child: Padding(
+//           padding: AppPadding.screenPadding,
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Container(
+//                 decoration: BoxDecoration(
+//                   color: AppTheme.primaryColor.withOpacity(0.05),
+//                   borderRadius: BorderRadius.circular(16),
+//                 ),
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     CircleAvatar(
+//                       backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+//                       radius: 24.r,
+//                       child: Icon(
+//                         Icons.person_sharp,
+//                         size: 24.r,
+//                         color: AppTheme.primaryColor,
+//                       ),
+//                     ),
+//                     12.widthBox,
+//                     Flexible(
+//                       child: Text(
+//                         ref.watch(userDataProvider)?.empName ?? "",
+//                         style: TextStyle(
+//                           fontSize: 18.sp,
+//                           fontWeight: FontWeight.w600,
+//                           color: AppTheme.primaryColor,
+//                         ),
+//                       ),
+//                     ),
+//                     12.widthBox,
+//                   ],
+//                 ),
+//               ),
+//               20.heightBox,
+//               Text(
+//                 authState.hasPin ? "enterYourPin".tr() : "createYourPin".tr(),
+//                 style: AppTextStyles.largeFont(),
+//               ),
+//               Text("enterPinForSafety".tr(), style: AppTextStyles.smallFont()),
+//               20.heightBox,
+//               CustomPinPutWidget(
+//                 controller: pinController,
+//                 onCompleted: (pin) => _confirmPin(),
+//               ),
+//               25.heightBox,
+//
+//               Center(
+//                 child: TextButton.icon(
+//                   onPressed: () async {
+//                     await SecureStorageService.clearAll();
+//                     ref.invalidate(userDataProvider);
+//                     ref.invalidate(localAuthProvider);
+//                     NavigationService.navigateRemoveUntil(
+//                       context: context,
+//                       screen: LoginScreen(),
+//                     );
+//                   },
+//                   icon: const Icon(Icons.arrow_back, size: 16),
+//                   label: Text(
+//                     "Log out".tr(),
+//                     style: AppTextStyles.mediumFont(),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   _confirmPin() async {
+//     final authState = ref.watch(localAuthProvider);
+//     final authNotifier = ref.read(localAuthProvider.notifier);
+//
+//     if (authState.hasPin) {
+//       final isValid = await authNotifier.verifyPin(pinController.text, context);
+//       if (isValid && mounted) {
+//         Future.delayed(Duration.zero, () {
+//           NavigationService.navigateRemoveUntil(
+//             context: context,
+//             screen: const MainScreen(),
+//           );
+//         });
+//       } else {
+//         showCustomAlertBox(
+//           context,
+//           title: 'invalidPin'.tr(),
+//           content: 'pleaseTryAgain'.tr(),
+//           type: AlertType.error,
+//           primaryButtonText: 'retry'.tr(),
+//           onPrimaryPressed: () => Navigator.pop(context),
+//         );
+//       }
+//     } else {
+//       await authNotifier.savePin(pinController.text);
+//       Future.delayed(Duration.zero, () {
+//         NavigationService.navigateRemoveUntil(
+//           context: context,
+//           screen: const MainScreen(),
+//         );
+//       });
+//     }
+//   }
+//
+//   @override
+//   void dispose() {
+//     pinController.dispose();
+//     super.dispose();
+//   }
+// }
 
 class CreatePinScreen extends ConsumerStatefulWidget {
   const CreatePinScreen({super.key});
@@ -22,11 +162,26 @@ class CreatePinScreen extends ConsumerStatefulWidget {
   ConsumerState<CreatePinScreen> createState() => _CreatePinScreenState();
 }
 
-class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
+class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController pinController = TextEditingController();
+  late AnimationController _animationController;
+  late Animation<double> _breathingAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    // Breathing effect for greeting card
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _breathingAnimation = Tween<double>(begin: 0.75, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(localAuthProvider.notifier).authenticateWithBiometrics(context);
     });
@@ -35,6 +190,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(localAuthProvider);
+    final user = ref.watch(userDataProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -43,53 +199,145 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                      radius: 24.r,
-                      child: Icon(
-                        Icons.person_sharp,
-                        size: 24.r,
-                        color: AppTheme.primaryColor,
-                      ),
+              /// Greeting Animated Card
+              ScaleTransition(
+                scale: _breathingAnimation,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.r),
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryColor.withOpacity(0.15),
+                        AppTheme.primaryColor.withOpacity(0.05),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    12.widthBox,
-                    Flexible(
-                      child: Text(
-                        ref.watch(userDataProvider)?.empName ?? "",
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryColor.withOpacity(0.2),
+                        blurRadius: 15,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                        radius: 26.r,
+                        child: Icon(
+                          Icons.person,
+                          size: 26.r,
                           color: AppTheme.primaryColor,
                         ),
                       ),
+                      12.widthBox,
+                      Flexible(
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 600),
+                          transitionBuilder:
+                              (child, anim) => FadeTransition(
+                                opacity: anim,
+                                child: ScaleTransition(
+                                  scale: anim,
+                                  child: child,
+                                ),
+                              ),
+                          child: Text(
+                            "${greeting.tr()}, ${user?.empName ?? "Employee"} 👋",
+                            key: ValueKey(user?.empName),
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              30.heightBox,
+
+              /// Heading Card (MATCHED STYLE)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.r),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryColor.withOpacity(0.12),
+                      AppTheme.primaryColor.withOpacity(0.05),
+                    ],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    12.widthBox,
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 700),
+                      transitionBuilder:
+                          (child, anim) => FadeTransition(
+                            opacity: anim,
+                            child: ScaleTransition(scale: anim, child: child),
+                          ),
+                      child: Text(
+                        authState.hasPin
+                            ? "enterYourPin".tr()
+                            : "createYourPin".tr(),
+                        key: ValueKey(
+                          authState.hasPin ? "enterYourPin" : "createYourPin",
+                        ),
+                        style: AppTextStyles.largeFont().copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    8.heightBox,
+                    Text(
+                      "enterPinForSafety".tr(),
+                      style: AppTextStyles.smallFont().copyWith(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              20.heightBox,
-              Text(
-                authState.hasPin ? "enterYourPin".tr() : "createYourPin".tr(),
-                style: AppTextStyles.largeFont(),
-              ),
-              Text("enterPinForSafety".tr(), style: AppTextStyles.smallFont()),
-              20.heightBox,
+
+              30.heightBox,
+
+              /// PIN Input
               CustomPinPutWidget(
                 controller: pinController,
                 onCompleted: (pin) => _confirmPin(),
               ),
-              25.heightBox,
 
+              40.heightBox,
+
+              /// Logout with Icon
               Center(
                 child: TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.redAccent,
+                  ),
                   onPressed: () async {
                     await SecureStorageService.clearAll();
                     ref.invalidate(userDataProvider);
@@ -99,7 +347,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
                       screen: LoginScreen(),
                     );
                   },
-                  icon: const Icon(Icons.arrow_back, size: 16),
+                  icon: const Icon(Icons.logout, size: 18),
                   label: Text(
                     "Log out".tr(),
                     style: AppTextStyles.mediumFont(),
@@ -120,12 +368,10 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
     if (authState.hasPin) {
       final isValid = await authNotifier.verifyPin(pinController.text, context);
       if (isValid && mounted) {
-        Future.delayed(Duration.zero, () {
-          NavigationService.navigateRemoveUntil(
-            context: context,
-            screen: const MainScreen(),
-          );
-        });
+        NavigationService.navigateRemoveUntil(
+          context: context,
+          screen: const MainScreen(),
+        );
       } else {
         showCustomAlertBox(
           context,
@@ -138,18 +384,19 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
       }
     } else {
       await authNotifier.savePin(pinController.text);
-      Future.delayed(Duration.zero, () {
+      if (mounted) {
         NavigationService.navigateRemoveUntil(
           context: context,
           screen: const MainScreen(),
         );
-      });
+      }
     }
   }
 
   @override
   void dispose() {
     pinController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 }

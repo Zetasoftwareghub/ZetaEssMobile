@@ -6,6 +6,7 @@ import 'package:zeta_ess/features/self_service/loan/providers/loan_providers.dar
 import 'package:zeta_ess/features/self_service/loan/repository/loan_repository.dart';
 
 import '../../../../core/common/alert_dialog/alertBox_function.dart';
+import '../../../../core/common/widgets/customFilePicker_widget.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/utils.dart';
 
@@ -41,6 +42,7 @@ class LoanController extends Notifier<bool> {
         ref.invalidate(loanListProvider);
         if (msg?.toLowerCase() == 'saved successfully' ||
             msg?.toLowerCase() == 'updated successfully') {
+          ref.read(fileUploadProvider.notifier).clearFile();
           Navigator.pop(context);
           showCustomAlertBox(
             context,

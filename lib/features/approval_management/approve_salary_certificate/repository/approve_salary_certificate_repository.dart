@@ -19,6 +19,8 @@ class ApproveSalaryCertificateRepository {
   FutureEither<ApproveSalaryCertificateListResponse>
   getApproveSalaryCertificateList({required UserContext userContext}) {
     return handleApiCall(() async {
+      print(userContext.esCode);
+      print('userContext.esCode');
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.getApproveSalaryCertificateList,
 

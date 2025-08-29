@@ -43,23 +43,7 @@ class CustomDrawer extends ConsumerWidget {
           child: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 28.sp,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                ),
-                10.heightBox,
+                25.heightBox,
                 _buildDrawerItem(
                   Icons.history,
                   "suggestions_feedback".tr(),
@@ -104,7 +88,14 @@ class CustomDrawer extends ConsumerWidget {
                   context: context,
                   screen: ChangePasswordScreen(),
                 ),
-
+                _buildDrawerItem(
+                  CupertinoIcons.globe,
+                  "change_language".tr(),
+                  onTap:
+                      () =>
+                          _showDropdownLikePopup(context, ref, languageTileKey),
+                  key: languageTileKey,
+                ),
                 _buildDrawerItem(
                   Icons.event_available,
                   "leave_balances".tr(),
@@ -112,14 +103,6 @@ class CustomDrawer extends ConsumerWidget {
                   screen: LeaveBalancesScreen(title: "leave_balances"),
                 ),
 
-                // _buildDrawerItem(
-                //   CupertinoIcons.globe,
-                //   "change_language".tr(),
-                //   onTap:
-                //       () =>
-                //           _showDropdownLikePopup(context, ref, languageTileKey),
-                //   key: languageTileKey,
-                // ),
                 const Spacer(),
                 _buildDrawerItem(
                   Icons.logout,

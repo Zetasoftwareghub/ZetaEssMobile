@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/api_constants/dio_headers.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
@@ -74,11 +73,6 @@ class ApproveSalaryAdvanceRepository {
         options: dioHeader(token: userContext.jwtToken),
       );
 
-      // Log response if needed
-      debugPrint('✅ Response: ${response.data}');
-
-      print(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'];
       } else {
@@ -98,22 +92,6 @@ class ApproveSalaryAdvanceRepository {
     return handleApiCall(() async {
       final url = userContext.baseUrl + ApproveApis.rejectSalaryAdvance;
       final data = {
-        // {
-        //   "suconn": "string",
-        //   "id": 0,
-        //   "apremcode": 0,
-        //   "rqnote": "string",
-        //   "apnote": "string",
-        //   "uname": "string",
-        //   "emcode": 0,
-        //   "apramnt": "string",
-        //   "rqdt": "string",
-        //   "rqamt": "string",
-        //   "url": "string",
-        //   "cocode": 0,
-        //   "mnthyr": "string",
-        //   "baseDirectory": "string"
-        // }
         "suconn": userContext.companyConnection,
         "id": requestId,
         "apremcode": userContext.empCode,
@@ -133,19 +111,12 @@ class ApproveSalaryAdvanceRepository {
         "cocode": 0,
         "baseDirectory": "string",
       };
-      print(data);
-      print("data");
       final response = await dio.post(
         url,
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
 
-      // Log response if needed
-      debugPrint('✅ Response: ${response.data}');
-
-      print(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'];
       } else {

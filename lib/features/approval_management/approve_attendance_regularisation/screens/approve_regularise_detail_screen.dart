@@ -173,7 +173,7 @@ class _AttendanceRegularizationApproveState
           SizedBox(height: 12.h),
           Container(
             width: double.infinity,
-
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
             decoration: BoxDecoration(
               color: accentColor.withOpacity(0.05),
               borderRadius: BorderRadius.circular(16.r),
@@ -471,31 +471,7 @@ class _AttendanceRegularizationApproveState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Attendance Approval"),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context, true),
-          icon: Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: const Color(0xFF0BA4DB),
-              size: 18.w,
-            ),
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text("Attendance Approval")),
       body: Stack(
         children: [
           if (_isLoading) Loader(),
@@ -510,7 +486,7 @@ class _AttendanceRegularizationApproveState
                       child: Form(
                         key: _formKey,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             // Employee Details Section
                             buildSectionHeader(
@@ -555,7 +531,10 @@ class _AttendanceRegularizationApproveState
                             ),
                             Container(
                               width: double.infinity,
-
+                              padding: EdgeInsets.symmetric(
+                                vertical: 12.h,
+                                horizontal: 8.w,
+                              ),
                               margin: EdgeInsets.only(bottom: 5.h),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -586,62 +565,63 @@ class _AttendanceRegularizationApproveState
                             ),
 
                             buildCommentSection(
-                              "Line Manager Comment",
+                              "Approval Manager Comment",
                               lmComment,
                               const Color(0xFF34C759),
                             ),
 
                             // Approve/Reject Comment Section
-                            buildSectionHeader(
-                              "Your Comment",
-                              Icons.rate_review_outlined,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(bottom: 15.h),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                            if (widget.isApproveTab ?? false) ...[
+                              buildSectionHeader(
+                                "Your Comment",
+                                Icons.rate_review_outlined,
                               ),
-                              child: TextFormField(
-                                validator: (value) {
-                                  if (value != null && value.isNotEmpty) {
-                                    if (value.length > 500) {
-                                      return "Maximum 500 characters allowed";
-                                    }
-                                    if (validateEmoji(value)) {
-                                      return "Emojis are not supported";
-                                    }
-                                  }
-                                  return null;
-                                },
-                                controller: noteController,
-                                maxLines: 4,
-                                minLines: 1,
-                                keyboardType: TextInputType.multiline,
-                                focusNode: _focusNode,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: const Color(0xFF2A2A2A),
-                                  fontWeight: FontWeight.w500,
+                              Container(
+                                margin: EdgeInsets.only(bottom: 15.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                decoration: InputDecoration(
-                                  hintText: "Enter your comment here...",
-                                  hintStyle: TextStyle(
-                                    color: const Color(0xFFCCCCCC),
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty) {
+                                      if (value.length > 500) {
+                                        return "Maximum 500 characters allowed";
+                                      }
+                                      if (validateEmoji(value)) {
+                                        return "Emojis are not supported";
+                                      }
+                                    }
+                                    return null;
+                                  },
+                                  controller: noteController,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  keyboardType: TextInputType.multiline,
+                                  focusNode: _focusNode,
+                                  style: TextStyle(
                                     fontSize: 14.sp,
+                                    color: const Color(0xFF2A2A2A),
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  contentPadding: EdgeInsets.all(16.w),
+                                  decoration: InputDecoration(
+                                    hintText: "Enter your comment here...",
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFFCCCCCC),
+                                      fontSize: 14.sp,
+                                    ),
+                                    contentPadding: EdgeInsets.all(16.w),
+                                  ),
                                 ),
                               ),
-                            ),
-
+                            ],
                             // Old Attendance Section
                             buildSectionHeader(
                               "Previous Attendance",

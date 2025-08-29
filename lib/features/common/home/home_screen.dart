@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/features/common/home/calender_home_view.dart';
 import 'package:zeta_ess/features/common/home/widgets/quickAction_widget.dart';
 import 'package:zeta_ess/features/common/screens/widgets/customDrawer.dart';
 
@@ -70,49 +71,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final showCheckInOut = widget.showCheckInOut;
     final showCalendar = ref.watch(toggleCalendarProvider);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawerEdgeDragWidth: 75.w,
-      extendBodyBehindAppBar: true,
-      drawer: CustomDrawer(),
-      body: SafeArea(
-        child:
-            showCheckInOut && !showCalendar
-                ? SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HeaderSection(
-                        scaffoldKey: _scaffoldKey,
-                        showcaseKeys: _showcaseKeys,
-                        showCheckInOut: showCheckInOut,
-                        isCheckIn: isCheckIn,
-                      ),
+    return showCalendar
+        ? CalendarHomeView(showCheckInOut: widget.showCheckInOut)
+        : Scaffold(
+          key: _scaffoldKey,
+          drawerEdgeDragWidth: 75.w,
+          extendBodyBehindAppBar: true,
+          drawer: CustomDrawer(),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HeaderSection(scaffoldKey: _scaffoldKey),
 
-                      if (widget.quickActions.isNotEmpty)
-                        QuickActionsSection(
-                          showcaseKey: _showcaseKeys.quickViewKey,
-                          quickActionItems: widget.quickActions,
-                        ),
-                      AttendanceHistorySection(
-                        showcaseKey: _showcaseKeys.historyView,
-                      ),
-                      AttendanceListSection(),
-                    ],
+                  if (widget.quickActions.isNotEmpty)
+                    QuickActionsSection(
+                      showcaseKey: _showcaseKeys.quickViewKey,
+                      quickActionItems: widget.quickActions,
+                    ),
+                  AttendanceHistorySection(
+                    showcaseKey: _showcaseKeys.historyView,
                   ),
-                )
-                : HeaderSection(
-                  scaffoldKey: _scaffoldKey,
-                  showcaseKeys: _showcaseKeys,
-                  showCheckInOut: showCheckInOut,
-                  isCheckIn: isCheckIn,
-                ),
-      ),
-    );
+                  AttendanceListSection(),
+                ],
+              ),
+            ),
+          ),
+        );
   }
 }
 

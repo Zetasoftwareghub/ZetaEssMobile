@@ -8,6 +8,7 @@ import 'package:zeta_ess/features/self_service/resumption_request/screens/resump
 import 'package:zeta_ess/features/self_service/resumption_request/screens/submitResumption_screen.dart';
 import 'package:zeta_ess/models/listRights_model.dart';
 
+import '../../../../core/common/error_text.dart';
 import '../../../../core/common/widgets/customTileListing_widget.dart';
 import '../../../../core/services/NavigationService.dart';
 import '../../../../core/utils.dart';
@@ -56,7 +57,7 @@ class ResumptionListingScreen extends ConsumerWidget {
                 );
               },
               loading: () => Loader(),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              error: (e, _) => ErrorText(error: e.toString()),
             ),
           ],
         ),
@@ -85,7 +86,7 @@ class ResumptionListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return resumptionList.isEmpty
-        ? Center(child: Text("No records found"))
+        ? Center(child: Text("No records found".tr()))
         : ListView.builder(
           padding: EdgeInsets.all(12.r).copyWith(bottom: 80.h),
           itemCount: resumptionList.length,

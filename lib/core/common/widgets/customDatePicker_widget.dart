@@ -61,7 +61,7 @@ class _CustomDateFieldState extends State<CustomDateField> {
       context: context,
       initialDate: initial,
       firstDate:
-          (widget.notBeforeInitialDate ?? false) ? initial : DateTime(2020),
+          (widget.notBeforeInitialDate ?? false) ? initial : DateTime(1500),
       lastDate: DateTime(2030),
     );
 
@@ -130,7 +130,7 @@ class _CustomDateRangePickerFieldState
       barrierColor: AppTheme.primaryColor,
       useRootNavigator: true,
       context: context,
-      firstDate: DateTime(2020),
+      firstDate: DateTime(1500),
       lastDate: DateTime(2030),
       initialDateRange:
           _selectedRange ??

@@ -8,7 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
+import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/common/common_text.dart';
+import 'package:zeta_ess/core/theme/common_theme.dart';
 
 import '../../../../../core/api_constants/dio_headers.dart';
 import '../../../../../core/common/no_server_screen.dart';
@@ -111,40 +113,43 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
   }
 
   getDataToDropDown() async {
-    var responseJson = await getLeaveConfigurations(
-      widget.dateFrom.toString(),
-      widget.dateTo.toString(),
-      widget.leaveCode.toString(),
-      ref.watch(userContextProvider),
-    ).timeout(
-      const Duration(seconds: 60),
-      onTimeout: () {
+    try {
+      var responseJson = await getLeaveConfigurations(
+        widget.dateFrom.toString(),
+        widget.dateTo.toString(),
+        widget.leaveCode.toString(),
+        ref.watch(userContextProvider),
+      ).timeout(
+        const Duration(seconds: 60),
+        onTimeout: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => const NoServer()),
+          );
+        },
+      );
+
+      if (responseJson == null) {
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           CupertinoPageRoute(builder: (context) => const NoServer()),
         );
-      },
-    );
-    print(responseJson);
-    print('responseJson===++');
-    if (responseJson == null) {
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        CupertinoPageRoute(builder: (context) => const NoServer()),
-      );
-    }
-
-    final canList = responseJson['canLst'] as List;
-    print(canList);
-    for (var i in canList) {
-      for (var item in i["canLst"]) {
-        editLieuDropDown.add(LeaveConfigurationEditData.fromJson(item));
       }
+
+      final canList = responseJson['canLst'] as List;
+      for (var i in canList) {
+        // for (var item in i["canLst"]) {
+        editLieuDropDown.add(LeaveConfigurationEditData.fromJson(i));
+        // }
+      }
+      setState(() {
+        leaveConfigDataCanLst = editLieuDropDown;
+      });
+    } catch (e) {
+      print(e.toString());
+      print('e.toString()');
     }
-    setState(() {
-      leaveConfigDataCanLst = editLieuDropDown;
-    });
   }
 
   void setSandwich() async {
@@ -751,7 +756,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
 
   bool validateConfig() {
     bool result = false;
-    String msg = 'invalidLieuDayConfiguration';
+    String msg = 'Invalid LieuDay Configuration';
     List<String> arr;
     var items = leaveConfigData.where((element) => element.lieuday != "null");
     var distinctItems = items.map((i) => i.lieuday).toSet().toList();
@@ -795,31 +800,15 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
     }
 
     if (result == true) {
-      showCupertinoModalPopup<void>(
-        context: context,
-        builder:
-            (BuildContext context) => CupertinoAlertDialog(
-              title: const Text(''),
-              content: Text(msg),
-              actions: <CupertinoDialogAction>[
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('ok'),
-                ),
-              ],
-            ),
-      );
+      showCustomAlertBox(context, title: msg);
     }
     return result;
   }
 
   void _save() {
-    print(leaveConfigData.first.lieuday);
-    print('leaveConfigData.first.lieuday');
     if (widget.isLieuDay) {
+      print(leaveConfigData.first.lieuday);
+      print('leaveConfigData.first.lieuday');
       if (leaveConfigData.isEmpty ||
           leaveConfigData.first.lieuday == null ||
           leaveConfigData.first.lieuday == "-- select --" ||
@@ -827,22 +816,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
           leaveConfigData.first.lieuday == "null" ||
           leaveConfigData.first.lieuday == "0" ||
           leaveConfigData.first.lieuday == "-- select --") {
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder:
-              (BuildContext context) => CupertinoAlertDialog(
-                title: const Text('Please select lieu day!'),
-                actions: <CupertinoDialogAction>[
-                  CupertinoDialogAction(
-                    isDestructiveAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('ok'),
-                  ),
-                ],
-              ),
-        );
+        showCustomAlertBox(context, title: 'Please select lieu day!');
+
         return;
       }
     }
@@ -933,8 +908,6 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
     final double itemHeight = (size.height - kToolbarHeight - 30);
 
     return Scaffold(
-      backgroundColor: HexColor("#D5F2FA"),
-      // appBar: widget.showSubmit == "" ? appBarWithoutBack() : appBarWithBack(),
       appBar: appBarWithBack(),
       body: SafeArea(
         child: Padding(
@@ -1002,7 +975,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                                 DataColumn(
                                   label: Expanded(
                                     child: Text(
-                                      'Full Day',
+                                      'Full\nDay',
                                       style: TextStyle(
                                         color: HexColor("#212121"),
                                         fontSize: 13.sp,
@@ -1014,7 +987,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                                 DataColumn(
                                   label: Expanded(
                                     child: Text(
-                                      'Half Day',
+                                      'Half\nDay',
                                       style: TextStyle(
                                         color: HexColor("#212121"),
                                         fontSize: 13.sp,
@@ -1029,7 +1002,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                                         (lieuDayValue()) == "Y" ? true : false,
                                     child: Expanded(
                                       child: Text(
-                                        'lieuDay',
+                                        'Lieu Day',
                                         style: TextStyle(
                                           color: HexColor("#212121"),
                                           fontSize: 13.sp,
@@ -1072,7 +1045,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                                     ),
                                   ),
                                 )
-                                : const Text(""),
+                                : const Text("NEW"),
                       ),
                       SizedBox(height: 20.h),
                     ],
@@ -1195,7 +1168,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                             _halfDay(i);
                           },
                           child: Text(
-                            i.halfType == "1" ? 'fHalf' : 'sHalf',
+                            i.halfType == "1" ? 'F Half' : 'S Half',
                             style: TextStyle(fontSize: 10),
                           ),
                         )
@@ -1214,7 +1187,6 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
             DataCell(
               widget.isLieuDay
                   ? Container(
-                    width: 130.w,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.r),
@@ -1229,12 +1201,6 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                               ),
                             )
                             : DropdownButtonFormField(
-                              // validator: (value) {
-                              //   if (value == null) {
-                              //     return 'Please select Lieu date';
-                              //   }
-                              //   return null;
-                              // },
                               icon: const Icon(Icons.keyboard_arrow_down),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
@@ -1252,35 +1218,30 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                               ),
                               hint: Text(
                                 "-- Select --",
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  color: HexColor("#000000"),
-                                ),
+                                style: AppTextStyles.smallFont(),
                               ),
 
                               items:
-                                  leaveConfigDataCanLst
-                                      .map(
-                                        (item) => DropdownMenuItem(
-                                          value: item.iLsslno,
-                                          child: Text(
-                                            item.dLsdate.toString(),
-                                            style: TextStyle(
-                                              fontSize: 10.sp,
-                                              color: HexColor("#000000"),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
+                                  leaveConfigDataCanLst.map((item) {
+                                    return DropdownMenuItem(
+                                      value: item.iLsslno,
+                                      child: Text(
+                                        item.dLsdate.toString(),
+                                        style: AppTextStyles.smallFont(),
+                                      ),
+                                    );
+                                  }).toList(),
                               value:
-                                  widget.isLieuDay &&
-                                              widget.selectedLeaveType ==
-                                                  null ||
-                                          (widget.selectedSameValues ?? false)
-                                      ? (i.luslno ?? "").toString()
-                                      : null,
+                                  (i.luslno == null || i.luslno == 0)
+                                      ? null
+                                      : i.luslno.toString(),
 
+                              //     widget.isLieuDay &&
+                              //                 widget.selectedLeaveType ==
+                              //                     null ||
+                              //             (widget.selectedSameValues ?? false)
+                              //         ? (i.luslno ?? "").toString()
+                              //         : null, TODO check and do thiscorre ctlttt
                               onChanged: (value) {
                                 setState(() {
                                   i.lieuday = value;
@@ -1316,12 +1277,6 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                               ),
                             )
                             : DropdownButtonFormField(
-                              // validator: (value) {
-                              //   if (value == null) {
-                              //     return 'Please select Lieu date';
-                              //   }
-                              //   return null;
-                              // },
                               icon: const Icon(Icons.keyboard_arrow_down),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
@@ -1403,8 +1358,6 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
         "dtto": dateTo,
         "leavcode": leaveType,
       };
-      print(data);
-      print('11 33');
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",
         data: data,

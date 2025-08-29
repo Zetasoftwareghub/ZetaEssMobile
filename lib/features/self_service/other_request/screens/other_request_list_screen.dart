@@ -142,7 +142,7 @@ class OtherRequestListView extends ConsumerWidget {
             );
           },
           child: CustomTileListingWidget(
-            text1: '${'Submitted On'.tr()}\n${item.date ?? ''}',
+            text1: '${'Submitted On'.tr()}\n${item.date?.split(' ')[0] ?? ''}',
             text2: item.name ?? "Unknown",
             subText2: "",
             listRights: rightsModel,
