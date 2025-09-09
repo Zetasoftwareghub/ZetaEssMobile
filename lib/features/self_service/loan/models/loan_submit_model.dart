@@ -3,7 +3,7 @@ class LoanSubmitRequestModel {
   final int emcode;
   final int lntype;
   final String? note;
-  final int amount;
+  final String amount;
   final String? reqdate;
   final String? username;
   final int paymentperiod;
@@ -41,7 +41,7 @@ class LoanSubmitRequestModel {
     "deductionstartdate": deductionstartdate,
     "mediafile": mediafile ?? '',
     "mediaExtension": mediaExtension ?? '',
-    "Loid": loid,
+    "loid": loid,
     "baseDirectory": baseDirectory,
   };
 }

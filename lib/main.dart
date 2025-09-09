@@ -12,7 +12,6 @@ import 'core/theme/app_theme.dart';
 import 'features/splash_screen.dart';
 import 'firebase_options.dart';
 
-//https://edc20c575821.ngrok-free.app/
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initialise();

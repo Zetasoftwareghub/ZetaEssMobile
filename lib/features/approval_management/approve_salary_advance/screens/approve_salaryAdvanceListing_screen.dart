@@ -41,6 +41,7 @@ class ApproveSalaryAdvanceListingScreen extends ConsumerWidget {
                       SalaryAdvanceListView(
                         salaryList: data.submitted,
                         isLineManger: true,
+                        showApproveAmount: false,
                       ),
                       SalaryAdvanceListView(salaryList: data.approved),
                       SalaryAdvanceListView(

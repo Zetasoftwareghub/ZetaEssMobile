@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zeta_ess/core/api_constants/keys/storage_keys.dart';
+import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
@@ -118,6 +121,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             onChanged: (selectedCompany) {
                               ref.read(userCompanyProvider.notifier).state =
                                   selectedCompany;
+                              SecureStorageService.write(
+                                key: StorageKeys.userCompanyModel,
+                                value: jsonEncode(selectedCompany?.toJson()),
+                              );
                             },
                             decoration: _inputDecoration("selectCompany".tr()),
                           );
@@ -150,10 +157,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     CustomElevatedButton(
                       onPressed: () {
                         if (ref.read(userCompanyProvider) == null) {
-                          showSnackBar(
-                            context: context,
-                            content: 'Please select company',
-                            color: AppTheme.errorColor,
+                          showCustomAlertBox(
+                            context,
+                            title: 'Please select company',
+                            type: AlertType.error,
                           );
                           return;
                         }
@@ -194,16 +201,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         // ref.read(provider)
                       },
                     ),
-                    // 10.heightBox,
-                    // _buildSocialLoginButton(
-                    //   icon: Constants.microsoftPath,
-                    //   label: "microsoft".tr(),
-                    //   onPressed: () {
-                    //     ref
-                    //         .read(authControllerProvider.notifier)
-                    //         .loginWithMicrosoft(context: context);
-                    //   },
-                    // ),
                   ],
                   25.heightBox,
 

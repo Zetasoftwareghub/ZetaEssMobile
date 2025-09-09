@@ -24,4 +24,6 @@ class CommonApis {
   static const String savePunch = '/api/Dash/INS_ATTDNCE_WTH_LOCN/savePunch';
 
   static const String saveSuggestion = '/api/Suggestion/SaveSuggestion';
+
+  static const String getEmployeeShift = '/api/Attendance/GetEmpoloyeeShift';
 }

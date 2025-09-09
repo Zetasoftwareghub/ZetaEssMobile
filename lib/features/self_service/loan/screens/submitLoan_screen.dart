@@ -51,9 +51,11 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
   }
 
   void prefillFields(LoanDetailModel? model) {
+    print(model?.loanAmount);
+    print('model.loanAmount');
     if (hasPrefilled || model == null) return;
     periodController.text = model.approvedMonths.toString();
-    amountController.text = model.approvedAmount.toString();
+    amountController.text = model.loanAmount.toString();
     noteController.text = model.note;
     deductionDate = model.repaymentStartDate;
 
@@ -191,6 +193,8 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
           padding: AppPadding.screenBottomSheetPadding,
           child: CustomElevatedButton(
             onPressed: () async {
+              print(amountController.text);
+              print('amountController.text');
               final fileData = ref.read(fileUploadProvider).value;
               final userContext = ref.watch(userContextProvider);
 
@@ -223,14 +227,14 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                 emcode: int.parse(userContext.empCode),
                 lntype: int.parse(loanType.typeCode),
                 note: noteController.text,
-                amount: int.tryParse(amountController.text) ?? 0,
+                amount: amountController.text,
                 reqdate: reqDate,
                 username: userContext.empName,
                 paymentperiod: int.tryParse(periodController.text) ?? 0,
                 deductionstartdate: deductionDate,
                 mediafile: fileData?.base64,
                 mediaExtension: fileData?.extension,
-                loid: 0,
+                loid: int.tryParse(widget.loanId ?? '0') ?? 0,
                 baseDirectory: userContext.userBaseUrl,
               );
 

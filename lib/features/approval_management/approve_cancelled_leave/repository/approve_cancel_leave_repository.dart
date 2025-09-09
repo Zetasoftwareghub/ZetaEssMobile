@@ -2,21 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/api_constants/dio_headers.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
-import 'package:zeta_ess/core/utils/date_utils.dart';
+import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/features/approval_management/approve_cancelled_leave/models/cancel_leave_model.dart';
 
 import '../../../../core/api_constants/approval_manager_apis/approve_apis.dart';
 import '../../../../core/providers/userContext_provider.dart';
-import '../../../self_service/leave_management/models/leave_model.dart';
-import '../models/approve_leave_listing_model.dart';
+import '../models/cancel_leave_listing.dart';
+import '../models/cancel_leave_params.dart';
 
-final approveLeaveRepositoryProvider = Provider<ApproveLeaveRepository>((ref) {
+final approveCancelLeaveRepositoryProvider = Provider<ApproveLeaveRepository>((
+  ref,
+) {
   return ApproveLeaveRepository();
 });
 
 class ApproveLeaveRepository {
   final dio = Dio();
 
-  FutureEither<LeaveApprovalListResponse> getApproveLeaveList({
+  FutureEither<ApproveCancelLeaveListResponse> getApproveCancelLeaveList({
     required UserContext userContext,
   }) {
     return handleApiCall(() async {
@@ -30,90 +33,63 @@ class ApproveLeaveRepository {
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
-        return LeaveApprovalListResponse.fromJson(response.data);
+        return ApproveCancelLeaveListResponse.fromJson(response.data);
       } else {
         throw Exception('Failed to load ApproveLeave leaves');
       }
     });
   }
 
-  FutureEither<String?> approveLeave({
+  FutureEither<CancelLeaveModel> getCancelLeaveDetails({
     required UserContext userContext,
-    required String comment,
-    required LeaveModel leaveDetails,
+    required String? lsslno,
+    required String? laslno,
+    required String? clslno,
   }) {
+    final data = {
+      "userid": userContext.esCode,
+      "suconn": userContext.companyConnection,
+      "emcode": userContext.empCode,
+      "lsslno": lsslno,
+      "laslno": laslno,
+      "clslno": clslno,
+    };
     return handleApiCall(() async {
-      final data = {
-        "emcode": userContext.empCode,
-        "suconn": userContext.companyConnection,
-        "id": leaveDetails.leaveId,
-        "apremcode": userContext.empCode,
-        "levtype": "A",
-        "uname": userContext.empName,
-        "lvdays": leaveDetails.leaveDays,
-        "ltcode": leaveDetails.leaveCode,
-        "subdt": leaveDetails.submitted,
-        "dtfrm": leaveDetails.leaveFrom,
-        "dtto": leaveDetails.leaveTo,
-        "reason": comment,
-        "note": leaveDetails.note,
-        "contno": leaveDetails.emergencyContact,
-        "rqall": "1",
-        "url": "string",
-        "cocode": 0,
-        "noOfDays": leaveDetails.leaveDays,
-        "baseDirectory": "string",
-      };
       final response = await dio.post(
-        userContext.baseUrl + ApproveApis.approveLeave,
+        userContext.baseUrl + ApproveApis.getApproveCancelLeaveDetails,
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
-        return response.data['data'].toString();
+        final raw = response.data['data'] as Map<String, dynamic>;
+        return CancelLeaveModel.fromJson(raw);
       } else {
-        throw Exception('Failed to Leave request');
+        throw Exception('Failed to load ApproveLeave leaves');
       }
     });
   }
 
-  FutureEither<String?> rejectLeave({
-    required UserContext userContext,
-    required LeaveModel leaveDetails,
-    required String comment,
+  FutureEither<String?> approveOrRejectLeave({
+    required ApproveRejectCancelLeaveParams params,
   }) {
+    printFullJson(params.toJson());
+    printFullJson('params.toJson()');
     return handleApiCall(() async {
-      final data = {
-        "rejdate": formatDate(DateTime.now()),
-        "emcode": userContext.empCode,
-        "suconn": userContext.companyConnection,
-        "id": leaveDetails.leaveId,
-        "apremcode": userContext.empCode,
-        "levtype": "A",
-        "uname": userContext.empName,
-        "lvdays": leaveDetails.leaveDays,
-        "ltcode": leaveDetails.leaveCode,
-        "subdt": leaveDetails.submitted,
-        "dtfrm": leaveDetails.leaveFrom,
-        "dtto": leaveDetails.leaveTo,
-        "reason": comment,
-        "note": leaveDetails.note,
-        "contno": leaveDetails.emergencyContact,
-        "rqall": "1",
-        "url": "string",
-        "cocode": 0,
-        "noOfDays": leaveDetails.leaveDays,
-        "baseDirectory": "string",
-      };
       final response = await dio.post(
-        userContext.baseUrl + ApproveApis.rejectLeave,
-        data: data,
-        options: dioHeader(token: userContext.jwtToken),
+        params.userContext.baseUrl +
+            (params.strapprflg == "A"
+                ? ApproveApis.approveCancelLeave
+                : ApproveApis.rejectCancelLeave),
+        data: params.toJson(),
+        options: dioHeader(token: params.userContext.jwtToken),
       );
+
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'].toString();
       } else {
-        throw Exception('Failed to ApproveLieuDay request');
+        throw Exception(
+          'Failed to ${params.strapprflg == "A" ? "Approve" : "Reject"} leave',
+        );
       }
     });
   }

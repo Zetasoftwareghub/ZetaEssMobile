@@ -79,12 +79,12 @@ class _ExpenseClaimDetailsScreenState
                       title: 'requested_month_and_year',
                       subTitle: claimDetail.monthyear,
                     ),
+                    // detailInfoRow(
+                    //   title: 'approved_month_and_year'.tr(),
+                    //   subTitle: claimDetail.approveMonthYear,
+                    // ),
                     detailInfoRow(
-                      title: 'approved_month_and_year'.tr(),
-                      subTitle: claimDetail.approveMonthYear,
-                    ),
-                    detailInfoRow(
-                      title: 'Approve Expense claim',
+                      title: 'Expense claim',
                       subTitle: claimDetail.expenseClaimName,
                     ),
                     detailInfoRow(

@@ -110,7 +110,7 @@ class SalaryAdvanceListView extends ConsumerWidget {
                   navigateToDetail(item.id ?? '0', context, showApproveAmount),
 
           child: CustomTileListingWidget(
-            text1: item.date ?? '',
+            text1: item.date?.split(' ')[0] ?? '',
             text2: item.amount ?? '',
             subText2: 'Note: ${item.note ?? ''}',
             listRights: listRights,

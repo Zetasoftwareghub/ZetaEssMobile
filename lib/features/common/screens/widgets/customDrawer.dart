@@ -12,6 +12,7 @@ import 'package:zeta_ess/features/common/screens/leaveBalances_screen.dart';
 import 'package:zeta_ess/services/secure_stroage_service.dart';
 
 import '../../../../core/providers/language_provider.dart';
+import '../../../../core/providers/storage_repository_provider.dart';
 import '../../../auth/controller/localAuth_controller.dart';
 import '../../../auth/screens/login_screen.dart';
 import '../drawer_screens/announcement_screen.dart';
@@ -118,6 +119,8 @@ class CustomDrawer extends ConsumerWidget {
                       onPrimaryPressed: () async {
                         //TODO check this clearly this can cause many issues in locally
                         await SecureStorageService.clearAll();
+                        ref.read(userCompanyProvider.notifier).state = null;
+
                         ref.invalidate(localAuthProvider);
                         NavigationService.navigateRemoveUntil(
                           context: context,

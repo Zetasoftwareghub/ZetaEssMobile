@@ -52,13 +52,11 @@ class SubmittedSalaryAdvanceResponse {
 class SalaryAdvanceListResponse {
   final SubmittedSalaryAdvanceResponse submitted;
   final List<SalaryAdvanceListingModel> approved;
-  final List<SalaryAdvanceListingModel> cancelled;
   final List<SalaryAdvanceListingModel> rejected;
 
   SalaryAdvanceListResponse({
     required this.submitted,
     required this.approved,
-    required this.cancelled,
     required this.rejected,
   });
 
@@ -66,15 +64,12 @@ class SalaryAdvanceListResponse {
     return SalaryAdvanceListResponse(
       submitted: SubmittedSalaryAdvanceResponse.fromJson(json),
       approved:
-          (json['subLst'] as List<dynamic>? ?? [])
+          (json['data']['appLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryAdvanceListingModel.fromJson(e))
               .toList(),
-      cancelled:
-          (json['appLst'] as List<dynamic>? ?? [])
-              .map((e) => SalaryAdvanceListingModel.fromJson(e))
-              .toList(),
+
       rejected:
-          (json['rejLst'] as List<dynamic>? ?? [])
+          (json['data']['rejLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryAdvanceListingModel.fromJson(e))
               .toList(),
     );

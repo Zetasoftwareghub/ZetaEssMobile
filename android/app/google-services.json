@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:234422163440:android:d828c86022b0ca914c2f35",
         "android_client_info": {
-          "package_name": "com.example.zeta_ess"
+          "package_name": "com.zeta.zeta_ess"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "234422163440-1h7t84vcvbm5f8t3i5coikde21etffta.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.zeta_ess",
+            "package_name": "com.zeta.zeta_ess",
             "certificate_hash": "870072401dbd41a9bbc05e212912ae7e930511d7"
           }
         },

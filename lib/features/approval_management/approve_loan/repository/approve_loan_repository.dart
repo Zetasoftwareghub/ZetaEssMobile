@@ -40,8 +40,6 @@ class ApproveLoanRepository {
     required UserContext userContext,
     required ApproveLoanModel approveLoanModel,
   }) {
-    print(approveLoanModel.toJson());
-    print('approveLoanModel.toJson()');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveRejectLoan,

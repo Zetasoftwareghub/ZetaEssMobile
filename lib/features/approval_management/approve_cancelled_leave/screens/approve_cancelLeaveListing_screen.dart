@@ -2,15 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zeta_ess/core/services/NavigationService.dart';
-import 'package:zeta_ess/features/approval_management/approveLeave_management/controller/approve_leave_controller.dart';
+import 'package:zeta_ess/features/approval_management/approve_cancelled_leave/models/cancel_leave_listing.dart';
+import 'package:zeta_ess/features/approval_management/approve_cancelled_leave/screens/cancel_leave_detail.dart';
 
 import '../../../../core/common/error_text.dart';
 import '../../../../core/common/loader.dart';
 import '../../../../core/common/widgets/customTileListing_widget.dart';
+import '../../../../core/services/NavigationService.dart';
 import '../../../../core/utils.dart';
-import '../../../self_service/leave_management/screens/leaveDetail_screen.dart';
-import '../models/approve_leave_listing_model.dart';
+import '../controller/approve_cacncel_leave_controller.dart';
 
 class ApproveCancelLeaveListingScreen extends ConsumerWidget {
   final String title;
@@ -18,7 +18,7 @@ class ApproveCancelLeaveListingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final leaveList = ref.watch(approveLeaveListProvider);
+    final leaveList = ref.watch(approveCancelLeaveListProvider);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -38,7 +38,7 @@ class ApproveCancelLeaveListingScreen extends ConsumerWidget {
                     children: [
                       LeaveListView(
                         leaveList: data.submitted,
-                        isLineManager: true,
+                        showCommentField: true,
                       ),
                       LeaveListView(leaveList: data.approved),
                       LeaveListView(leaveList: data.rejected),
@@ -58,9 +58,13 @@ class ApproveCancelLeaveListingScreen extends ConsumerWidget {
 }
 
 class LeaveListView extends StatelessWidget {
-  final List<LeaveApprovalListingModel> leaveList;
-  final bool? isLineManager;
-  const LeaveListView({super.key, required this.leaveList, this.isLineManager});
+  final List<ApproveCancelLeaveListingModel> leaveList;
+  final bool? showCommentField;
+  const LeaveListView({
+    super.key,
+    required this.leaveList,
+    this.showCommentField,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,16 +81,16 @@ class LeaveListView extends StatelessWidget {
           onTap:
               () => NavigationService.navigateToScreen(
                 context: context,
-                screen: LeaveDetailsScreen(
-                  isLineManager: isLineManager,
-                  leaveId: leave.leaveId ?? '0',
+                screen: CancelLeaveDetailsScreen(
+                  showCommentField: showCommentField ?? false,
+                  clslno: leave.clslno,
+                  laslno: leave.laslno,
+                  lsslno: leave.lsslno,
                 ),
               ),
           child: CustomTileListingWidget(
-            text1: leave.leaveDays,
-            subText1: "leaves".tr(),
-            text2: leave.user ?? 'No name',
-            subText2: "Date : ${leave.dateFrom}  To  ${leave.dateTo}",
+            text2: leave.employeeName,
+            subText2: "Date : ${leave.leaveDateFrom}  To  ${leave.leaveDateTo}",
           ),
         );
       },

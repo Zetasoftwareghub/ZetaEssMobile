@@ -2,7 +2,7 @@ name: zeta_ess
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.7.2
@@ -19,7 +19,7 @@ dependencies:
   dio: ^5.8.0+1
   geolocator: ^14.0.1
   permission_handler: ^12.0.0+1
-  intl: ^0.19.0
+  intl:
   geocoding: ^3.0.0
   local_auth: ^2.3.0
   pinput: ^5.0.1
@@ -28,7 +28,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   table_calendar: ^3.1.3
   file_picker: ^10.1.9
-  easy_localization: ^3.0.7+1
+  easy_localization:
   showcaseview: ^4.0.1
   google_nav_bar: ^5.0.7
 
@@ -64,6 +64,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/translations/
+    - shorebird.yaml
 
   fonts:
     - family: Urbanist

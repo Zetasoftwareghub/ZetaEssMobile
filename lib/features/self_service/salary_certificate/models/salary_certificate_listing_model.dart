@@ -48,13 +48,11 @@ class SubmittedSalaryCertificateResponse {
 class SalaryCertificateListResponse {
   final SubmittedSalaryCertificateResponse submitted;
   final List<SalaryCertificateListModel> approved;
-  final List<SalaryCertificateListModel> cancelled;
   final List<SalaryCertificateListModel> rejected;
 
   SalaryCertificateListResponse({
     required this.submitted,
     required this.approved,
-    required this.cancelled,
     required this.rejected,
   });
 
@@ -62,15 +60,12 @@ class SalaryCertificateListResponse {
     return SalaryCertificateListResponse(
       submitted: SubmittedSalaryCertificateResponse.fromJson(json),
       approved:
-          (json['appLst'] as List<dynamic>? ?? [])
+          (json['data']['appLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryCertificateListModel.fromJson(e))
               .toList(),
-      cancelled:
-          (json['canLst'] as List<dynamic>? ?? [])
-              .map((e) => SalaryCertificateListModel.fromJson(e))
-              .toList(),
+
       rejected:
-          (json['rejLst'] as List<dynamic>? ?? [])
+          (json['data']['rejLst'] as List<dynamic>? ?? [])
               .map((e) => SalaryCertificateListModel.fromJson(e))
               .toList(),
     );

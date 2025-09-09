@@ -374,6 +374,17 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                   ? Loader()
                   : CustomElevatedButton(
                     onPressed: () async {
+                      if (ref.watch(totalLeaveDaysStateProvider) == '0' ||
+                          ref.watch(totalLeaveDaysStateProvider) == '0.0') {
+                        showCustomAlertBox(
+                          context,
+                          title: 'Total leave days cannot be 0',
+                          type: AlertType.error,
+                        );
+
+                        return;
+                      }
+
                       if (dateFrom == null ||
                           dateTo == null ||
                           selectedLeaveType == null) {

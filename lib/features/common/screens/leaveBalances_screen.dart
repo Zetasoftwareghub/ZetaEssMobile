@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/theme/app_theme.dart';
 
 import '../../../core/common/loders/customScreen_loader.dart';
@@ -41,7 +42,7 @@ class LeaveBalancesScreen extends ConsumerWidget {
               () => CustomScreenLoader(
                 loadingText: 'loading_leave_balances'.tr(),
               ),
-          error: (e, _) => Center(child: Text("${'error'.tr()}: $e")),
+          error: (e, _) => ErrorText(error: e.toString()),
         ),
       ),
     );

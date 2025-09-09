@@ -55,6 +55,8 @@ class EmployeeRepository {
     required UserContext userContext,
   }) {
     return handleApiCall(() async {
+      print(userContext.empCode);
+      print('userContext.empCode');
       final response = await dio.post(
         userContext.baseUrl + EmployeeApi.getMainMenuAgainstEmployee,
         data: {
@@ -63,7 +65,6 @@ class EmployeeRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-
       if (response.statusCode == 200 && response.data['success'] == true) {
         return MainMenuModel.fromJson(response.data);
       } else {
@@ -84,7 +85,6 @@ class EmployeeRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-
       if (response.statusCode == 200 && response.data['success'] == true) {
         return EmployeeMenuModel.fromJson(response.data);
       } else {
@@ -98,25 +98,16 @@ class EmployeeRepository {
   }) {
     return handleApiCall(() async {
       final baseUrl = userContext.baseUrl + CommonApis.getLeaveBalance;
-      print(DateTime.now().toString());
-      print("response.data");
       final payload = {
         'emcode': userContext.empCode,
         'suconn': userContext.companyConnection,
-        'dtleave': DateTime.now().toString(),
+        'dtleave': formatDate(DateTime.now()),
         'escode': int.parse(userContext.esCode),
         'id': 0,
       };
-
       final response = await dio.post(
         baseUrl,
-        data: {
-          'emcode': userContext.empCode,
-          'suconn': userContext.companyConnection,
-          'dtleave': formatDate(DateTime.now()),
-          'escode': int.parse(userContext.esCode),
-          'id': 0,
-        },
+        data: payload,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

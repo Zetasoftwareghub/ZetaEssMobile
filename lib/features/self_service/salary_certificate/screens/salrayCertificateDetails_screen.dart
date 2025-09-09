@@ -104,7 +104,10 @@ class _SalaryCertificateDetailsScreenState
                       subTitle: details.accountName ?? "-",
                     ),
 
-                    titleHeaderText("comment".tr()),
+                    if ((details.approvalOrRejectionComment?.isNotEmpty ??
+                            false) ||
+                        (details.lineManagerComment?.isNotEmpty ?? false))
+                      titleHeaderText("comment".tr()),
                     Text(
                       details.approvalOrRejectionComment?.isNotEmpty == true
                           ? details.approvalOrRejectionComment!

@@ -264,8 +264,6 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
     final latest = punches.first;
     final type = latest.punchType?.toLowerCase();
     final mode = latest.punchMode;
-    print(mode);
-    print("mode");
     if (mode == "FILO") {
       return punches.isEmpty;
     }

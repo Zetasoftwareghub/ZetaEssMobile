@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
 import 'package:zeta_ess/features/common/screens/drawer_screens/downloads_screen.dart';
 import 'package:zeta_ess/features/common/screens/drawer_screens/holiday_calendar_screen.dart';
 import 'package:zeta_ess/features/common/screens/leaveBalances_screen.dart';
@@ -36,6 +38,8 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
   static const _dateFormat = "dd-MM-yyyy HH:mm:ss";
   static const _maxFutureDays = 365;
   static const _requestTimeout = Duration(seconds: 60);
+  String? shiftData;
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Animation Controllers
@@ -404,7 +408,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      greeting,
+                      greeting.tr(),
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 14.sp,
@@ -596,7 +600,9 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
   }
 
   Widget _buildStunningSmallCard(AttendanceSummary summary) {
-    final color = Color(int.parse(summary.color.replaceAll('#', '0xFF')));
+    final rawColor = Color(int.parse(summary.color.replaceAll('#', '0xFF')));
+
+    final color = rawColor == Colors.white ? AppTheme.primaryColor : rawColor;
 
     return TweenAnimationBuilder<double>(
       duration: Duration(
@@ -1047,6 +1053,14 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                 color: Colors.grey[800],
               ),
             ),
+            Text(
+              'Tap once to view shift, double tap to regularize',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
             SizedBox(height: 12.h),
 
             if (_calendarDays.isNotEmpty && _isCalendarExpanded) ...[
@@ -1133,12 +1147,25 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
   Widget _buildEnhancedCalendarDayItem(RegulariseCalendarDay day) {
     final bgColor =
         day.colorCode.isNotEmpty
-            ? Color(int.parse(day.colorCode.replaceAll('#', '0xFF')))
+            ? (() {
+              final parsed = Color(
+                int.parse(day.colorCode.replaceAll('#', '0xFF')),
+              );
+              return parsed == Colors.white ? AppTheme.primaryColor : parsed;
+            })()
             : const Color(0xFF6C5CE7);
 
     return InkWell(
       borderRadius: BorderRadius.circular(20.r),
       onTap: () async {
+        final shiftDataResponse = await ref.read(
+          getEmployeeShiftProvider(day.date).future,
+        );
+        setState(() {
+          shiftData = shiftDataResponse;
+        });
+      },
+      onDoubleTap: () async {
         HapticFeedback.mediumImpact();
         Navigator.push(
           context,
@@ -1254,6 +1281,8 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24.h),
+        if (shiftData != null && shiftData != '')
+          Text(shiftData ?? '', style: AppTextStyles.mediumFont()),
         Text(
           'Pending Requests',
           style: TextStyle(

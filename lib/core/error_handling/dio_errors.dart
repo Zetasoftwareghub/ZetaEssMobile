@@ -22,7 +22,7 @@ String handleDioException(DioException dioError) {
       } else if (statusCode == 404) {
         return "notFound".tr();
       } else if (statusCode == 500) {
-        return "serverError".tr();
+        return "No data found".tr();
       } else {
         return response?.data['message']?.toString() ??
             "genericError".tr(args: [statusCode?.toString() ?? 'Unknown']);

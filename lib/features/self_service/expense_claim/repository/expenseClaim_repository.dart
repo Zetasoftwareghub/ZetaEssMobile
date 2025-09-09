@@ -27,15 +27,12 @@ class ExpenseClaimRepository {
         'emcode': int.parse(userContext.empCode),
         'userid': int.parse(userContext.esCode),
       };
-      print(data);
-      print('123123');
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.getExpenseClaims,
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
-        print(response.data);
         return right(ExpenseClaimListResponse.fromJson(response.data));
       } else {
         return left(Failure(errMsg: 'Unknown error occurred'));
@@ -73,6 +70,7 @@ class ExpenseClaimRepository {
     required int claimId,
   }) {
     return handleApiCall(() async {
+      print(claimId);
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.deleteExpenseClaims,
         data: {
@@ -82,7 +80,8 @@ class ExpenseClaimRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-
+      print(response.data);
+      print('response.data');
       return response.data['data'].toString().toLowerCase() == 'true';
     });
   }

@@ -43,7 +43,12 @@ class CommonController extends Notifier<bool> {
         if (msg == 'Saved Successfully') {
           Navigator.pop(context);
         }
-        showCustomAlertBox(context, title: msg);
+        showCustomAlertBox(
+          context,
+          title: msg,
+          type:
+              msg == 'Saved Successfully' ? AlertType.success : AlertType.info,
+        );
       },
     );
   }

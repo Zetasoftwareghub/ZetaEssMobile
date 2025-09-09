@@ -1,138 +1,3 @@
-/*
-// TODO old standard splash screen
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
-import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
-import 'package:zeta_ess/features/auth/screens/login_screen.dart';
-
-import '../core/constants/constants.dart';
-import '../core/theme/app_theme.dart';
-import 'auth/controller/localAuth_controller.dart';
-import 'auth/screens/createPin_screen.dart';
-
-class SplashScreen extends ConsumerStatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    animationFunction();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      Constants.logoPath,
-                      height: screenSize.width * 0.4,
-                      width: screenSize.width * 0.4,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Zeta HRMS',
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 32.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10.0,
-                            color: Colors.black.withOpacity(0.3),
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Future<void> animationFunction() async {
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack),
-      ),
-    );
-
-    _animationController.forward();
-
-    await ref.read(localAuthProvider.notifier).loadInitialAuthState();
-    await ref.read(storageRepositoryProvider.notifier).loadLocalStorageValues();
-    print(ref.watch(userDataProvider));
-    Timer(const Duration(seconds: 3), () {
-      final authState = ref.read(localAuthProvider);
-      //TODO check this validation from splash screen
-      if (authState.hasPin || authState.isAuthenticated && authState.urlExist) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const CreatePinScreen()),
-        );
-      } else if (authState.urlExist) {
-        Navigator.of(
-          context,
-        ).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
-      } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => ActivationUrlScreen()),
-        );
-      }
-    });
-  }
-}
-*/
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -359,8 +224,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         _currentStatus =
             'Loading ${_hrTools[i].label.replaceAll('\n', ' ')}...';
       });
-
-      // Handle authentication loading for specific tools
       switch (i) {
         case 1: // Authentication/Attendance Tracking
           try {
@@ -382,6 +245,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           // Regular delay for other tools
           break;
       }
+      //TODO check this correctly
+      // await ref.read(localAuthProvider.notifier).loadInitialAuthState();
+      // await ref
+      //     .read(storageRepositoryProvider.notifier)
+      //     .loadLocalStorageValues();
 
       await Future.delayed(const Duration(milliseconds: 300));
     }
@@ -389,7 +257,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   void _navigateWithEnterpriseTransition() {
     final authState = ref.read(localAuthProvider);
-
     Widget nextScreen;
     if (authState.hasPin || authState.isAuthenticated && authState.urlExist) {
       nextScreen = const CreatePinScreen();

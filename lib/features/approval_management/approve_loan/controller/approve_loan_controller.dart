@@ -35,14 +35,11 @@ class ApproveLoanController extends Notifier<bool> {
     return result.fold(
       (failure) => showSnackBar(context: context, content: failure.errMsg),
       (res) {
-        print(res);
-        print('''res''');
         ref.invalidate(approveLoanListProvider);
         showSnackBar(
           context: context,
           content: res ?? 'Request processed successfully',
         );
-        print(res == 'Loan approved successfully');
         if (res == 'Loan approved successfully' ||
             res == 'Loan rejected successfully') {
           Navigator.pop(context);
@@ -65,8 +62,6 @@ class ApproveLoanListNotifier
     final repo = ref.read(approveLoanRepositoryProvider);
     final result = await repo.getApproveLoanList(userContext: userContext);
     return result.fold((failure) {
-      print(failure.errMsg);
-      print('failure.errMsg');
       throw failure;
     }, (data) => data);
   }

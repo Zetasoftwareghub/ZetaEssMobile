@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
 import '../../../../core/api_constants/self_service_apis/salary_advance_apis.dart';
@@ -42,11 +43,12 @@ class SalaryAdvanceRepository {
     final data = {
       'suconn': userContext.companyConnection,
       'emcode': userContext.empCode,
-      'userid': userContext.esCode,
-      'micode': 84,
+      // 'userid': userContext.esCode,
+      // 'micode': 84,
     };
+
     print(data);
-    print('tabbsbs');
+    print('salaryList');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + SalaryAdvanceApis.getSalaryAdvanceList,
@@ -54,6 +56,8 @@ class SalaryAdvanceRepository {
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
+      printFullJson(response.data);
+      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return SalaryAdvanceListResponse.fromJson(response.data);
       } else {

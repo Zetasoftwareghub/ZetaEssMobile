@@ -15,6 +15,29 @@ final homeRepositoryProvider = Provider<HomeRepository>((ref) {
 class HomeRepository {
   final dio = Dio();
 
+  FutureEither<String> getShiftAgainstEmployee({
+    required UserContext userContext,
+    required String date,
+  }) async {
+    return handleApiCall(() async {
+      final response = await dio.post(
+        userContext.baseUrl + CommonApis.getEmployeeShift,
+        data: {
+          'suconn': userContext.companyConnection,
+          'emcode': userContext.empCode,
+          'ckdate': date,
+        },
+        options: dioHeader(token: userContext.jwtToken),
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['data'] ?? 'No Data';
+      } else {
+        throw Exception('Failed to load data');
+      }
+    });
+  }
+
   FutureEither<List<PunchModel>> getPunchDetails({
     required UserContext userContext,
   }) {
@@ -45,18 +68,18 @@ class HomeRepository {
     required String locationTime,
   }) async {
     return handleApiCall(() async {
+      final data = {
+        'suconn': userContext.companyConnection,
+        'cocode': 0,
+        'emcode': userContext.empCode,
+        'latLong': "${loc.position.latitude},${loc.position.longitude}",
+        "location": loc.placeName,
+        'geotag': ipAddress,
+        'locationTime': locationTime,
+      };
       final response = await dio.post(
         userContext.baseUrl + CommonApis.savePunch,
-        data: {
-          'suconn': userContext.companyConnection,
-          'cocode': 0,
-          'emcode': userContext.empCode,
-          'latLong': "${loc.position.latitude},${loc.position.longitude}",
-          // 'latLong': "11111,11111", //TODO make this above code !
-          "location": loc.placeName,
-          'geotag': ipAddress,
-          'locationTime': locationTime,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

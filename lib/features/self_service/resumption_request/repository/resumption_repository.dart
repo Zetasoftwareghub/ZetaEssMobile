@@ -109,13 +109,10 @@ class ResumptionRepository {
     required UserContext userContext,
     required SubmitResumptionModel resumptionModel,
   }) async {
-    print(resumptionModel.toJson());
-    print("resumptionModel.toJson()");
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ResumptionApis.submitResumptionLeave,
         data: resumptionModel.toJson(),
-
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

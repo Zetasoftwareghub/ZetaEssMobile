@@ -35,7 +35,6 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(title, style: TextStyle(fontSize: 16.sp))),
       body: asyncData.when(
         data: (changeRequest) {
-          print(changeRequest.chrqtp);
           changeRequestModel = changeRequest;
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.w),
@@ -43,7 +42,7 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 labelText('Request Date'),
-                labelText(changeRequest.chrqdt),
+                labelText(changeRequest.chrqdt ?? ""),
                 12.heightBox,
 
                 // Details Section
@@ -52,7 +51,7 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                 else if (changeRequest.chrqtp == "M")
                   Row(
                     children: [
-                      labelText(changeRequest.detail.first.chtype),
+                      labelText(changeRequest.detail.first.chtype ?? ""),
                       10.widthBox,
                       Expanded(
                         child: CustomDropdown(
@@ -148,13 +147,14 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
 
   /// Generic rendering of detail list
   Widget _buildDynamicDetails(List<ChangeRequestDetailModel> details) {
+    print(details.map((e) => e.toJson()));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleHeaderText('${title} Details'),
+        titleHeaderText('$title Details'),
         8.heightBox,
         ...details.map(
-          (d) => detailInfoRow(title: d.chtype, subTitle: d.chvalu),
+          (d) => detailInfoRow(title: d.chtype ?? "", subTitle: d.chvalu),
         ),
       ],
     );

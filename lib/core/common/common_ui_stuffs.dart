@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/common/common_text.dart';
 import 'package:zeta_ess/core/utils.dart';
@@ -46,6 +47,10 @@ Widget inputField({
                     : null
                 : null,
     controller: controller,
+    inputFormatters:
+        keyboardType == TextInputType.number
+            ? [FilteringTextInputFormatter.digitsOnly]
+            : [],
     onChanged: onChanged,
     maxLines: minLines,
     autovalidateMode: AutovalidateMode.onUserInteraction,

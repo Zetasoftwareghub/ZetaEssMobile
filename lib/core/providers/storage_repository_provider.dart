@@ -41,6 +41,7 @@ class StorageRepositoryProvider extends Notifier<String?> {
     final userCompanyJson = await SecureStorageService.read(
       key: StorageKeys.userCompanyModel,
     );
+
     if (userCompanyJson != null && userCompanyJson.isNotEmpty) {
       final companyMap = jsonDecode(userCompanyJson);
       final company = CompanyModel.fromJson(companyMap);

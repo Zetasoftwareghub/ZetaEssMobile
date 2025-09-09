@@ -1,15 +1,15 @@
 class ChangeRequestModel {
-  final int chrqcd;
-  final String chrqdt;
+  final int? chrqcd;
+  final String? chrqdt;
   final String? cOprtn;
-  final String suconn;
-  final int emcode;
-  final String chrqtp;
+  final String? suconn;
+  final int? emcode;
+  final String? chrqtp;
   final String? chrqtpText;
-  final int bacode;
+  final int? bacode;
   final String? bcacno;
   final String? bcacnm;
-  final String chrqst;
+  final String? chrqst;
   final String? chapby;
   final String? chapdt;
   final String? chapnt;
@@ -33,38 +33,40 @@ class ChangeRequestModel {
     required this.detail,
   });
 
-  factory ChangeRequestModel.fromJson(Map<String, dynamic> json) {
-    print(json['data']);
-    print('submitted');
-    // header is in data[0][0]
+  factory ChangeRequestModel.fromJson(Map<String?, dynamic> json) {
+    final data = json['data'] as List?;
     final header =
-        json['data'][0][0]; // TODO issue here no values in theheader section after approval
-    // detail is in data[1]
-    final List<ChangeRequestDetailModel> d =
-        (json['data'][1] as List)
-            .map((e) => ChangeRequestDetailModel.fromJson(e))
-            .toList();
+        (data != null && data.isNotEmpty && (data[0] as List).isNotEmpty)
+            ? data[0][0] as Map<String?, dynamic>
+            : null;
+
+    final details =
+        (data != null && data.length > 1)
+            ? (data[1] as List)
+                .map((e) => ChangeRequestDetailModel.fromJson(e))
+                .toList()
+            : <ChangeRequestDetailModel>[];
 
     return ChangeRequestModel(
-      chrqcd: header['chrqcd'],
-      chrqdt: header['chrqdt'],
-      emcode: header['emcode'],
-      chrqtp: header['chrqtp'],
-      chrqtpText: header['chrqtp_text'],
-      bacode: header['bacode'],
-      bcacno: header['bcacno'],
-      bcacnm: header['bcacnm'],
-      chrqst: header['chrqst'],
-      chapby: header['chapby'],
-      chapdt: header['chapdt'],
-      chapnt: header['chapnt'],
-      detail: d,
+      chrqcd: header?['chrqcd'],
+      chrqdt: header?['chrqdt'],
+      emcode: header?['emcode'],
+      chrqtp: header?['chrqtp'],
+      chrqtpText: header?['chrqtp_text'],
+      bacode: header?['bacode'],
+      bcacno: header?['bcacno'],
+      bcacnm: header?['bcacnm'],
+      chrqst: header?['chrqst'],
+      chapby: header?['chapby'],
+      chapdt: header?['chapdt'],
+      chapnt: header?['chapnt'],
+      detail: details,
       suconn: '',
       cOprtn: "",
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "suconn": suconn,
     "iChrqcd": chrqcd,
     "chRqTp": chrqtp,
@@ -81,8 +83,8 @@ class ChangeRequestModel {
 
 class ChangeRequestDetailModel {
   final int? chRqCd;
-  final String chtype;
-  final String chvalu;
+  final String? chtype;
+  final String? chvalu;
 
   ChangeRequestDetailModel({
     this.chRqCd,
@@ -90,7 +92,7 @@ class ChangeRequestDetailModel {
     required this.chvalu,
   });
 
-  factory ChangeRequestDetailModel.fromJson(Map<String, dynamic> json) {
+  factory ChangeRequestDetailModel.fromJson(Map<String?, dynamic> json) {
     return ChangeRequestDetailModel(
       chRqCd: json['chRqCd'] ?? 0,
       chtype: json['chtype'],
@@ -98,7 +100,7 @@ class ChangeRequestDetailModel {
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String?, dynamic> toJson() => {
     "chRqCd": chRqCd ?? 0,
     "chtype": chtype,
     "chvalu": chvalu,
@@ -106,16 +108,16 @@ class ChangeRequestDetailModel {
 }
 
 /*class SaveChangeRequestModel {
-  final String suconn;
-  final int iChrqcd;
-  final String chRqTp;
-  final int emCode;
-  final String chRqDt;
-  final int baCode;
-  final String bcAcNo;
-  final String bcAcNm;
-  final String chRqSt;
-  final String cOprtn;
+  final String? suconn;
+  final int? iChrqcd;
+  final String? chRqTp;
+  final int? emCode;
+  final String? chRqDt;
+  final int? baCode;
+  final String? bcAcNo;
+  final String? bcAcNm;
+  final String? chRqSt;
+  final String? cOprtn;
   final List<SaveChangeRequestDetail> detail;
 
   SaveChangeRequestModel({
@@ -132,7 +134,7 @@ class ChangeRequestDetailModel {
     required this.detail,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String?, dynamic> toJson() {
     return {
       'suconn': suconn,
       'iChrqcd': iChrqcd,
@@ -150,9 +152,9 @@ class ChangeRequestDetailModel {
 }
 
 class SaveChangeRequestDetail {
-  final int chRqCd;
-  final String chtype;
-  final String chvalu;
+  final int? chRqCd;
+  final String? chtype;
+  final String? chvalu;
 
   SaveChangeRequestDetail({
     required this.chRqCd,
@@ -160,7 +162,7 @@ class SaveChangeRequestDetail {
     required this.chvalu,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String?, dynamic> toJson() {
     return {'chRqCd': chRqCd, 'chtype': chtype, 'chvalu': chvalu};
   }
 }

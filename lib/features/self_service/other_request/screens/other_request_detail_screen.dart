@@ -743,14 +743,14 @@ class _OtherRequestDetailScreenState
     print(_strings);
 
     // Add comment sections
-    widgets.add(
-      _buildCommentSection(
-        _prevComment,
-        _strings['previousComment']!,
-        _prevComment.isNotEmpty,
-        // widget.fromSelf == false && _prevComment.isNotEmpty,
-      ),
-    );
+    // widgets.add(
+    //   _buildCommentSection(
+    //     _prevComment,
+    //     _strings['previousComment']!,
+    //     _prevComment.isNotEmpty,
+    //     // widget.fromSelf == false && _prevComment.isNotEmpty,
+    //   ),
+    // );
 
     widgets.add(
       _buildCommentSection(
@@ -851,7 +851,7 @@ class _OtherRequestDetailScreenState
               contentPadding: EdgeInsets.all(16.0),
             ),
           ),
-          SizedBox(height: 10.h),
+          100.heightBox,
         ],
       ),
     );

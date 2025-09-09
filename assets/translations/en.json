@@ -1,4 +1,9 @@
 {
+  "cancel_approved_leave": "Cancel Approved Leave",
+  "good_morning": "Good Morning",
+  "good_afternoon": "Good Afternoon",
+  "good_evening": "Good Evening",
+
   "welcomeTo": "Welcome To 👋",
   "enterActivationLink": "Hello there, Please enter Activation link",
   "activationURL": "Activation URL (e.g., http://120.9.234.56:8080)",
@@ -275,7 +280,7 @@
   "Attendance": "Attendance",
   "HR Requests": "HR Requests",
   "resumption_approve": "Approve Resumption",
-  "approve_leave": "Approve Leave",
+  "approve_leave": "Leave",
   "lieu_day_approve": "Approve Lieu Day",
   "schooling_allowance_approve": "Approve Schooling Allowance",
   "salary_advance_approve": "Approve Salary Advance",

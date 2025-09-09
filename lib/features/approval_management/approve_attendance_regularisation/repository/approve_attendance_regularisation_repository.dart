@@ -18,13 +18,15 @@ class ApproveAttendanceRegularisationRepository {
   FutureEither<ApproveAttendanceRegularisationListResponse>
   getApproveAttendanceRegularisationList({required UserContext userContext}) {
     return handleApiCall(() async {
+      final data = {
+        'userid': userContext.esCode,
+        'suconn': userContext.companyConnection,
+        'emcode': userContext.empCode,
+      };
+
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.getApproveRegularisationList,
-        data: {
-          'userid': userContext.esCode,
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

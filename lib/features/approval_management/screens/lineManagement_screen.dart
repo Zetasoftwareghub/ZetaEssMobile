@@ -9,6 +9,7 @@ import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
 import 'package:zeta_ess/core/theme/app_theme.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/features/approval_management/approve_cancelled_leave/screens/approve_cancelLeaveListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/screens/providers/lineManagerExpansion_provider.dart';
 import 'package:zeta_ess/features/providers/employeeSelfLineMenu_provider.dart';
 import 'package:zeta_ess/features/self_service/screens/widgets/customServiceListing_widget.dart';
@@ -45,7 +46,8 @@ class ApprovalManagementScreen extends ConsumerWidget {
 
   final Map<String, Widget Function(String key)> lineManagerRoutes = {
     'approve_leave': (key) => ApproveLeaveListingScreen(title: key),
-    // 'approve_cancelled_leave' ()=>ApproveCancelledLeave(), TODO create this
+    'cancel_approved_leave':
+        (key) => ApproveCancelLeaveListingScreen(title: key),
     'resumption_approve': (key) => ApproveResumptionListingScreen(title: key),
     'lieu_day_approve': (key) => ApproveLieuDayListingScreen(title: key),
     'expense_claim_approve':

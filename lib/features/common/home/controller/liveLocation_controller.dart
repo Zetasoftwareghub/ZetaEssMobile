@@ -12,6 +12,71 @@ class LiveLocation {
   LiveLocation({required this.position, required this.placeName});
 }
 
+class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
+  StreamSubscription<Position>? _positionStream;
+
+  LiveLocationController() : super(const AsyncValue.loading()) {
+    _startListening();
+  }
+
+  Future<void> _startListening() async {
+    try {
+      // Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Location permissions are permanently denied.');
+      }
+
+      // Start listening to location changes
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10, // update when user moves 10 meters
+        ),
+      ).listen((position) async {
+        String placeName = await _getPlaceNameFromCoordinates(position);
+
+        state = AsyncValue.data(
+          LiveLocation(position: position, placeName: placeName),
+        );
+      });
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<String> _getPlaceNameFromCoordinates(Position position) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks[0];
+        return '${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}';
+      }
+      return 'Unknown location';
+    } catch (_) {
+      return 'Unable to get location name';
+    }
+  }
+
+  @override
+  void dispose() {
+    _positionStream?.cancel();
+    super.dispose();
+  }
+}
+
+/*
 // Location Controller Class
 class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
   LiveLocationController() : super(const AsyncValue.loading()) {
@@ -88,6 +153,7 @@ class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
     await _getCurrentLocation();
   }
 }
+*/
 
 // Provider definition
 final liveLocationControllerProvider =
@@ -128,6 +194,7 @@ final liveLocationFutureProvider = FutureProvider<LiveLocation>((ref) async {
   try {
     position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
+
       timeLimit: const Duration(seconds: 10),
     );
   } on TimeoutException {
@@ -164,75 +231,6 @@ class LocationPermissionHandler {
     if (permission == LocationPermission.whileInUse ||
         permission == LocationPermission.always) {
       // Permission granted, refresh the location
-      ref.read(liveLocationControllerProvider.notifier).onPermissionGranted();
     }
   }
 }
-
-/*
-OLD code but loading
-final liveLocationControllerProvider =
-    StateNotifierProvider<LiveLocationController, AsyncValue<LiveLocation>>(
-      (ref) => LiveLocationController(),
-    );
-
-class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
-  LiveLocationController() : super(const AsyncValue.loading()) {
-    _init();
-  }
-
-  StreamSubscription<Position>? _positionSubscription;
-
-  Future<void> _init() async {
-    final hasPermission = await LocationService.hasPermission();
-    if (!hasPermission) {
-      state = AsyncValue.error(
-        'Location permission not granted.',
-        StackTrace.current,
-      );
-      return;
-    }
-
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      state = AsyncValue.error(
-        'Location services are disabled.',
-        StackTrace.current,
-      );
-      return;
-    }
-
-    try {
-      _positionSubscription = LocationService.getLiveLocationStream().listen(
-        (position) async {
-          final placeName = await LocationService.getPlaceName(position);
-          state = AsyncValue.data(
-            LiveLocation(position: position, placeName: placeName),
-          );
-        },
-        onError: (e, st) {
-          state = AsyncValue.error(
-            e,
-            st is StackTrace ? st : StackTrace.current,
-          );
-        },
-      );
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  @override
-  void dispose() {
-    _positionSubscription?.cancel();
-    super.dispose();
-  }
-}
-
-class LiveLocation {
-  final Position position;
-  final String placeName;
-
-  LiveLocation({required this.position, required this.placeName});
-}
-*/

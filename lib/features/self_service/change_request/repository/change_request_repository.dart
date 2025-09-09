@@ -145,8 +145,6 @@ class ChangeRequestRepository {
       'iChrqcd': reqId,
       'emcode': userContext.empCode,
     };
-    print(data);
-    print("12333");
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getChangeRequestDetails,

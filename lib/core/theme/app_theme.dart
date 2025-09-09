@@ -119,17 +119,17 @@ class AppTheme {
         brightness: Brightness.light,
       ),
 
-      tabBarTheme: TabBarTheme(
-        indicatorColor: AppTheme.primaryColor,
-        labelColor: AppTheme.primaryColor,
-        unselectedLabelColor: Colors.grey,
-        dividerColor: Colors.grey.shade200,
-        labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.sp),
-        unselectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 12.sp,
-        ),
-      ),
+      // tabBarTheme: TabBarTheme(
+      //   indicatorColor: AppTheme.primaryColor,
+      //   labelColor: AppTheme.primaryColor,
+      //   unselectedLabelColor: Colors.grey,
+      //   dividerColor: Colors.grey.shade200,
+      //   labelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.sp),
+      //   unselectedLabelStyle: TextStyle(
+      //     fontWeight: FontWeight.normal,
+      //     fontSize: 12.sp,
+      //   ),
+      // ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor.withOpacity(0.1),

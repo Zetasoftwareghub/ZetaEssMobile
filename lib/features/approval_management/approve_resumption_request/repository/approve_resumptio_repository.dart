@@ -51,8 +51,6 @@ class ApproveResumptionRepository {
         "strNote": note,
         "suconn": userContext.companyConnection,
       };
-      print(data);
-      print("requestId");
 
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveRejectResumption,
