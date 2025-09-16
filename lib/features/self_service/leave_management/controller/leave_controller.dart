@@ -247,7 +247,6 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
       toDate: leaveSubmitModel.toDate,
       userContext: userContext,
     );
-    print(firstResult);
     final first = firstResult.fold((l) {
       NavigationService.navigateToScreen(
         context: context,
