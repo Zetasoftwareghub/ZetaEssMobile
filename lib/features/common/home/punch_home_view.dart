@@ -276,12 +276,20 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
   //TODO do you understadn this????
   bool _shouldCheckIn(List<PunchModel> punches) {
     if (punches.isEmpty) return true;
-
     final latest = punches.first;
     final type = latest.punchType?.toLowerCase();
+
     final mode = latest.punchMode;
     if (mode == "FILO") {
       return punches.isEmpty;
+    }
+
+    if (mode == 'ACTL') {
+      if (type == "in") {
+        return false;
+      } else {
+        return true;
+      }
     }
 
     if (type == "in") {

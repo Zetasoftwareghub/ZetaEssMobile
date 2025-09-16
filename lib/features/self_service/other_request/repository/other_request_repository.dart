@@ -123,6 +123,8 @@ class OtherRequestRepository {
         "emp_mail": empMail,
         "sucode": sucode,
       };
+      printFullJson(payload);
+      print('payload');
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.submitOtherRequest,
         data: payload,

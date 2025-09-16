@@ -60,12 +60,13 @@ class ApproveOtherRequestListResponse {
 
 class ApproveOtherRequestFirstListingModel {
   String? menuName, requestId;
-  String? menuId;
+  String? menuId, count;
 
   ApproveOtherRequestFirstListingModel({
     this.menuName,
     this.menuId,
     this.requestId,
+    this.count,
   });
 
   factory ApproveOtherRequestFirstListingModel.fromJson(
@@ -75,6 +76,7 @@ class ApproveOtherRequestFirstListingModel {
       menuName: json['lsnote'].toString(),
       menuId: json['iAprlid'].toString(),
       requestId: json['lrtpac'].toString(),
+      count: (json['oldCount'] ?? '') == '' ? '0' : json['oldCount'].toString(),
     );
   }
 }

@@ -49,7 +49,10 @@ Widget inputField({
     controller: controller,
     inputFormatters:
         keyboardType == TextInputType.number
-            ? [FilteringTextInputFormatter.digitsOnly]
+            ? [
+              // FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(11), // Limit to 10 digits
+            ]
             : [],
     onChanged: onChanged,
     maxLines: minLines,

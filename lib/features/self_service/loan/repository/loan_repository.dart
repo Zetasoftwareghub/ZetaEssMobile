@@ -95,7 +95,7 @@ class LoanRepository {
     print('aaa');
     return handleApiCall(() async {
       printFullJson(submitModel.toJson());
-      print('submitModel.toJson()');
+      print('loadnsubmitModel.toJson()');
       final response = await dio.post(
         userContext.baseUrl + LoanApis.submitLoanApi,
         data: submitModel.toJson(),

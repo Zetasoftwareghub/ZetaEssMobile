@@ -178,6 +178,14 @@ class _SubmitExpenseClaimScreenState
               controller: amountController,
             ),
             12.heightBox,
+            labelText('note'.tr()),
+            inputField(
+              hint: 'enter_your_note'.tr(),
+              minLines: 3,
+              controller: noteController,
+              isRequired: false,
+            ),
+            12.heightBox,
             labelText('expense_claim'.tr(), isRequired: true),
 
             ref
@@ -216,14 +224,8 @@ class _SubmitExpenseClaimScreenState
                 ),
 
             100.heightBox,
+
             // FileUploadButton(),
-            // labelText('note'.tr()),
-            // inputField(
-            //   hint: 'enter_your_note'.tr(),
-            //   minLines: 3,
-            //   controller: noteController,
-            //   isRequired: false,
-            // ),
           ],
         ),
       ),

@@ -6,8 +6,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/loader.dart';
-
+import 'package:dio/dio.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/utils.dart';
 import '../controller/other_request_controller.dart';
@@ -313,6 +314,8 @@ class _SubmitEditOtherRequestState
   }
 
   Widget _buildDropdownField(FormFieldModel field, String fieldKey) {
+    print(field.options);
+    print("field.options");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<String>(
@@ -323,6 +326,7 @@ class _SubmitEditOtherRequestState
         ),
         items:
             field.options
+                .toSet()
                 .map(
                   (option) => DropdownMenuItem(
                     value: option,
@@ -330,6 +334,7 @@ class _SubmitEditOtherRequestState
                   ),
                 )
                 .toList(),
+
         onChanged: (value) {
           setState(() {
             _formValues[fieldKey] = value;
@@ -407,7 +412,12 @@ class _SubmitEditOtherRequestState
               InkWell(
                 onTap: () async {
                   FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(withData: true);
+                      .pickFiles(
+                        withData: true,
+                        type: FileType.custom,
+                        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc'],
+                      );
+
                   if (result != null) {
                     setState(() {
                       _selectedFiles[fieldKey] = result.files.single;
@@ -438,6 +448,18 @@ class _SubmitEditOtherRequestState
                           ),
                         ),
                       ),
+                      // Add view icon for existing files in edit mode
+                      if (widget.isEditMode &&
+                          _formValues[fieldKey] != null &&
+                          _formValues[fieldKey] is Map &&
+                          _formValues[fieldKey]['filePath'] != null)
+                        IconButton(
+                          onPressed:
+                              () =>
+                                  _launchUrl(_formValues[fieldKey]['filePath']),
+                          icon: Icon(Icons.visibility, color: Colors.blue),
+                          tooltip: 'View file',
+                        ),
                     ],
                   ),
                 ),
@@ -456,6 +478,98 @@ class _SubmitEditOtherRequestState
       ),
     );
   }
+
+  // Add this method to your class
+  Future<void> _launchUrl(String filePath) async {
+    try {
+      String attachmentUrl =
+          "${ref.watch(userContextProvider).userBaseUrl}/$filePath";
+      var status = await getAttachmentStatus(attachmentUrl);
+      if (status == "200") {
+        final Uri url = Uri.parse(attachmentUrl);
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        showSnackBar(context: context, content: 'File not found');
+      }
+    } catch (e) {
+      showSnackBar(context: context, content: 'Error opening file');
+    }
+  }
+
+  Future<String> getAttachmentStatus(String url) async {
+    try {
+      var response = await Dio().get(url);
+      return response.statusCode.toString();
+    } catch (e) {
+      return "404";
+    }
+  }
+  // Widget _buildFileUploadField(FormFieldModel field, String fieldKey) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: FormField<PlatformFile?>(
+  //       validator: (value) => _validateField(field, value),
+  //       builder: (FormFieldState<PlatformFile?> state) {
+  //         return Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(
+  //               field.fieldName + (field.isRequired ? ' *' : ''),
+  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+  //             ),
+  //             SizedBox(height: 8),
+  //             InkWell(
+  //               onTap: () async {
+  //                 FilePickerResult? result = await FilePicker.platform
+  //                     .pickFiles(withData: true);
+  //                 if (result != null) {
+  //                   setState(() {
+  //                     _selectedFiles[fieldKey] = result.files.single;
+  //                     _formValues[fieldKey] = result.files.single;
+  //                   });
+  //                   state.didChange(result.files.single);
+  //                 }
+  //               },
+  //               child: Container(
+  //                 width: double.infinity,
+  //                 padding: EdgeInsets.all(12),
+  //                 decoration: BoxDecoration(
+  //                   border: Border.all(color: Colors.grey),
+  //                   borderRadius: BorderRadius.circular(4),
+  //                 ),
+  //                 child: Row(
+  //                   children: [
+  //                     Icon(Icons.attach_file),
+  //                     SizedBox(width: 8),
+  //                     Expanded(
+  //                       child: Text(
+  //                         _selectedFiles[fieldKey]?.name ?? 'Select file',
+  //                         style: TextStyle(
+  //                           color:
+  //                               _selectedFiles[fieldKey] != null
+  //                                   ? Colors.black
+  //                                   : Colors.grey[600],
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //             if (state.hasError)
+  //               Padding(
+  //                 padding: const EdgeInsets.only(top: 8.0),
+  //                 child: Text(
+  //                   state.errorText!,
+  //                   style: TextStyle(color: Colors.red, fontSize: 12),
+  //                 ),
+  //               ),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Future<void> _selectDate(FormFieldModel field, String fieldKey) async {
     final DateTime? picked = await showDatePicker(

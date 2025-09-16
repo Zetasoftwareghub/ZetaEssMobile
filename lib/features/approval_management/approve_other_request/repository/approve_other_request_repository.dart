@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/api_constants/dio_headers.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/api_constants/approval_manager_apis/approve_apis.dart';
 import '../../../../core/api_constants/self_service_apis/other_request_apis.dart';
@@ -36,6 +37,7 @@ class ApproveOtherRequestRepository {
         final List<dynamic> dataList = response.data['data'];
         //TODO ithinte response model vere annu bro
         print('response.data');
+        printFullJson(dataList);
         return dataList
             .map((json) => ApproveOtherRequestFirstListingModel.fromJson(json))
             .toList();

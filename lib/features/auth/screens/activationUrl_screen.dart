@@ -62,6 +62,15 @@ class _ActivationUrlScreenState extends ConsumerState<ActivationUrlScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkInternet();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // This forces the widget to rebuild when locale changes
     context.locale;
@@ -116,6 +125,7 @@ class _ActivationUrlScreenState extends ConsumerState<ActivationUrlScreen> {
                     ? Loader()
                     : CustomElevatedButton(
                       onPressed: () {
+                        _checkInternet();
                         if (!_formKey.currentState!.validate()) {
                           showSnackBar(
                             content: 'plsEnterUrl'.tr(),

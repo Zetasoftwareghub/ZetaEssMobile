@@ -57,15 +57,22 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
     periodController.text = model.approvedMonths.toString();
     amountController.text = model.loanAmount.toString();
     noteController.text = model.note;
-    deductionDate = model.repaymentStartDate;
+    deductionDate = model.repaymentStartDate
+        .split('/')
+        .reversed
+        .join('/'); //TO reverse the year coming first
+    print(model.repaymentStartDate);
+    print('model.repaymentStartDate');
 
     //TODO need this global or not? year first concerde
     reqDate = DateFormat(
       'dd/MM/yyyy',
     ).format(DateFormat('yyyy/MM/dd').parse(model.submittedDate));
     loanTypeID = model.LoanTypeCode;
-    editFileUrl =
-        '${ref.watch(userContextProvider).userBaseUrl}/${model.filePath}';
+    if (model.filePath?.isNotEmpty ?? false) {
+      editFileUrl =
+          '${ref.watch(userContextProvider).userBaseUrl}/${model.filePath}';
+    }
     // Future.microtask(
     //       () => ref.read(withPayroll.notifier).state = model.iRqmode == '1',
     // );
@@ -203,7 +210,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
 
                               16.heightBox,
                               FileUploadButton(editFileUrl: editFileUrl),
-                              50.heightBox,
+                              90.heightBox,
                             ],
                           ),
                 ),
@@ -216,8 +223,6 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                   padding: AppPadding.screenBottomSheetPadding,
                   child: CustomElevatedButton(
                     onPressed: () async {
-                      print(amountController.text);
-                      print('amountController.text');
                       final fileData = ref.read(fileUploadProvider).value;
                       final userContext = ref.watch(userContextProvider);
 

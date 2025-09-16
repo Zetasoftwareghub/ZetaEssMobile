@@ -19,17 +19,18 @@ class ApproveSalaryCertificateRepository {
   FutureEither<ApproveSalaryCertificateListResponse>
   getApproveSalaryCertificateList({required UserContext userContext}) {
     return handleApiCall(() async {
-      print(userContext.esCode);
+      final data = {
+        'userid': userContext.esCode,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        'emcode': userContext.empCode,
+      };
+      print(data);
       print('userContext.esCode');
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.getApproveSalaryCertificateList,
 
-        data: {
-          'userid': userContext.esCode,
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
@@ -67,6 +68,8 @@ class ApproveSalaryCertificateRepository {
         "cocode": 0,
         "baseDirectory": "",
       };
+      print(data);
+      print('salaaa');
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveRejectSalaryCertificate,
         data: data,
