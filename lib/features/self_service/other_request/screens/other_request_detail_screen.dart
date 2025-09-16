@@ -795,25 +795,7 @@ class _OtherRequestDetailScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.edit_outlined,
-                size: 18.sp,
-                color: Colors.grey.shade700,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                _strings['comment']!,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 6.h),
           TextFormField(
             validator: _validateComment,
             controller: _commentController,

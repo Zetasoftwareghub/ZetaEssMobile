@@ -31,6 +31,7 @@ import 'package:zeta_ess/features/self_service/salary_certificate/screens/salary
 
 import '../../../core/common/loders/customScreen_loader.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../approval_management/approve_cancelled_leave/screens/approve_cancelLeaveListing_screen.dart';
 import '../../auth/screens/login_screen.dart';
 import '../models/notification_model.dart';
 import '../providers/common_ui_providers.dart';
@@ -547,8 +548,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "Pending Approve Leave Cancellation Request":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: ApproveLeaveListingScreen(
-              title: 'approve_leave_cancellation',
+            screen: ApproveCancelLeaveListingScreen(
+              title: 'cancel_approved_leave',
             ),
           );
           break;

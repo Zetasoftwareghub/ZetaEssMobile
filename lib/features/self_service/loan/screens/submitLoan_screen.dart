@@ -40,6 +40,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
   final selectedLoanType = StateProvider<LoanTypeModel?>((ref) => null);
   bool isEditMode = false;
   bool hasPrefilled = false;
+  bool isEditLoading = false;
 
   int? loanTypeID;
   String? editFileUrl;
@@ -48,6 +49,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
   void initState() {
     super.initState();
     isEditMode = widget.loanId != null;
+    if (isEditMode) setState(() => isEditLoading = true);
   }
 
   void prefillFields(LoanDetailModel? model) {
@@ -67,6 +69,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
     // Future.microtask(
     //       () => ref.read(withPayroll.notifier).state = model.iRqmode == '1',
     // );
+    setState(() => isEditLoading = false);
 
     hasPrefilled = true;
   }
@@ -92,163 +95,185 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
               : '${submitText.tr()} ${"loan".tr()}',
         ),
       ),
-      body: SingleChildScrollView(
-        padding: AppPadding.screenPadding,
-        child: Form(
-          key: _formKey,
-          child:
-              isLoading
-                  ? const Loader()
-                  : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      labelText("requested_date".tr(), isRequired: true),
-                      CustomDateField(
-                        hintText: "select_date".tr(),
-                        initialDate: reqDate,
-                        onDateSelected:
-                            (date) => setState(() => reqDate = date),
-                      ),
+      body:
+          isEditLoading
+              ? Loader()
+              : SingleChildScrollView(
+                padding: AppPadding.screenPadding,
+                child: Form(
+                  key: _formKey,
+                  child:
+                      isLoading
+                          ? const Loader()
+                          : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              labelText(
+                                "requested_date".tr(),
+                                isRequired: true,
+                              ),
+                              CustomDateField(
+                                hintText: "select_date".tr(),
+                                initialDate: reqDate,
+                                onDateSelected:
+                                    (date) => setState(() => reqDate = date),
+                              ),
 
-                      labelText("loan_type".tr(), isRequired: true),
-                      loanTypeAsync.when(
-                        data: (loanTypes) {
-                          if (loanTypeID != null &&
-                              ref.watch(selectedLoanType) == null) {
-                            Future.microtask(() {
-                              final type = loanTypes.firstWhere(
-                                (t) => t.typeCode == loanTypeID.toString(),
-                                orElse: () => loanTypes.first,
-                              );
-                              ref.read(selectedLoanType.notifier).state = type;
-                            });
-                          }
-                          return CustomDropdown<LoanTypeModel>(
-                            value: loanType,
-                            items:
-                                loanTypes.map((type) {
-                                  return DropdownMenuItem(
-                                    value: type,
-                                    child: Text(type.typeName),
+                              labelText("loan_type".tr(), isRequired: true),
+                              loanTypeAsync.when(
+                                data: (loanTypes) {
+                                  if (loanTypeID != null &&
+                                      ref.watch(selectedLoanType) == null) {
+                                    Future.microtask(() {
+                                      final type = loanTypes.firstWhere(
+                                        (t) =>
+                                            t.typeCode == loanTypeID.toString(),
+                                        orElse: () => loanTypes.first,
+                                      );
+                                      ref
+                                          .read(selectedLoanType.notifier)
+                                          .state = type;
+                                    });
+                                  }
+                                  return CustomDropdown<LoanTypeModel>(
+                                    value: loanType,
+                                    items:
+                                        loanTypes.map((type) {
+                                          return DropdownMenuItem(
+                                            value: type,
+                                            child: Text(type.typeName),
+                                          );
+                                        }).toList(),
+                                    onChanged:
+                                        (type) =>
+                                            ref
+                                                .read(selectedLoanType.notifier)
+                                                .state = type,
+                                    hintText: "select_type".tr(),
                                   );
-                                }).toList(),
-                            onChanged:
-                                (type) =>
-                                    ref.read(selectedLoanType.notifier).state =
-                                        type,
-                            hintText: "select_type".tr(),
-                          );
-                        },
-                        loading: () => const Loader(),
-                        error: (err, _) => ErrorText(error: err.toString()),
-                      ),
+                                },
+                                loading: () => const Loader(),
+                                error:
+                                    (err, _) =>
+                                        ErrorText(error: err.toString()),
+                              ),
 
-                      labelText("requested_amount".tr(), isRequired: true),
-                      inputField(
-                        hint: "enter_amount".tr(),
-                        controller: amountController,
-                        keyboardType: TextInputType.number,
-                        isRequired: true,
-                      ),
+                              labelText(
+                                "requested_amount".tr(),
+                                isRequired: true,
+                              ),
+                              inputField(
+                                hint: "enter_amount".tr(),
+                                controller: amountController,
+                                keyboardType: TextInputType.number,
+                                isRequired: true,
+                              ),
 
-                      labelText(
-                        "repayment_period".tr() + ' (Months)'.tr(),
-                        isRequired: true,
-                      ),
-                      inputField(
-                        hint: "Enter Repayment Period",
-                        controller: periodController,
-                        keyboardType: TextInputType.number,
-                        isRequired: true,
-                      ),
+                              labelText(
+                                "repayment_period".tr() + ' (Months)'.tr(),
+                                isRequired: true,
+                              ),
+                              inputField(
+                                hint: "Enter Repayment Period",
+                                controller: periodController,
+                                keyboardType: TextInputType.number,
+                                isRequired: true,
+                              ),
 
-                      labelText("deduction_start_date".tr(), isRequired: true),
-                      CustomDateField(
-                        hintText: "select_date".tr(),
-                        initialDate: reqDate,
+                              labelText(
+                                "deduction_start_date".tr(),
+                                isRequired: true,
+                              ),
+                              CustomDateField(
+                                hintText: "select_date".tr(),
+                                initialDate: reqDate,
 
-                        notBeforeInitialDate: true,
-                        onDateSelected:
-                            (date) => setState(() => deductionDate = date),
-                      ),
+                                notBeforeInitialDate: true,
+                                onDateSelected:
+                                    (date) =>
+                                        setState(() => deductionDate = date),
+                              ),
 
-                      labelText("note".tr()),
-                      inputField(
-                        hint: "enter_your_note".tr(),
-                        minLines: 3,
-                        controller: noteController,
-                      ),
+                              labelText("note".tr()),
+                              inputField(
+                                hint: "enter_your_note".tr(),
+                                minLines: 3,
+                                controller: noteController,
+                              ),
 
-                      16.heightBox,
-                      FileUploadButton(editFileUrl: editFileUrl),
-                      50.heightBox,
-                    ],
+                              16.heightBox,
+                              FileUploadButton(editFileUrl: editFileUrl),
+                              50.heightBox,
+                            ],
+                          ),
+                ),
+              ),
+      bottomSheet:
+          isEditLoading
+              ? null
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenBottomSheetPadding,
+                  child: CustomElevatedButton(
+                    onPressed: () async {
+                      print(amountController.text);
+                      print('amountController.text');
+                      final fileData = ref.read(fileUploadProvider).value;
+                      final userContext = ref.watch(userContextProvider);
+
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
+                      if (deductionDate == null && reqDate != null) {
+                        showCustomAlertBox(
+                          context,
+                          title: 'Please verify the deduction start date',
+                          content:
+                              'A default date is pre-filled. Kindly review and confirm it is correct.',
+                          type: AlertType.error,
+                        );
+                        return;
+                      }
+                      if (reqDate == null ||
+                          deductionDate == null ||
+                          loanType == null) {
+                        showCustomAlertBox(
+                          context,
+                          title: 'Please fill all required fields',
+                          type: AlertType.error,
+                        );
+                        return;
+                      }
+
+                      final model = LoanSubmitRequestModel(
+                        suconn: userContext.companyConnection,
+                        sucode: userContext.companyCode,
+
+                        emcode: int.parse(userContext.empCode),
+                        lntype: int.parse(loanType.typeCode),
+                        note: noteController.text,
+                        amount: amountController.text,
+                        reqdate: reqDate,
+                        username: userContext.empName,
+                        paymentperiod: int.tryParse(periodController.text) ?? 0,
+                        deductionstartdate: deductionDate,
+                        mediafile: fileData?.base64,
+                        mediaExtension: fileData?.extension,
+                        loid: int.tryParse(widget.loanId ?? '0') ?? 0,
+                        baseDirectory: userContext.userBaseUrl,
+                      );
+
+                      await ref
+                          .read(loanControllerProvider.notifier)
+                          .submitLoan(submitModel: model, context: context);
+                    },
+                    child: Text(
+                      isEditMode ? updateText.tr() : submitText.tr(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
-        ),
-      ),
-      bottomSheet: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenBottomSheetPadding,
-          child: CustomElevatedButton(
-            onPressed: () async {
-              print(amountController.text);
-              print('amountController.text');
-              final fileData = ref.read(fileUploadProvider).value;
-              final userContext = ref.watch(userContextProvider);
-
-              if (!_formKey.currentState!.validate()) {
-                return;
-              }
-              if (deductionDate == null && reqDate != null) {
-                showCustomAlertBox(
-                  context,
-                  title: 'Please verify the deduction start date',
-                  content:
-                      'A default date is pre-filled. Kindly review and confirm it is correct.',
-                  type: AlertType.error,
-                );
-                return;
-              }
-              if (reqDate == null ||
-                  deductionDate == null ||
-                  loanType == null) {
-                showCustomAlertBox(
-                  context,
-                  title: 'Please fill all required fields',
-                  type: AlertType.error,
-                );
-                return;
-              }
-
-              final model = LoanSubmitRequestModel(
-                suconn: userContext.companyConnection,
-                sucode: userContext.companyCode,
-
-                emcode: int.parse(userContext.empCode),
-                lntype: int.parse(loanType.typeCode),
-                note: noteController.text,
-                amount: amountController.text,
-                reqdate: reqDate,
-                username: userContext.empName,
-                paymentperiod: int.tryParse(periodController.text) ?? 0,
-                deductionstartdate: deductionDate,
-                mediafile: fileData?.base64,
-                mediaExtension: fileData?.extension,
-                loid: int.tryParse(widget.loanId ?? '0') ?? 0,
-                baseDirectory: userContext.userBaseUrl,
-              );
-
-              await ref
-                  .read(loanControllerProvider.notifier)
-                  .submitLoan(submitModel: model, context: context);
-            },
-            child: Text(
-              isEditMode ? updateText.tr() : submitText.tr(),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-      ),
+                ),
+              ),
     );
   }
 

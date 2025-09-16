@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/api_constants/self_service_apis/loan_apis.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
+import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/loan/models/loan_submit_model.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
@@ -23,7 +24,8 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanListApi,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': int.parse(userContext.esCode),
         },
@@ -45,7 +47,8 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanTypesApi,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),
@@ -64,16 +67,19 @@ class LoanRepository {
     required String loanId,
   }) async {
     final data = {
-      'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
       'emcode': userContext.empCode,
       'iLqslno': loanId,
     };
+    print(data);
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanDetailsApi,
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
+      print(response.data['data']);
       if (response.statusCode == 200 && response.data['success'] == true) {
         return LoanDetailModel.fromJson(response.data['data']);
       } else {
@@ -88,7 +94,7 @@ class LoanRepository {
   }) async {
     print('aaa');
     return handleApiCall(() async {
-      print(submitModel.toJson());
+      printFullJson(submitModel.toJson());
       print('submitModel.toJson()');
       final response = await dio.post(
         userContext.baseUrl + LoanApis.submitLoanApi,
@@ -111,7 +117,8 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.deleteLoanApi,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'loid': loanId,
           'username': userContext.empName,
         },

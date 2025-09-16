@@ -295,20 +295,7 @@ class LeaveRepository {
     LeaveSubmissionRequest request,
     UserContext userContext,
   ) async {
-    printFullJson(
-      request.toJson(
-        userContext.companyConnection ?? "",
-        userContext.companyCode,
-        userContext.empCode,
-        userContext.esCode,
-        userContext.esCode,
-        // userContext.userBaseUrl ?? '',
-        userContext.baseUrl,
-      ),
-    );
-
     return handleApiCall(() async {
-      print('leave submit');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.submitLeave,
         data: request.toJson(
