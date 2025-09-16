@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:zeta_ess/core/api_constants/self_service_apis/leave_managment_apis.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
 import '../../../../core/error_handling/dio_errors.dart';
@@ -24,12 +25,13 @@ class LeaveRepository {
     required int leaveId,
   }) async {
     try {
-      print(userContext.baseUrl + LeaveManagementApis.getEditLeaveDetails);
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getEditLeaveDetails,
         data: {
           "escode": userContext.esCode,
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
+
           "id": leaveId,
           "emcode": userContext.empCode,
         },
@@ -49,6 +51,7 @@ class LeaveRepository {
   }) async {
     try {
       final data = {
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
         'emcode': userContext.empCode,
         'id': leaveId,
@@ -81,6 +84,7 @@ class LeaveRepository {
     try {
       final data = {
         'id': int.parse(leaveId),
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
         'escode': int.parse(userContext.esCode),
         'emcode': int.parse(userContext.empCode),
@@ -115,6 +119,7 @@ class LeaveRepository {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getSubmittedLeaves,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': userContext.esCode,
@@ -168,6 +173,7 @@ class LeaveRepository {
   }) async {
     return handleApiCall(() async {
       final data = {
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
         'emcode': userContext.empCode,
         'escode': userContext.esCode,
@@ -202,6 +208,7 @@ class LeaveRepository {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getLeaveTypes,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': userContext.esCode,
@@ -235,6 +242,7 @@ class LeaveRepository {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getTotalLeaveDays,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'dtfrm': dateFrom,
           'dtto': dateTo,
@@ -269,7 +277,8 @@ class LeaveRepository {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.submitLeaveFirstApi,
         data: {
-          "suconn": userContext.companyConnection ?? "",
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection ?? "",
           "emcode": userContext.empCode,
           "ltcode": leaveCode,
           "strdat": convertDateToIso(fromDate),
@@ -286,9 +295,10 @@ class LeaveRepository {
     LeaveSubmissionRequest request,
     UserContext userContext,
   ) async {
-    print(
+    printFullJson(
       request.toJson(
         userContext.companyConnection ?? "",
+        userContext.companyCode,
         userContext.empCode,
         userContext.esCode,
         userContext.esCode,
@@ -298,10 +308,12 @@ class LeaveRepository {
     );
 
     return handleApiCall(() async {
+      print('leave submit');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.submitLeave,
         data: request.toJson(
           userContext.companyConnection ?? "",
+          userContext.companyCode ?? "",
           userContext.empCode,
           userContext.esCode,
           userContext.esCode,
@@ -324,9 +336,15 @@ class LeaveRepository {
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.deleteLeave,
-        data: {'suconn': userContext.companyConnection, 'id': leaveId},
+        data: {
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
+          'id': leaveId,
+        },
         options: dioHeader(token: userContext.jwtToken),
       );
+      print(response.data['data']);
+      print('response.data');
       return response.data['data'].toString().toLowerCase() == 'true';
     });
   }
@@ -340,7 +358,8 @@ class LeaveRepository {
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.cancelLeave,
         data: {
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           "emcode": userContext.empCode,
           "lsslno": lsslno,
           "dpFrom": dateFrom,

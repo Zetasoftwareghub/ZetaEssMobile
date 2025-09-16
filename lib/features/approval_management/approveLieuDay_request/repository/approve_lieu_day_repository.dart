@@ -24,6 +24,7 @@ class ApproveLieuDayRepository {
         userContext.baseUrl + ApproveApis.getApproveLieuDayList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -52,7 +53,8 @@ class ApproveLieuDayRepository {
           "strEmcode": userContext.empCode,
           "username": userContext.empName,
           "strNote": note,
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

@@ -10,8 +10,11 @@ import '../../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/widgets/attachment_viewer.dart';
+import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/theme/common_theme.dart';
 import '../controller/resumption_controller.dart';
+import '../models/resumption_details_model.dart';
 import '../providers/resumption_provider.dart';
 
 class ResumptionDetailsScreen extends ConsumerStatefulWidget {
@@ -31,7 +34,7 @@ class ResumptionDetailsScreen extends ConsumerStatefulWidget {
 class _ResumptionDetailsScreenState
     extends ConsumerState<ResumptionDetailsScreen> {
   final TextEditingController commentController = TextEditingController();
-
+  ResumptionDetailModel? resumptionModel;
   @override
   Widget build(BuildContext context) {
     final resumptionAsync = ref.watch(
@@ -46,6 +49,8 @@ class _ResumptionDetailsScreenState
 
           child: resumptionAsync.when(
             data: (resumption) {
+              print(widget.resumptionId);
+              resumptionModel = resumption;
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +73,7 @@ class _ResumptionDetailsScreenState
                     titleHeaderText('resumption_details'.tr()),
                     detailInfoRow(
                       title: 'resumption_date'.tr(),
-                      subTitle: resumption.redate,
+                      subTitle: resumption.redate?.split(' ')[0],
                     ),
                     detailInfoRow(
                       title: 'Has the return to work meeting taken place',
@@ -81,15 +86,16 @@ class _ResumptionDetailsScreenState
                     ),
 
                     // -- section
-                    titleHeaderText('attachments'.tr()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.h),
-                      child: Text(
-                        // resumption.attachmentUrl?.isEmpty ?
-                        '* No Attachments',
-                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
-                      ),
+                    titleHeaderText('attachments'),
+
+                    AttachmentWidget(
+                      attachmentUrl:
+                          resumption.attachmentUrl == null ||
+                                  resumption.attachmentUrl == ''
+                              ? null
+                              : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/${resumption.attachmentUrl ?? ''}',
                     ),
+
                     titleHeaderText('employee_details'.tr()),
                     detailInfoRow(
                       title: 'employee_id'.tr(),
@@ -124,10 +130,18 @@ class _ResumptionDetailsScreenState
                       subTitle: resumption.emdojn,
                     ),
                     titleHeaderText('comment'.tr()),
-                    Text(
-                      resumption.appRejComment ?? '',
-                      style: TextStyle(fontSize: 15.sp),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (resumption.prevComment?.trim().isNotEmpty ?? false)
+                          Text(resumption.prevComment!),
+                        if (resumption.appRejComment?.trim().isNotEmpty ??
+                            false)
+                          Text(resumption.appRejComment!),
+                      ],
                     ),
+
+                    10.heightBox,
                     if (widget.isLineManager ?? false)
                       inputField(
                         hint: 'Approve/Reject Comment'.tr(),
@@ -149,6 +163,8 @@ class _ResumptionDetailsScreenState
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
+                    print(widget.resumptionId);
+                    print('widget.resumptionId');
                     ref
                         .read(resumptionControllerProvider.notifier)
                         .approveRejectResumption(
@@ -156,6 +172,7 @@ class _ResumptionDetailsScreenState
                           requestId: widget.resumptionId.toString(),
                           approveRejectFlag: 'A',
                           context: context,
+                          leaveId: resumptionModel?.laslno ?? '',
                         );
                   },
                   onReject: () {
@@ -174,6 +191,7 @@ class _ResumptionDetailsScreenState
                           requestId: widget.resumptionId.toString(),
                           approveRejectFlag: 'R',
                           context: context,
+                          leaveId: resumptionModel?.laslno ?? '',
                         );
                   },
                 ),

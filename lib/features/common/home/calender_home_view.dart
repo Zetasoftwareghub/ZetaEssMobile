@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/core/utils/date_utils.dart';
 import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
 import 'package:zeta_ess/features/common/screens/drawer_screens/downloads_screen.dart';
 import 'package:zeta_ess/features/common/screens/drawer_screens/holiday_calendar_screen.dart';
@@ -664,7 +665,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
 
                   // Content
                   Padding(
-                    padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.all(9.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1144,7 +1145,12 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
     );
   }
 
+  // Add these properties to your widget class
+  String? selectedDate; // Add this to track selected date
+
   Widget _buildEnhancedCalendarDayItem(RegulariseCalendarDay day) {
+    final isSelected = selectedDate == day.date;
+
     final bgColor =
         day.colorCode.isNotEmpty
             ? (() {
@@ -1155,121 +1161,182 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
             })()
             : const Color(0xFF6C5CE7);
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(20.r),
-      onTap: () async {
-        final shiftDataResponse = await ref.read(
-          getEmployeeShiftProvider(day.date).future,
-        );
-        setState(() {
-          shiftData = shiftDataResponse;
-        });
-      },
-      onDoubleTap: () async {
-        HapticFeedback.mediumImpact();
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    AttendanceRegularisationScreen(regulariseDay: day),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
+    // Enhanced colors for selection state
+    final primaryColor = isSelected ? Colors.white : bgColor;
+    final textColor = isSelected ? bgColor : Colors.white;
+    final iconColor =
+        isSelected ? bgColor.withOpacity(0.8) : Colors.white.withOpacity(0.7);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20.r),
+        onTap: () async {
+          // Add haptic feedback for better UX
+          HapticFeedback.lightImpact();
+
+          // Update selected date
+          setState(() {
+            selectedDate = day.date;
+          });
+
+          final shiftDataResponse = await ref.read(
+            getEmployeeShiftProvider(day.date).future,
+          );
+          setState(() {
+            shiftData = shiftDataResponse;
+          });
+        },
+        onDoubleTap: () async {
+          HapticFeedback.mediumImpact();
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder:
+                  (context, animation, secondaryAnimation) =>
+                      AttendanceRegularisationScreen(regulariseDay: day),
+              transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+              ) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
                   ),
-                ),
-                child: child,
-              );
-            },
-          ),
-        ).then((_) => refreshCalendarData());
-      },
-      child: Container(
-        width: 90.w,
-        margin: EdgeInsets.only(right: 16.w),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              bgColor.withOpacity(0.9),
-              bgColor,
-              bgColor.withOpacity(0.7),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: bgColor.withOpacity(0.4),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+                  child: child,
+                );
+              },
             ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (day.hasRequest)
-                    Container(
-                      padding: EdgeInsets.all(4.w),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.9),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.exclamationmark,
-                        color: Colors.white,
-                        size: 10.sp,
-                      ),
+          ).then((_) => refreshCalendarData());
+        },
+        child: Container(
+          width: 90.w,
+          margin: EdgeInsets.only(right: 16.w),
+          decoration: BoxDecoration(
+            gradient:
+                isSelected
+                    ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white,
+                        Colors.white.withOpacity(0.95),
+                        Colors.white.withOpacity(0.9),
+                      ],
                     )
-                  else
-                    const SizedBox(),
-                  Icon(
-                    CupertinoIcons.clock,
-                    color: Colors.white.withOpacity(0.7),
-                    size: 14.sp,
-                  ),
-                ],
-              ),
-              Text(
-                day.day,
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 24.sp,
-                  color: Colors.white,
-                  height: 1,
-                ),
-              ),
-              Text(
-                day.title.length > 6
-                    ? '${day.title.substring(0, 6)}...'
-                    : day.title,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: Colors.white.withOpacity(0.9),
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                    : LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        bgColor.withOpacity(0.9),
+                        bgColor,
+                        bgColor.withOpacity(0.7),
+                      ],
+                    ),
+            borderRadius: BorderRadius.circular(20.r),
+            border: isSelected ? Border.all(color: bgColor, width: 2.w) : null,
+            boxShadow: [
+              BoxShadow(
+                color:
+                    isSelected
+                        ? bgColor.withOpacity(0.6)
+                        : bgColor.withOpacity(0.4),
+                blurRadius: isSelected ? 25 : 20,
+                offset: Offset(0, isSelected ? 12 : 10),
+                spreadRadius: isSelected ? 2 : 0,
               ),
             ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (day.hasRequest)
+                      Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? Colors.red.withOpacity(0.9)
+                                  : Colors.red.withOpacity(0.9),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          CupertinoIcons.exclamationmark,
+                          color: Colors.white,
+                          size: 10.sp,
+                        ),
+                      )
+                    else
+                      const SizedBox(),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        isSelected
+                            ? CupertinoIcons.clock_fill
+                            : CupertinoIcons.clock,
+                        color: iconColor,
+                        size: isSelected ? 16.sp : 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                // Enhanced day text with selection animation
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: isSelected ? 28.sp : 24.sp,
+                    color: textColor,
+                    height: 1,
+                    shadows:
+                        isSelected
+                            ? [
+                              Shadow(
+                                color: bgColor.withOpacity(0.3),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ]
+                            : [],
+                  ),
+                  child: Text(day.day),
+                ),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
+                  style: TextStyle(
+                    fontSize: isSelected ? 12.sp : 11.sp,
+                    color:
+                        isSelected
+                            ? textColor.withOpacity(0.8)
+                            : Colors.white.withOpacity(0.9),
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  ),
+                  child: Text(
+                    day.title.length > 6
+                        ? '${day.title.substring(0, 6)}...'
+                        : day.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1281,8 +1348,25 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 24.h),
-        if (shiftData != null && shiftData != '')
-          Text(shiftData ?? '', style: AppTextStyles.mediumFont()),
+        if (shiftData != null)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Shift Schedule for ${convertDateYYYMMDDtoStringDate(selectedDate)}',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+              Text(
+                (shiftData?.isEmpty ?? false) ? 'No Shift' : shiftData ?? '',
+                style: AppTextStyles.mediumFont(),
+              ),
+              10.heightBox,
+            ],
+          ),
         Text(
           'Pending Requests',
           style: TextStyle(

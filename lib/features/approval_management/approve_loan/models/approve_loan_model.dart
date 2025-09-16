@@ -1,5 +1,5 @@
 class ApproveLoanModel {
-  final String? suconn;
+  final String? suconn, sucode;
   final String? aprDate;
   final String? reqDate;
   final double amount;
@@ -12,6 +12,7 @@ class ApproveLoanModel {
 
   ApproveLoanModel({
     required this.suconn,
+    required this.sucode,
     required this.aprDate,
     required this.reqDate,
     required this.amount,
@@ -25,6 +26,7 @@ class ApproveLoanModel {
 
   Map<String?, dynamic> toJson() {
     return {
+      "sucode": sucode,
       'suconn': suconn,
       'aprDate': aprDate,
       'reqDate': reqDate,

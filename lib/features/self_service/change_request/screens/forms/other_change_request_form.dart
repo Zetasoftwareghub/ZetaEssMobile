@@ -27,6 +27,7 @@ class OtherChangeRequestForm extends ConsumerStatefulWidget {
 class _OtherChangeRequestFormState
     extends ConsumerState<OtherChangeRequestForm> {
   final TextEditingController otherChangeRequestCtrl = TextEditingController();
+  String? comment;
 
   @override
   void initState() {
@@ -45,6 +46,9 @@ class _OtherChangeRequestFormState
         getValueFromDetails(changeRequest.detail, "Other Change Request") ?? '';
 
     _isInitialized = true;
+    setState(() {
+      comment = changeRequest.comment ?? '';
+    });
   }
 
   @override
@@ -84,6 +88,10 @@ class _OtherChangeRequestFormState
             onChanged: (v) => updateField(ref, "Other Change Request", v),
             controller: otherChangeRequestCtrl,
           ),
+          if (widget.isLineManager)
+            Column(
+              children: [titleHeaderText("Comment"), labelText(comment ?? '')],
+            ),
         ],
       ),
     );

@@ -15,6 +15,7 @@ import 'package:zeta_ess/features/self_service/leave_management/screens/widgets/
 
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/error_text.dart';
 import '../../../../core/common/widgets/customDatePicker_widget.dart';
 import '../../../../core/common/widgets/customDropDown_widget.dart';
 import '../../../../core/common/widgets/customFilePicker_widget.dart';
@@ -228,7 +229,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                         },
                         error:
                             (error, stackTrace) =>
-                                Center(child: Text('$error')),
+                                ErrorText(error: '$error'),
                         loading: () => const Loader(),
                       ),
                 ),

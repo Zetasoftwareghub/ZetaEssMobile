@@ -43,6 +43,7 @@ class OtherRequestController extends Notifier<bool> {
           baseDirectory: ref.watch(userContextProvider).userBaseUrl ?? '',
           emmail: ref.watch(userContextProvider).empEminid,
           empMail: ref.watch(userContextProvider).empEminid,
+          sucode: ref.watch(userContextProvider).companyCode,
         );
     state = false;
 

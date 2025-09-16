@@ -26,6 +26,7 @@ class ApproveSalaryCertificateRepository {
 
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -48,7 +49,8 @@ class ApproveSalaryCertificateRepository {
   }) {
     return handleApiCall(() async {
       final data = {
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": certificateId,
         "apremcode": userContext.empCode,
         "rqnote": salaryModel.note,

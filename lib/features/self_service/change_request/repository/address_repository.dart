@@ -40,7 +40,7 @@ class AddressRepository {
         userContext.baseUrl + ChangeRequestApis.getAddressContactDetails,
         options: dioHeader(token: userContext.jwtToken),
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': employeeCode ?? userContext.empCode,
         },
       );

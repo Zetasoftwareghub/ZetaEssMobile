@@ -36,7 +36,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
   final TextEditingController passportNumberController =
       TextEditingController();
   final TextEditingController placeOfIssueController = TextEditingController();
-  String? issuedCountryCode, nationalityCode;
+  String? issuedCountryCode, nationalityCode, comment;
 
   bool _isInitialized = false;
 
@@ -61,6 +61,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
       nationalityCode = getValueFromDetails(details, "Nationality");
     });
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -83,10 +84,6 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
 
     return passportAsync.when(
       data: (passport) {
-        print(passport.passportHolder);
-        print(passport.expiryDate);
-        print('passport.passportHolder');
-        print(passport.issuedDate);
         return Column(
           children: [
             // Old Value Section
@@ -246,6 +243,13 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                               // ref.read(passportHolderValueProvider.notifier).state = value;
                             },
                   ),
+                  if (widget.isLineManager)
+                    Column(
+                      children: [
+                        titleHeaderText("Comment"),
+                        labelText(comment ?? ''),
+                      ],
+                    ),
                   100.heightBox,
                 ],
               ),

@@ -100,6 +100,7 @@ class _SubmitSalaryAdvanceScreenState
               final user = ref.read(userContextProvider);
               final submitModel = SubmitSalaryAdvanceModel(
                 suconn: user.companyConnection,
+                sucode: user.companyCode,
                 emcode: int.parse(user.empCode),
                 username: user.empName,
                 iSaid: int.parse(widget.advanceId ?? '0'),

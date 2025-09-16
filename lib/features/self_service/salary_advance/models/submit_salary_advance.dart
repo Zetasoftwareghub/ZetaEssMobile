@@ -1,6 +1,7 @@
 class SubmitSalaryAdvanceModel {
   final String? suconn;
   final int emcode;
+  final String sucode;
   final String? username;
   final int iSaid;
   final String? monthyear;
@@ -14,6 +15,7 @@ class SubmitSalaryAdvanceModel {
 
   SubmitSalaryAdvanceModel({
     required this.suconn,
+    required this.sucode,
     required this.emcode,
     required this.username,
     required this.iSaid,
@@ -30,6 +32,8 @@ class SubmitSalaryAdvanceModel {
   Map<String?, dynamic> toJson() {
     return {
       "suconn": suconn,
+      "sucode": sucode,
+
       "emcode": emcode,
       "username": username,
       "iSaid": iSaid,

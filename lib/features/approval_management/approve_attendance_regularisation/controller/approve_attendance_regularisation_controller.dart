@@ -27,7 +27,7 @@ class AttendanceRegulariseController extends Notifier<bool> {
   }) async {
     final repo = ref.read(approveAttendanceRegularisationRepositoryProvider);
     final userContext = ref.read(userContextProvider);
-
+    state = true;
     final res = await repo.approveRejectRegularisation(
       requestId: requestId,
       strEmailId: strEmailId,
@@ -35,7 +35,7 @@ class AttendanceRegulariseController extends Notifier<bool> {
       note: note,
       userContext: userContext,
     );
-
+    state = false;
     return res.fold(
       (l) {
         showSnackBar(context: context, content: 'Error occurred: ${l.errMsg}');

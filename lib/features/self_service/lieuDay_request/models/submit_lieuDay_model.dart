@@ -1,5 +1,6 @@
 class SubmitLieuDayRequest {
   final String rqldcode;
+  final String sucode;
   final String? suconn;
   final String? emcode;
   final String micode;
@@ -15,6 +16,7 @@ class SubmitLieuDayRequest {
 
   SubmitLieuDayRequest({
     required this.rqldcode,
+    required this.sucode,
     required this.suconn,
     required this.emcode,
     required this.micode,
@@ -32,6 +34,7 @@ class SubmitLieuDayRequest {
   factory SubmitLieuDayRequest.fromJson(Map<String, dynamic> json) {
     return SubmitLieuDayRequest(
       rqldcode: json['rqldcode'] ?? 0,
+      sucode: json['sucode'] ?? 0,
       suconn: json['suconn'] ?? '',
       emcode: json['emcode'] ?? '',
       micode: json['micode'] ?? '',
@@ -50,6 +53,7 @@ class SubmitLieuDayRequest {
   Map<String, dynamic> toJson() {
     return {
       'rqldcode': rqldcode,
+      "sucode": sucode,
       'suconn': suconn,
       'emcode': emcode,
       'micode': micode,

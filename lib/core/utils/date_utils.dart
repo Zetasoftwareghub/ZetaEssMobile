@@ -66,7 +66,7 @@ String convertMonthYearToMMYYYY(String? input) {
 String convertRawDateToString(String? rawDate) {
   if (rawDate == null) return '';
   final date = DateTime.parse(rawDate);
-  return DateFormat("MM/d/yyyy").format(date);
+  return DateFormat("dd/MM/yyyy").format(date);
 }
 
 String convertRawDateAndTimeToDate(String rawDate) {

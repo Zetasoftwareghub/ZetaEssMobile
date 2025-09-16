@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
+import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
 import 'package:zeta_ess/services/location_service.dart';
@@ -107,10 +109,10 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                 children: [
                   const Loader(),
                   8.widthBox,
-                  TextButton(
+                  ElevatedButton(
                     onPressed:
                         () => ref.refresh(liveLocationControllerProvider),
-                    child: Text('Retry'),
+                    child: Text('retry'.tr()),
                   ),
                 ],
               ),
@@ -122,11 +124,12 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
               children: [
                 SizedBox(
                   width: 200.w,
-                  child: ErrorText(
-                    error: errorMsg.replaceAll('Exception:', '').trim(),
+                  child: Text(
+                    errorMsg.replaceAll('Exception:', '').trim(),
+                    style: AppTextStyles.smallFont(color: AppTheme.errorColor),
                   ),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () => ref.refresh(liveLocationControllerProvider),
                   child: Text('retry'.tr()),
                 ),
@@ -144,7 +147,7 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
 
     return punchState.when(
       loading: () => const Loader(),
-      error: (e, _) => Center(child: Text("Error: $e")),
+      error: (e, _) => ErrorText(error: e.toString()),
       data: (punchList) {
         bool isCheckIn = _shouldCheckIn(punchList);
         final inTime = getFormattedPunchTime(punchList, 'in');
@@ -188,6 +191,19 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                         isPunching
                             ? null
                             : () async {
+                              if (ref.watch(userContextProvider).alternateID ==
+                                      null ||
+                                  ref.watch(userContextProvider).alternateID ==
+                                      '') {
+                                showCustomAlertBox(
+                                  context,
+                                  title: 'Alternate ID Missing',
+                                  content:
+                                      'Please contact HR to update your Alternate ID before punching in/out.',
+                                  type: AlertType.error,
+                                );
+                                return;
+                              }
                               ref.read(isPunchingProvider.notifier).state =
                                   true;
 

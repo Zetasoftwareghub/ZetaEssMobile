@@ -51,8 +51,6 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
   }
 
   void prefillFields(LoanDetailModel? model) {
-    print(model?.loanAmount);
-    print('model.loanAmount');
     if (hasPrefilled || model == null) return;
     periodController.text = model.approvedMonths.toString();
     amountController.text = model.loanAmount.toString();
@@ -224,6 +222,8 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
 
               final model = LoanSubmitRequestModel(
                 suconn: userContext.companyConnection,
+                sucode: userContext.companyCode,
+
                 emcode: int.parse(userContext.empCode),
                 lntype: int.parse(loanType.typeCode),
                 note: noteController.text,

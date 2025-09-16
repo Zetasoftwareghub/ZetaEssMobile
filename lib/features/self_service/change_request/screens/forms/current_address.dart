@@ -41,7 +41,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController personalEmailController = TextEditingController();
   final TextEditingController officialEmailController = TextEditingController();
-  String? countryCode;
+  String? countryCode, comment;
 
   bool _isInitialized = false;
 
@@ -56,6 +56,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
+
     addressLine1Controller.text =
         getValueFromDetails(details, "House No.") ?? '';
     streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
@@ -72,6 +73,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
         getValueFromDetails(details, "Official Email id") ?? '';
     setState(() => countryCode = getValueFromDetails(details, "Country"));
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -97,17 +99,19 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
       error: (err, _) => ErrorText(error: err.toString()),
       data: (data) {
         // current address
-        addressLine1Controller.text = data.addressLine1 ?? '';
-        streetNameController.text = data.streetName ?? '';
-        cityController.text = data.townCityName ?? '';
-        stateController.text = data.stateName ?? '';
-        countryController.text = data.countryCode ?? '';
-        postBoxController.text = data.postBox ?? '';
-        phoneNumberController.text = data.phoneNumber ?? '';
-        mobileNumberController.text = data.mobileNumber ?? '';
-        personalEmailController.text = data.emailId ?? '';
-        officialEmailController.text = data.emailId ?? '';
-        countryCode ??= data.countryCode ?? 'IND';
+        if (widget.reqId == null) {
+          addressLine1Controller.text = data.addressLine1 ?? '';
+          streetNameController.text = data.streetName ?? '';
+          cityController.text = data.townCityName ?? '';
+          stateController.text = data.stateName ?? '';
+          countryController.text = data.countryCode ?? '';
+          postBoxController.text = data.postBox ?? '';
+          phoneNumberController.text = data.phoneNumber ?? '';
+          mobileNumberController.text = data.mobileNumber ?? '';
+          personalEmailController.text = data.emailId ?? '';
+          officialEmailController.text = data.emailId ?? '';
+          countryCode ??= data.countryCode ?? 'IND';
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,6 +155,13 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
             SizedBox(height: 16.h),
             _formSection(readOnly: widget.isLineManager ?? false),
+            if (widget.isLineManager ?? false)
+              Column(
+                children: [
+                  titleHeaderText("Comment"),
+                  labelText(comment ?? ''),
+                ],
+              ),
             80.heightBox,
           ],
         );

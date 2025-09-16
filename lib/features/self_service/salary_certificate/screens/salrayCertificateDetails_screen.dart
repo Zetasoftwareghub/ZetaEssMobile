@@ -97,8 +97,6 @@ class _SalaryCertificateDetailsScreenState
                       subTitle: details.remarks ?? "-",
                     ),
 
-                    // -- section: Address Name
-                    titleHeaderText("address_name".tr()),
                     detailInfoRow(
                       title: "address_name".tr(),
                       subTitle: details.accountName ?? "-",
@@ -106,15 +104,16 @@ class _SalaryCertificateDetailsScreenState
 
                     if ((details.approvalOrRejectionComment?.isNotEmpty ??
                             false) ||
-                        (details.lineManagerComment?.isNotEmpty ?? false))
+                        (details.lineManagerComment?.isNotEmpty ?? false)) ...[
                       titleHeaderText("comment".tr()),
-                    Text(
-                      details.approvalOrRejectionComment?.isNotEmpty == true
-                          ? details.approvalOrRejectionComment!
-                          : details.lineManagerComment?.isNotEmpty == true
-                          ? details.lineManagerComment!
-                          : details.previousComment ?? '',
-                    ),
+                      Text(
+                        details.approvalOrRejectionComment?.isNotEmpty == true
+                            ? details.approvalOrRejectionComment!
+                            : details.lineManagerComment?.isNotEmpty == true
+                            ? details.lineManagerComment!
+                            : details.previousComment ?? '',
+                      ),
+                    ],
 
                     10.heightBox,
                     if (widget.isLineManager ?? false)

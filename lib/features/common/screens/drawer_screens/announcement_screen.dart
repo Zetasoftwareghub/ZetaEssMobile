@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 
 import '../../../../core/common/alert_dialog/custom_bottomSheets.dart';
@@ -20,16 +21,16 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
   @override
   Widget build(BuildContext context) {
     final announcementsAsync = ref.watch(announcementProvider);
-    return announcementsAsync.when(
-      data:
-          (announcements) => Scaffold(
-            appBar: AppBar(title: Text("announcements".tr())),
+    return Scaffold(
+      appBar: AppBar(title: Text("announcements".tr())),
 
-            body: SafeArea(
-              child: Padding(
-                padding: AppPadding.screenPadding,
+      body: SafeArea(
+        child: Padding(
+          padding: AppPadding.screenPadding,
 
-                child: ListView.builder(
+          child: announcementsAsync.when(
+            data:
+                (announcements) => ListView.builder(
                   shrinkWrap: true,
                   itemCount: announcements.length,
                   itemBuilder: (context, index) {
@@ -155,13 +156,14 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                     );
                   },
                 ),
-              ),
-            ),
+            loading:
+                () => const CustomScreenLoader(
+                  loadingText: 'Loading Announcements...',
+                ),
+            error: (err, stack) => ErrorText(error: err.toString()),
           ),
-      loading:
-          () =>
-              const CustomScreenLoader(loadingText: 'Loading Announcements...'),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+        ),
+      ),
     );
   }
 }

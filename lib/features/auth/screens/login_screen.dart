@@ -130,8 +130,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           );
                         },
                         error:
-                            (error, stackTrace) =>
-                                ErrorText(error: error.toString()),
+                            (error, stackTrace) => Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text('Server connection lost'.tr()),
+                                ElevatedButton(
+                                  onPressed:
+                                      () => ref.invalidate(companyListProvider),
+                                  child: Text('Retry'),
+                                ),
+                              ],
+                            ),
                         loading: () => Loader(),
                       ),
                   SizedBox(height: 8.h),
@@ -156,14 +165,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ] else ...[
                     CustomElevatedButton(
                       onPressed: () {
-                        if (ref.read(userCompanyProvider) == null) {
-                          showCustomAlertBox(
-                            context,
-                            title: 'Please select company',
-                            type: AlertType.error,
-                          );
-                          return;
-                        }
                         if (_formKey.currentState!.validate() &&
                             ref.watch(userCompanyProvider) != null) {
                           ref
@@ -174,10 +175,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 context: context,
                               );
                         } else {
-                          showSnackBar(
-                            content: "please_enter_valid_data".tr(),
-                            context: context,
-                            color: AppTheme.errorColor,
+                          showCustomAlertBox(
+                            context,
+                            title:
+                                _formKey.currentState!.validate() &&
+                                        ref.read(userCompanyProvider) == null
+                                    ? 'Please select company'
+                                    : "please_enter_valid_data".tr(),
+                            type: AlertType.error,
                           );
                         }
                       },

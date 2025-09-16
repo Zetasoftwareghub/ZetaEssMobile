@@ -46,9 +46,6 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
             loading: () => const Loader(),
             error: (err, _) => Center(child: Text('Error: $err')),
             data: (lieuDay) {
-              print(
-                '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
-              );
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +65,7 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                     ),
                     detailInfoRow(
                       title: 'remarks'.tr(),
-                      belowValue:
+                      subTitle:
                           lieuDay.remark.isNotEmpty ? lieuDay.remark : '-',
                     ),
                     titleHeaderText('attachments'.tr()),
@@ -108,16 +105,20 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                       title: 'date_of_joining'.tr(),
                       subTitle: lieuDay.dateOfJoining,
                     ),
+                    detailInfoRow(
+                      title: 'remark'.tr(),
+                      subTitle: lieuDay.remark,
+                    ),
                     if (lieuDay.previousComment.isNotEmpty) ...[
                       titleHeaderText('Comment'),
                       Text(lieuDay.previousComment),
                     ],
                     10.heightBox,
-                   if( widget.isLineManager ?? false)
-                        inputField(
-                          hint: 'Approve/Reject Comment'.tr(),
-                          controller: commentController,
-                        ),
+                    if (widget.isLineManager ?? false)
+                      inputField(
+                        hint: 'Approve/Reject Comment'.tr(),
+                        controller: commentController,
+                      ),
 
                     // if (!(widget.isLineManager ?? false)) ...[
 

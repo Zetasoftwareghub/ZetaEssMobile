@@ -31,6 +31,7 @@ class LeaveSubmissionRequest {
   });
 
   Map<String, dynamic> toJson(
+    String suconn,
     String sucode,
     String emcode,
     String username,
@@ -40,7 +41,9 @@ class LeaveSubmissionRequest {
     return {
       "mediafile": file,
       "mediaExtension": fileExt,
-      "suconn": sucode,
+      "suconn": suconn,
+      "sucode": sucode,
+      "sucode": sucode,
       "emcode": emcode,
       "username": username,
       "userid": userId,

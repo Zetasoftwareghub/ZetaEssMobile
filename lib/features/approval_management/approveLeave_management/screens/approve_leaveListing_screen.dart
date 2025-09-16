@@ -12,17 +12,30 @@ import '../../../../core/utils.dart';
 import '../../../self_service/leave_management/screens/leaveDetail_screen.dart';
 import '../models/approve_leave_listing_model.dart';
 
-class ApproveLeaveListingScreen extends ConsumerWidget {
+class ApproveLeaveListingScreen extends ConsumerStatefulWidget {
   final String title;
   const ApproveLeaveListingScreen({super.key, required this.title});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ApproveLeaveListingScreen> createState() =>
+      _ApproveLeaveListingScreenState();
+}
+
+class _ApproveLeaveListingScreenState
+    extends ConsumerState<ApproveLeaveListingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.invalidate(approveLeaveListProvider));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final leaveList = ref.watch(approveLeaveListProvider);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: Text(title.tr())),
+        appBar: AppBar(title: Text(widget.title.tr())),
         body: Column(
           children: [
             TabBar(

@@ -46,6 +46,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
   final TextEditingController phoneCtrl3 = TextEditingController();
   final TextEditingController emailCtrl3 = TextEditingController();
   bool _isInitialized = false;
+  String? comment;
 
   @override
   void initState() {
@@ -58,7 +59,6 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
-
     nameCtrl1.text = getValueFromDetails(details, "Contact 1") ?? '';
     relationCtrl1.text = getValueFromDetails(details, "Relation 1") ?? '';
     phoneCtrl1.text = getValueFromDetails(details, "Phone No. 1") ?? '';
@@ -74,6 +74,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     phoneCtrl3.text = getValueFromDetails(details, "Phone No 3") ?? '';
     emailCtrl3.text = getValueFromDetails(details, "Email Id 3") ?? '';
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -98,17 +99,19 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
       loading: () => const Loader(),
       error: (err, _) => ErrorText(error: err.toString()),
       data: (data) {
-        nameCtrl1.text = data.emergencyPerson ?? '';
-        relationCtrl1.text = data.emergencyRelation ?? '';
-        phoneCtrl1.text = data.emergencyPhone ?? '';
+        if (widget.reqId == null) {
+          nameCtrl1.text = data.emergencyPerson ?? '';
+          relationCtrl1.text = data.emergencyRelation ?? '';
+          phoneCtrl1.text = data.emergencyPhone ?? '';
 
-        nameCtrl2.text = data.emergencyPerson1 ?? '';
-        relationCtrl2.text = data.emergencyRelation1 ?? '';
-        phoneCtrl2.text = data.emergencyPhone1 ?? '';
+          nameCtrl2.text = data.emergencyPerson1 ?? '';
+          relationCtrl2.text = data.emergencyRelation1 ?? '';
+          phoneCtrl2.text = data.emergencyPhone1 ?? '';
 
-        nameCtrl3.text = data.emergencyPerson2 ?? '';
-        relationCtrl3.text = data.emergencyRelation2 ?? '';
-        phoneCtrl3.text = data.emergencyPhone2 ?? '';
+          nameCtrl3.text = data.emergencyPerson2 ?? '';
+          relationCtrl3.text = data.emergencyRelation2 ?? '';
+          phoneCtrl3.text = data.emergencyPhone2 ?? '';
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,6 +136,13 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
 
             SizedBox(height: 16.h),
             _formSection(readOnly: widget.isLineManager ?? false),
+            if (widget.isLineManager ?? false)
+              Column(
+                children: [
+                  titleHeaderText("Comment"),
+                  labelText(comment ?? ''),
+                ],
+              ),
             80.heightBox,
           ],
         );

@@ -52,6 +52,7 @@ class AuthController extends Notifier<bool> {
         .forgotPassword(
           userContext: ref.watch(userContextProvider),
           userId: userId,
+          sucode: ref.watch(userCompanyProvider)?.companyCode.toString() ?? '0',
         );
     state = false;
     res.fold(
@@ -115,10 +116,10 @@ class AuthController extends Notifier<bool> {
 
     return res.fold(
       (l) {
-        NavigationService.navigateRemoveUntil(
-          context: context,
-          screen: ActivationUrlScreen(),
-        );
+        // NavigationService.navigateRemoveUntil(
+        //   context: context,
+        //   screen: ActivationUrlScreen(),
+        // );
         throw Exception(l.errMsg);
       },
       (companies) async {
@@ -290,13 +291,15 @@ class AuthController extends Notifier<bool> {
       final user = userCredential.user;
 
       if (user != null && user.email != null) {
-        print(user.email!);
-        print("user.email");
         await ssoLogin(email: user.email!, context: context);
       }
     } catch (e) {
-      print('Google Sign-In Error: $e');
-      showSnackBar(context: context, content: 'Google Sign-In failed: $e');
+      state = false;
+      showSnackBar(
+        context: context,
+        content: 'Google Sign-In failed',
+        color: AppTheme.errorColor,
+      );
     }
   }
 }

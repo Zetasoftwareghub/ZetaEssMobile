@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,6 +67,7 @@ class _SuggestionFeedbackScreenState
               ),
               15.heightBox,
               FileUploadButton(),
+              100.heightBox,
             ],
           ),
         ),
@@ -92,10 +95,10 @@ class _SuggestionFeedbackScreenState
                       );
                       return;
                     }
-
                     final user = ref.read(userContextProvider);
                     final filedData = ref.read(fileUploadProvider).value;
                     final suggestionModel = SuggestionModel(
+                      sucode: user.companyCode,
                       suconn: user.companyConnection,
                       id: 0,
                       emcode: user.empCode,
@@ -103,9 +106,9 @@ class _SuggestionFeedbackScreenState
                       subject: messageController.text,
                       description: descriptionController.text,
                       drpType: dropDownValue,
-                      baseDirectory: user.baseDirectory,
+                      baseDirectory: user.userBaseUrl,
                       mediafile: filedData?.base64 ?? '',
-                      filename: filedData?.extension,
+                      filename: generateUniqueFileName(filedData?.extension),
                     );
                     ref
                         .read(commonControllerProvider.notifier)
@@ -118,5 +121,11 @@ class _SuggestionFeedbackScreenState
                 ),
               ),
     );
+  }
+
+  String generateUniqueFileName(String? extension) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(9999);
+    return "file_${timestamp}_$random.${extension ?? 'txt'}";
   }
 }

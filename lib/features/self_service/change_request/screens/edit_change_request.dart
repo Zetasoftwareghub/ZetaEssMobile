@@ -56,6 +56,8 @@ class _EditChangeRequestScreenState
   }
 
   getWhichEditScreen() {
+    printFullJson(widget.chrqcd);
+    printFullJson("widget.chrqcd");
     switch (widget.chrqst) {
       case "O":
         screen = OtherChangeRequestForm(
@@ -146,6 +148,7 @@ class _EditChangeRequestScreenState
                         12.heightBox,
                       ],
                     ),
+
                   screen ?? const SizedBox(),
                 ],
               ),
@@ -165,6 +168,8 @@ class _EditChangeRequestScreenState
                           final approveChangeRequestModel =
                               ApproveChangeRequestModel(
                                 suconn: userContext.companyConnection,
+                                sucode: userContext.companyCode,
+
                                 chRqCd: widget.chrqcd ?? 0,
                                 chApBy: userContext.empName,
                                 bcSlNo:
@@ -190,6 +195,8 @@ class _EditChangeRequestScreenState
                           final approveChangeRequestModel =
                               ApproveChangeRequestModel(
                                 suconn: userContext.companyConnection,
+                                sucode: userContext.companyCode,
+
                                 chRqCd: widget.chrqcd ?? 0,
                                 chApBy: userContext.empName,
                                 bcSlNo: '0',
@@ -223,6 +230,8 @@ class _EditChangeRequestScreenState
                     final user = ref.watch(userContextProvider);
                     final saveModel = ChangeRequestModel(
                       suconn: user.companyConnection ?? '',
+                      sucode: user.companyCode,
+
                       chrqcd: widget.chrqcd,
                       chrqtp: widget.chrqst,
                       emcode: int.parse(user.empCode),

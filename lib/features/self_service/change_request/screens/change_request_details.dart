@@ -89,10 +89,11 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                     final userContext = ref.watch(userContextProvider);
                     final approveChangeRequestModel = ApproveChangeRequestModel(
                       suconn: userContext.companyConnection,
+                      sucode: userContext.companyCode,
                       chRqCd: changeRequestModel?.chrqcd ?? 0,
                       chApBy: changeRequestModel?.chapby,
                       bcSlNo: '0',
-                      chapnt: changeRequestModel?.chapnt,
+                      chapnt: changeRequestModel?.comment,
                       emCode: userContext.empCode,
                       chtype: changeRequestModel?.chrqst, //TODO check with api
                       aprFlag: 'A',
@@ -109,10 +110,12 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
 
                     final approveChangeRequestModel = ApproveChangeRequestModel(
                       suconn: userContext.companyConnection,
+                      sucode: userContext.companyCode,
+
                       chRqCd: changeRequestModel?.chrqcd ?? 0,
                       chApBy: changeRequestModel?.chapby,
                       bcSlNo: '0',
-                      chapnt: changeRequestModel?.chapnt,
+                      chapnt: changeRequestModel?.comment,
                       emCode: userContext.empCode,
                       chtype: changeRequestModel?.chrqst, //TODO check with api
                       aprFlag: 'R',

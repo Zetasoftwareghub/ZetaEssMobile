@@ -49,6 +49,7 @@ class LieuDayRepository {
       final response = await dio.post(
         userContext.baseUrl + LieuDayApis.getLieuDays,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'userid': userContext.esCode,
@@ -73,6 +74,7 @@ class LieuDayRepository {
       final response = await dio.post(
         userContext.baseUrl + LieuDayApis.getLieuDayDetails,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'rqldcode': lieuDayId,
@@ -95,6 +97,7 @@ class LieuDayRepository {
       final response = await dio.post(
         userContext.baseUrl + LieuDayApis.deleteLieuDay,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'id': lieuDayId,
           'mi_code': '0',

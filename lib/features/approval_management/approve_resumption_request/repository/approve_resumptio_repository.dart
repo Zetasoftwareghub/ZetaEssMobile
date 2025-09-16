@@ -23,6 +23,7 @@ class ApproveResumptionRepository {
         userContext.baseUrl + ApproveApis.getApproveResumptionList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -41,6 +42,7 @@ class ApproveResumptionRepository {
     required String note,
     required String requestId,
     required String approveRejectFlag,
+    required String leaveId,
   }) {
     return handleApiCall(() async {
       final data = {
@@ -49,7 +51,9 @@ class ApproveResumptionRepository {
         "strEmcode": userContext.empCode,
         "username": userContext.empName,
         "strNote": note,
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        'strlaslno': leaveId,
       };
 
       final response = await dio.post(

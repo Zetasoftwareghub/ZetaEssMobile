@@ -23,7 +23,7 @@ class ExpenseClaimRepository {
   }) async {
     try {
       final data = {
-        'suconn': userContext.companyConnection,
+        'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
         'emcode': int.parse(userContext.empCode),
         'userid': int.parse(userContext.esCode),
       };
@@ -53,7 +53,7 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.submitExpenseClaim,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': int.parse(userContext.empCode),
           'username': userContext.empName,
           "baseDirectory": '', //TODO give this ! frmo locall
@@ -74,7 +74,7 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.deleteExpenseClaims,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'id': claimId,
           'escode': userContext.esCode,
         },
@@ -94,7 +94,7 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.getExpenseClaimDetails,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'id': claimId,
           'emcode': userContext.empCode,
         },

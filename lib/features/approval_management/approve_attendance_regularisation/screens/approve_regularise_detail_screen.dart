@@ -40,6 +40,7 @@ class _AttendanceRegularizationApproveState
   String prevComment = "";
   String lmComment = "";
   bool _isLoading = false;
+  bool _approveLoading = false;
 
   @override
   void initState() {
@@ -646,41 +647,48 @@ class _AttendanceRegularizationApproveState
       ),
       bottomSheet:
           (widget.isApproveTab ?? false)
-              ? SafeArea(
-                child: ApproveRejectButtons(
-                  onApprove: () {
-                    ref
-                        .read(approveRegulariseControllerProvider.notifier)
-                        .approveRejectRegularise(
-                          note: noteController.text,
-                          requestId: widget.id ?? '0',
-                          approveRejectFlag: 'A',
-                          context: context,
-                          strEmailId: sdetails?.dLsrdtf ?? '',
-                        );
-                  },
-                  onReject: () {
-                    if (noteController.text.isEmpty) {
-                      showCustomAlertBox(
-                        context,
-                        title: 'Please give reject comment',
-                        type: AlertType.error,
-                      );
+              ? _approveLoading
+                  ? Loader()
+                  : SafeArea(
+                    child: ApproveRejectButtons(
+                      onApprove: () async {
+                        setState(() => _approveLoading = true);
+                        await ref
+                            .read(approveRegulariseControllerProvider.notifier)
+                            .approveRejectRegularise(
+                              note: noteController.text,
+                              requestId: widget.id ?? '0',
+                              approveRejectFlag: 'A',
+                              context: context,
+                              strEmailId: sdetails?.dLsrdtf ?? '',
+                            );
+                        setState(() => _approveLoading = false);
+                      },
+                      onReject: () async {
+                        if (noteController.text.isEmpty) {
+                          showCustomAlertBox(
+                            context,
+                            title: 'Please give reject comment',
+                            type: AlertType.error,
+                          );
 
-                      return;
-                    }
-                    ref
-                        .read(approveRegulariseControllerProvider.notifier)
-                        .approveRejectRegularise(
-                          note: noteController.text,
-                          requestId: widget.id ?? '0',
-                          approveRejectFlag: 'R',
-                          context: context,
-                          strEmailId: sdetails?.dLsrdtf ?? '',
-                        );
-                  },
-                ),
-              )
+                          return;
+                        }
+                        setState(() => _approveLoading = true);
+
+                        await ref
+                            .read(approveRegulariseControllerProvider.notifier)
+                            .approveRejectRegularise(
+                              note: noteController.text,
+                              requestId: widget.id ?? '0',
+                              approveRejectFlag: 'R',
+                              context: context,
+                              strEmailId: sdetails?.dLsrdtf ?? '',
+                            );
+                        setState(() => _approveLoading = false);
+                      },
+                    ),
+                  )
               : null,
     );
   }

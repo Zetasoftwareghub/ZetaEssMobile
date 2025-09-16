@@ -41,14 +41,12 @@ class SalaryAdvanceRepository {
     required UserContext userContext,
   }) async {
     final data = {
+      'sucode': userContext.companyCode,
       'suconn': userContext.companyConnection,
       'emcode': userContext.empCode,
-      // 'userid': userContext.esCode,
+      'userid': userContext.esCode,
       // 'micode': 84,
     };
-
-    print(data);
-    print('salaryList');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + SalaryAdvanceApis.getSalaryAdvanceList,
@@ -56,8 +54,6 @@ class SalaryAdvanceRepository {
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
-      printFullJson(response.data);
-      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return SalaryAdvanceListResponse.fromJson(response.data);
       } else {
@@ -74,6 +70,7 @@ class SalaryAdvanceRepository {
       final response = await dio.post(
         userContext.baseUrl + SalaryAdvanceApis.getSalaryAdvanceDetails,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'id': salaryAdvanceId,
@@ -96,6 +93,7 @@ class SalaryAdvanceRepository {
       final response = await dio.post(
         userContext.baseUrl + SalaryAdvanceApis.deleteSalaryAdvance,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'id': int.parse(salaryAdvanceId ?? '0'),
           'username': userContext.empName,

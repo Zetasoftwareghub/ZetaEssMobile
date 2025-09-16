@@ -20,7 +20,9 @@ class ApproveAttendanceRegularisationRepository {
     return handleApiCall(() async {
       final data = {
         'userid': userContext.esCode,
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
+
         'emcode': userContext.empCode,
       };
 
@@ -54,7 +56,8 @@ class ApproveAttendanceRegularisationRepository {
         "strRemrk": note,
         "strEmalid": strEmailId,
         "strAprtyp": approveRejectFlag == 'A' ? '1' : '2',
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "url": userContext.baseUrl,
         "baseDirectory": "",
         "eminid": userContext.empEminid,

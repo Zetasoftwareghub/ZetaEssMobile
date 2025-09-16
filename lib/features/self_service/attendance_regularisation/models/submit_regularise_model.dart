@@ -23,6 +23,7 @@ class SubmitRegulariseModel {
     required String empname,
     required String suconn,
     required String url,
+    required String sucode,
   }) {
     return {
       "emalid": emalid,
@@ -30,6 +31,7 @@ class SubmitRegulariseModel {
       "emcode": emcode,
       "empname": empname,
       "suconn": suconn,
+      "sucode": sucode,
       "remark": remark,
       "archkdat": archkdat.join(","),
       "arckdate": arckdate.join(","),

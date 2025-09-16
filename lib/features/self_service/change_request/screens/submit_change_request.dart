@@ -362,6 +362,8 @@ class _SubmitChangeRequestScreenState
                           final user = ref.watch(userContextProvider);
                           final saveModel = ChangeRequestModel(
                             suconn: user.companyConnection ?? '',
+                            sucode: user.companyCode,
+
                             chrqcd: 0,
                             chrqtp: requestType,
                             emcode: int.parse(user.empCode),

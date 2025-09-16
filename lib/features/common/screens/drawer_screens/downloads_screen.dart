@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
+import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/features/common/models/download_model.dart';
 
 import '../../providers/common_ui_providers.dart';
@@ -205,7 +207,7 @@ class DownloadsScreen extends ConsumerWidget {
                     return _AwesomeDownloadTile(
                       doc: doc,
                       index: index,
-                      onTap: () => _handleFileTap(context, doc),
+                      onTap: () => _handleFileTap(context, doc, ref),
                     );
                   },
                 ),
@@ -217,27 +219,20 @@ class DownloadsScreen extends ConsumerWidget {
     );
   }
 
-  void _handleFileTap(BuildContext context, DocumentModel doc) {
-    doc.fileKey;
-    print(doc.fileKey);
-    print(doc.fileName);
-    print(doc.description);
-    print("doc.fileName");
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Row(
-    //       children: [
-    //         Icon(Icons.open_in_new_rounded, color: Colors.white),
-    //         SizedBox(width: 8.w),
-    //         Expanded(child: Text('Opening ${doc.fileName}')),
-    //       ],
-    //     ),
-    //     behavior: SnackBarBehavior.floating,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(12.r),
-    //     ),
-    //   ),
-    // );
+  Future<void> _handleFileTap(
+    BuildContext context,
+    DocumentModel doc,
+    WidgetRef ref,
+  ) async {
+    final fullUrl =
+        '${ref.watch(userContextProvider).userBaseUrl}/DownloadFormats/${doc.fileKey}';
+    final uri = Uri.parse(fullUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $fullUrl");
+    }
   }
 }
 

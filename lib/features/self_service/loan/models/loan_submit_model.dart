@@ -1,5 +1,6 @@
 class LoanSubmitRequestModel {
   final String? suconn;
+  final String? sucode;
   final int emcode;
   final int lntype;
   final String? note;
@@ -15,6 +16,7 @@ class LoanSubmitRequestModel {
 
   LoanSubmitRequestModel({
     required this.suconn,
+    required this.sucode,
     required this.emcode,
     required this.lntype,
     required this.note,
@@ -31,6 +33,8 @@ class LoanSubmitRequestModel {
 
   Map<String?, dynamic> toJson() => {
     "suconn": suconn,
+    "sucode": sucode,
+
     "emcode": emcode,
     "lntype": lntype,
     "note": note,

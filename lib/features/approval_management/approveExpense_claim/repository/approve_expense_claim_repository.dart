@@ -24,6 +24,7 @@ class ApproveExpenseClaimRepository {
         userContext.baseUrl + ApproveApis.getApproveExpenseClaimList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -47,7 +48,8 @@ class ApproveExpenseClaimRepository {
   }) {
     return handleApiCall(() async {
       final data = {
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": requestId,
         "apremcode": userContext.empCode,
         "emcode": expenseClaim.empCode,
@@ -85,7 +87,26 @@ class ApproveExpenseClaimRepository {
     required ExpenseClaimModel expenseClaim,
   }) {
     return handleApiCall(() async {
-      final data = {};
+      final data = {
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        "id": expenseClaim.expenseClaimId,
+        "apremcode": userContext.empCode,
+        "emcode": expenseClaim.empCode,
+        "uname": expenseClaim.employeeName,
+        "rqnote": expenseClaim.note,
+        "apnote": note,
+        "mnthyr": "${expenseClaim.month}/${expenseClaim.year}",
+        "crcode": "INR",
+        "conrate": "1.00",
+        "apramt": "0",
+        "rqdt": expenseClaim.reqdate,
+        "rqamt": expenseClaim.amount,
+        "cocode": 0,
+        "url": "string",
+        "apprMonthYear": "",
+        "baseDirectory": "string",
+      };
       print(data);
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.rejectExpenseClaim,

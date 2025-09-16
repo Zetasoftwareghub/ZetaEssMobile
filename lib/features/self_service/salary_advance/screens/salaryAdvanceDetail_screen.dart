@@ -9,6 +9,7 @@ import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/salary_advance/models/salary_advance_details.dart';
 
+import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../controller/salary_advance_controller.dart';
@@ -100,6 +101,13 @@ class _SalaryAdvanceDetailScreenState
                           hint: 'Approve amount'.tr(),
                           controller: amountController,
                           keyboardType: TextInputType.number,
+                          onChanged: (amount) {
+                            validateApproveAmount(
+                              context: context,
+                              controller: amountController,
+                              requestedAmount: advance.amount,
+                            );
+                          },
                         ),
                         10.heightBox,
                         inputField(
@@ -122,6 +130,13 @@ class _SalaryAdvanceDetailScreenState
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
+                    final isValid = validateApproveAmount(
+                      context: context,
+                      controller: amountController,
+                      requestedAmount: salaryDetails?.amount ?? '0',
+                    );
+
+                    if (!isValid) return;
                     if (amountController.text.isEmpty) {
                       showCustomAlertBox(
                         context,

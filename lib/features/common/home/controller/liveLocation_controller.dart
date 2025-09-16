@@ -30,10 +30,19 @@ class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
         }
       }
 
-      if (permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.deniedForever ||
+          permission == LocationPermission.unableToDetermine) {
         throw Exception('Location permissions are permanently denied.');
       }
 
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        state = AsyncValue.error(
+          'Location services are disabled. Please enable location services.',
+          StackTrace.current,
+        );
+        return;
+      }
       // Start listening to location changes
       _positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
@@ -61,7 +70,12 @@ class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
 
       if (placemarks.isNotEmpty) {
         final place = placemarks[0];
-        return '${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}';
+        return [
+          place.street, // e.g. "350 5th Ave"
+          place.subLocality, // e.g. "Manhattan"
+          place.locality, // e.g. "New York"
+          place.country, // e.g. "USA"
+        ].where((e) => e != null && e.isNotEmpty).join(', ');
       }
       return 'Unknown location';
     } catch (_) {

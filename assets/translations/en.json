@@ -284,7 +284,7 @@
   "lieu_day_approve": "Approve Lieu Day",
   "schooling_allowance_approve": "Approve Schooling Allowance",
   "salary_advance_approve": "Approve Salary Advance",
-  "expense_claim_approve": "Approve Expense Claim",
+  "expense_claim_approve": "Approve Expense Claim Request",
   "loan_approve": "Approve Loan",
   "attendance_regularisation_approve": "Approve Attendance Regularisation",
 
@@ -304,7 +304,7 @@
   "Submitted Successfully": "Submitted Successfully",
   "Total leave days": "Total leave days",
   "annual_leave": "Annual Leave",
-  "salary_certificate_approve": "Salary Certificate Approved",
+  "salary_certificate_approve": "Salary Certificate Approve",
   "approval_management": "Approval Management",
   "Log out": "Log out",
   "No punch data available": "No punch data available",

@@ -211,11 +211,11 @@ class _SubmitExpenseClaimScreenState
                       hintText: "select_type".tr(),
                     );
                   },
-                  error: (error, _) => Center(child: Text('$error')),
+                  error: (error, _) => ErrorText(error: error.toString()),
                   loading: () => const Loader(),
                 ),
 
-            // 12.heightBox,
+            100.heightBox,
             // FileUploadButton(),
             // labelText('note'.tr()),
             // inputField(

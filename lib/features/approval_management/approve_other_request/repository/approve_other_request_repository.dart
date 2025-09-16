@@ -26,6 +26,7 @@ class ApproveOtherRequestRepository {
         userContext.baseUrl +
             OtherRequestApis.getApprovalOtherRequestFirstListing,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -58,7 +59,7 @@ class ApproveOtherRequestRepository {
   //     final response = await dio.post(
   //       userContext.baseUrl + OtherRequestApis.getOtherRequestList,
   //       data: {
-  //         'suconn': userContext.companyConnection,
+  //         'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
   //         'emcode': userContext.empCode,
   //         'userid': userContext.esCode,
   //         'rfcode': requestId,
@@ -82,6 +83,7 @@ class ApproveOtherRequestRepository {
     return handleApiCall(() async {
       final data = {
         'userid': userContext.esCode,
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
         'emcode': userContext.empCode,
         "username": userContext.empName,
@@ -118,7 +120,8 @@ class ApproveOtherRequestRepository {
         "comment": note,
         "emcode": userContext.empCode,
         "micode": micode,
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "flag": approveRejectFlag,
         "requestName": requestName,
         "baseDirectory": userContext.baseDirectory,

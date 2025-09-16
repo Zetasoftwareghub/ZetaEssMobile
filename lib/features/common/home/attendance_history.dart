@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
 import 'package:zeta_ess/features/common/home/widgets/todayPunch_widget.dart';
@@ -71,7 +72,7 @@ class AttendanceListSection extends StatelessWidget {
           final punchDetails = ref.watch(punchDetailsProvider);
           return punchDetails.when(
             loading: () => const Loader(),
-            error: (error, _) => Center(child: Text('$error')),
+            error: (error, _) => ErrorText(error: error.toString()),
             data: (punchList) {
               if (punchList.isEmpty) {
                 return SizedBox(

@@ -606,11 +606,6 @@ class _SubmitEditOtherRequestState
       // Build the submission data
       final formData = await _buildSubmissionData();
 
-      // Print submission data for debugging
-      print(
-        'Submission data: ${formData.map((e) => {'rqtscd': e.rqtscd, 'rtenvl': e.rtenvl, 'rtcont': e.rtcont, 'rtflnm': e.rtflnm, 'rtescd': e.rtescd}).toList()}',
-      );
-
       // Submit to your API
       ref
           .read(otherRequestControllerProvider.notifier)

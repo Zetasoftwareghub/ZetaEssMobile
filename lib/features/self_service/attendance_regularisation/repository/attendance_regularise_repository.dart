@@ -20,7 +20,8 @@ Future getCalendarData({
     final response = await Dio().post(
       "${userContext.baseUrl}/api/Leave/BindMyCalendar_MobileApp/getCalendarData",
       data: {
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "strEmcodes": userContext.empEminid,
         "dtStart": dateFrom.toString(),
         "dtEnd": dateTo.toString(),
@@ -57,6 +58,7 @@ class AttendanceRegulariseRepository {
           empname: userContext.empName,
           suconn: userContext.companyConnection ?? '',
           url: userContext.baseUrl,
+          sucode: userContext.companyCode,
         ),
         options: dioHeader(token: userContext.jwtToken),
       );
@@ -72,7 +74,8 @@ class AttendanceRegulariseRepository {
       final response = await dio.post(
         userContext.baseUrl + RegulariseApis.getCalendarDetails,
         data: {
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           "strEmalid": userContext.empEminid,
           "dtAttDate": regulariseDate,
           "strAtStat": "E",
@@ -102,7 +105,8 @@ class AttendanceRegulariseRepository {
       final response = await Dio().post(
         userContext.baseUrl + RegulariseApis.getCalendarData,
         data: {
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           "strEmcodes": userContext.empCode,
           "dtStart": dateFrom,
           "dtEnd": dateTo,

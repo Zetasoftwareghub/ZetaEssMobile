@@ -12,11 +12,13 @@ class ChangeRequestModel {
   final String? chrqst;
   final String? chapby;
   final String? chapdt;
-  final String? chapnt;
+  final String? comment;
+  final String? sucode;
   final List<ChangeRequestDetailModel> detail;
 
   ChangeRequestModel({
     required this.chrqcd,
+    required this.sucode,
     this.cOprtn,
     required this.suconn,
     required this.chrqdt,
@@ -29,7 +31,7 @@ class ChangeRequestModel {
     required this.chrqst,
     this.chapby,
     this.chapdt,
-    this.chapnt,
+    this.comment,
     required this.detail,
   });
 
@@ -49,6 +51,7 @@ class ChangeRequestModel {
 
     return ChangeRequestModel(
       chrqcd: header?['chrqcd'],
+      sucode: header?['sucode'],
       chrqdt: header?['chrqdt'],
       emcode: header?['emcode'],
       chrqtp: header?['chrqtp'],
@@ -59,7 +62,7 @@ class ChangeRequestModel {
       chrqst: header?['chrqst'],
       chapby: header?['chapby'],
       chapdt: header?['chapdt'],
-      chapnt: header?['chapnt'],
+      comment: header?['chapnt'],
       detail: details,
       suconn: '',
       cOprtn: "",
@@ -68,6 +71,8 @@ class ChangeRequestModel {
 
   Map<String?, dynamic> toJson() => {
     "suconn": suconn,
+    "sucode": sucode,
+
     "iChrqcd": chrqcd,
     "chRqTp": chrqtp,
     "emCode": emcode,
@@ -136,7 +141,8 @@ class ChangeRequestDetailModel {
 
   Map<String?, dynamic> toJson() {
     return {
-      'suconn': suconn,
+            "sucode": sucode,
+'suconn': suconn,
       'iChrqcd': iChrqcd,
       'chRqTp': chRqTp,
       'emCode': emCode,

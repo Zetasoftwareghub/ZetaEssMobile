@@ -37,7 +37,7 @@ class MaritalStatusForm extends ConsumerStatefulWidget {
 
 class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
   final newMaritalStatusProvider = StateProvider<String?>((ref) => null);
-
+  String? comment;
   @override
   void initState() {
     super.initState();
@@ -55,6 +55,7 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
         getValueFromDetails(changeRequest.detail, "Marital Status") ?? '';
 
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -126,6 +127,13 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
                                 value;
                           },
                 ),
+                if (widget.isLineManager ?? false)
+                  Column(
+                    children: [
+                      titleHeaderText("Comment"),
+                      labelText(comment ?? ''),
+                    ],
+                  ),
               ],
             );
           },

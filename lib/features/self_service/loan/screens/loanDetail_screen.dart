@@ -13,6 +13,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/approval_management/approve_loan/models/approve_loan_model.dart';
 import 'package:zeta_ess/features/self_service/loan/models/loan_list_model.dart';
 
+import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../approval_management/approve_loan/controller/approve_loan_controller.dart';
@@ -44,8 +45,6 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.loanId);
-    print('widget.loanId23');
     final loanDetailsAsync = ref.watch(loanDetailsProvider(widget.loanId));
     return Scaffold(
       appBar: AppBar(title: Text('details'.tr())),
@@ -132,6 +131,14 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                       hint: 'Approve amount',
                       controller: approveAmountController,
                       keyboardType: TextInputType.number,
+
+                      onChanged: (amount) {
+                        validateApproveAmount(
+                          context: context,
+                          controller: approveAmountController,
+                          requestedAmount: loan.loanAmount.toString(),
+                        );
+                      },
                     ),
                     10.heightBox,
 
@@ -152,6 +159,15 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
+                    final loan = loanDetailsAsync.value;
+
+                    final isValid = validateApproveAmount(
+                      context: context,
+                      controller: approveAmountController,
+                      requestedAmount: loan?.loanAmount.toString() ?? '0',
+                    );
+
+                    if (!isValid) return;
                     if (approveAmountController.text.isEmpty ||
                         ref.watch(selectedDateProvider) == null) {
                       showCustomAlertBox(
@@ -160,10 +176,10 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                       );
                       return;
                     }
-                    final loan = loanDetailsAsync.value;
                     final userContext = ref.watch(userContextProvider);
                     final approveLoanModel = ApproveLoanModel(
                       suconn: userContext.companyConnection,
+                      sucode: userContext.companyCode,
                       aprDate:
                           ref.watch(selectedDateProvider) ??
                           formatDate(DateTime.now()),
@@ -189,6 +205,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 
                     final approveLoanModel = ApproveLoanModel(
                       suconn: userContext.companyConnection,
+                      sucode: userContext.companyCode,
+
                       aprDate: formatDate(DateTime.now()),
                       reqDate: loan?.repaymentStartDate,
                       amount:

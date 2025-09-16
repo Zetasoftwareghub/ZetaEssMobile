@@ -8,17 +8,61 @@ import 'package:zeta_ess/features/auth/screens/widgets/activationUrl_textField.d
 
 import '../../../core/common/loader.dart';
 import '../../../core/common/widgets/customElevatedButton_widget.dart';
+import '../../../core/network_connection_checker/connectivity_service.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/theme/common_theme.dart';
 import '../controller/auth_controller.dart';
 
-class ActivationUrlScreen extends ConsumerWidget {
-  final TextEditingController _activationController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  ActivationUrlScreen({super.key});
+class ActivationUrlScreen extends ConsumerStatefulWidget {
+  const ActivationUrlScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ActivationUrlScreen> createState() =>
+      _ActivationUrlScreenState();
+}
+
+class _ActivationUrlScreenState extends ConsumerState<ActivationUrlScreen> {
+  final TextEditingController _activationController = TextEditingController();
+  final connectivityService = ConnectivityService();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkInternet();
+    });
+  }
+
+  Future<void> _checkInternet() async {
+    final hasInternet = await connectivityService.hasInternet();
+    if (!hasInternet && mounted) {
+      _showNoInternetPopup();
+    }
+  }
+
+  Future<void> _showNoInternetPopup() async {
+    showNoInternetPopup(
+      context: context,
+      onPressed: () async {
+        Navigator.of(context).pop();
+
+        final hasInternet = await connectivityService.hasInternet();
+
+        if (!mounted) return;
+
+        if (!hasInternet) {
+          _showNoInternetPopup();
+        } else {
+          // ✅ Navigate or refresh data when connected
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // This forces the widget to rebuild when locale changes
     context.locale;
     final isLoading = ref.watch(authControllerProvider);

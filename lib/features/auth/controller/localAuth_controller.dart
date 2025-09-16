@@ -7,6 +7,7 @@ import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
 import 'package:zeta_ess/services/secure_stroage_service.dart';
 
+import '../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils.dart';
 import '../../common/screens/main_screen.dart';
@@ -131,10 +132,7 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
 
     res.fold(
       (failure) {
-        NavigationService.navigateRemoveUntil(
-          context: context,
-          screen: ActivationUrlScreen(),
-        );
+        //TODO check what to do here
       },
       (activateResponse) {
         if (activateResponse["data"] != "Authorized") {

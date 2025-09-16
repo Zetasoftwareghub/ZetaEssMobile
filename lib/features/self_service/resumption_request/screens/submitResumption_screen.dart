@@ -188,6 +188,7 @@ class _SubmitResumptionScreenState
 
                       final submitResumptionModel = SubmitResumptionModel(
                         reslno: 0,
+                        sucode: user.companyCode ?? '0',
                         suconn: user.companyConnection ?? '',
                         emcode: user.empCode,
                         micode: '0',
@@ -204,7 +205,7 @@ class _SubmitResumptionScreenState
                         laslno: selectedLeave.laslno ?? '',
                         lvtype: selectedLeave.lvtype ?? '',
                         baseDirectory:
-                            ref.watch(userContextProvider).baseDirectory ?? '',
+                            ref.watch(userContextProvider).userBaseUrl ?? '',
                       );
                       if (ref.watch(newlySelectedDate) != null) {
                         if (ref.watch(newlySelectedDate) !=

@@ -2,7 +2,6 @@ class ApproveApis {
   //APPROVE APIS
   static const String approveRejectResumption =
       '/api/Leave/ApproveResumption_MobileApp/approveResumption';
-
   static const String approveLeave =
       '/api/Leave/ApproveLeaveMobApp/approveLeave';
   static const String rejectLeave = '/api/Leave/RejectLeaveMobApp/rejectLeave';
@@ -36,7 +35,6 @@ class ApproveApis {
       '/api/Leave/Get_AttendanceRegularization_AllList/getLMAttendanceRegularization';
 
   //Cancel leave approve
-
   static const String approveCancelLeave =
       '/api/Leave/ApproveCancelReq_MobileApp/approveCancelReq';
   static const String rejectCancelLeave =
@@ -58,21 +56,16 @@ class ApproveApis {
 
   static const String getApproveExpenseClaimList =
       '/api/ExpClaim/Get_LM_AllList/getLMExpenseClaimList';
-
   static const String getApproveOtherRequestList =
       '/api/Leave/Get_OTHER_LMList/lMGetOtherRqLst';
-
   static const String getApproveSalaryCertificateList =
       '/api/Leave/Get_LM_AllListSalcert/getLMSalaryCertificates';
   static const String getApproveResumptionList =
       '/api/Leave/Get_ResumptionRequest_LMAllList/getLMResumptionRequest';
-
   static String get approveRejectLoan =>
       '/api/LoanRequest/LoanRequestApproveReject';
-
   static String get getApproveLoanListApi =>
       '/api/LoanRequest/Get_LM_LoanRequestList';
-
   static const String getApproveChangeRequestList =
       '/api/ChangeRequest/get_lm_changerequestlist';
 

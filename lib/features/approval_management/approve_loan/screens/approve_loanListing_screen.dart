@@ -25,7 +25,7 @@ class ApproveLoanListingScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(title: Text(title.tr())),
         body: Column(
           children: [
             TabBar(

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/self_service/lieuDay_request/controller/lieuday_controller.dart';
@@ -39,7 +40,7 @@ class LieuDayListingScreen extends ConsumerWidget {
             Expanded(
               child: state.when(
                 loading: () => const Loader(),
-                error: (err, _) => Center(child: Text('Error: $err')),
+                error: (err, _) => ErrorText(error: err.toString()),
                 data: (data) {
                   return TabBarView(
                     children: [

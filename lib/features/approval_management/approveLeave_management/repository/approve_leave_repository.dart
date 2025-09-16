@@ -24,6 +24,7 @@ class ApproveLeaveRepository {
         userContext.baseUrl + ApproveApis.getApproveLeaveList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -45,7 +46,8 @@ class ApproveLeaveRepository {
     return handleApiCall(() async {
       final data = {
         "emcode": userContext.empCode,
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": leaveDetails.leaveId,
         "apremcode": userContext.empCode,
         "levtype": "A",
@@ -86,7 +88,8 @@ class ApproveLeaveRepository {
       final data = {
         "rejdate": formatDate(DateTime.now()),
         "emcode": userContext.empCode,
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": leaveDetails.leaveId,
         "apremcode": userContext.empCode,
         "levtype": "A",

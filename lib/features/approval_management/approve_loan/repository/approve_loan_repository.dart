@@ -23,7 +23,7 @@ class ApproveLoanRepository {
         userContext.baseUrl + ApproveApis.getApproveLoanListApi,
         data: {
           'escode': userContext.esCode,
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),

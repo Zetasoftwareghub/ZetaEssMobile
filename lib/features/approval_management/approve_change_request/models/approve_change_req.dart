@@ -3,6 +3,7 @@ class ApproveChangeRequestModel {
   final int chRqCd;
   final String? chApBy;
   final String bcSlNo;
+  final String sucode;
   final String? chapnt;
   final String emCode;
   final String? chtype;
@@ -10,6 +11,7 @@ class ApproveChangeRequestModel {
 
   ApproveChangeRequestModel({
     required this.suconn,
+    required this.sucode,
     required this.chRqCd,
     required this.chApBy,
     required this.bcSlNo,
@@ -22,6 +24,7 @@ class ApproveChangeRequestModel {
   factory ApproveChangeRequestModel.fromJson(Map<String?, dynamic> json) {
     return ApproveChangeRequestModel(
       suconn: json['suconn'] ?? '',
+      sucode: json['sucode'] ?? '',
       chRqCd: json['chRqCd'] ?? 0,
       chApBy: json['chApBy'] ?? '',
       bcSlNo: json['bcSlNo'] ?? 0,
@@ -34,6 +37,7 @@ class ApproveChangeRequestModel {
 
   Map<String?, dynamic> toJson() {
     return {
+      "sucode": sucode,
       'suconn': suconn,
       'chRqCd': chRqCd,
       'chApBy': chApBy,

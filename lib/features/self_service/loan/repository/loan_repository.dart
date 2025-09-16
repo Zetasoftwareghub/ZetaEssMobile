@@ -23,7 +23,7 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanListApi,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': int.parse(userContext.esCode),
         },
@@ -45,7 +45,7 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanTypesApi,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),
@@ -64,7 +64,7 @@ class LoanRepository {
     required String loanId,
   }) async {
     final data = {
-      'suconn': userContext.companyConnection,
+      'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
       'emcode': userContext.empCode,
       'iLqslno': loanId,
     };
@@ -111,7 +111,7 @@ class LoanRepository {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.deleteLoanApi,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'loid': loanId,
           'username': userContext.empName,
         },

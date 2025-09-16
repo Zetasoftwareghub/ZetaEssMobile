@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/app_theme.dart';
@@ -31,16 +32,7 @@ class MainScreen extends ConsumerWidget {
     return menuAsync.when(
       loading: () => CustomScreenLoader(loadingText: 'loading_menus'.tr()),
       error: (e, st) {
-        print(e.toString());
-        print('Login eerrororo');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          NavigationService.navigateRemoveUntil(
-            context: context,
-            screen: const LoginScreen(),
-          );
-        });
-
-        return const Scaffold();
+        return ErrorText(error: e.toString());
       },
       data: (menu) {
         //TODO this if check in is true then calendar should be false and vice versa

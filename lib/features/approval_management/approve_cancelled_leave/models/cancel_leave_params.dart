@@ -68,6 +68,7 @@ class ApproveRejectCancelLeaveParams {
       "strNote": strNote,
       "strlaslno": strlaslno,
       "suconn": suconn,
+      "sucode": userContext.companyCode,
       "ltcode": ltcode ?? "",
       "emcode": emcode,
       "baseDirectory": baseDirectory ?? "",

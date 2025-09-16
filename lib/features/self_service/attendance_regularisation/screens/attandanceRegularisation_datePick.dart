@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
+import 'package:zeta_ess/core/theme/common_theme.dart';
+import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/attendance_regularisation/screens/widgets/regularise_calendar_data_display.dart';
 
 import '../../../../core/theme/app_theme.dart';
@@ -259,18 +262,69 @@ class _AttendanceRegularisationDatePickState
 
   @override
   Widget build(BuildContext context) {
+    final alternateId = ref.watch(userContextProvider).alternateID;
+    final isMissingId = alternateId == null || alternateId.isEmpty;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text('Attendance Regularization')),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: const Text('Attendance Regularization')),
+      body:
+          isMissingId
+              ? _buildMissingIdView(context, ref)
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildCalendarSection(),
+                    RegulariseCalendarDataDisplay(
+                      isLoading: _isLoading,
+                      summaryData: _summaryData,
+                      requestStatuses: _requestStatuses,
+                      selectedEvents: _selectedEvents,
+                    ),
+                  ],
+                ),
+              ),
+    );
+  }
+
+  Widget _buildMissingIdView(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32.w),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            _buildCalendarSection(),
-            RegulariseCalendarDataDisplay(
-              isLoading: _isLoading,
-              summaryData: _summaryData,
-              requestStatuses: _requestStatuses,
-              selectedEvents: _selectedEvents,
+            // Icon with background
+            Container(
+              width: 80.w,
+              height: 80.h,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Icon(
+                Icons.badge_outlined,
+                size: 40.sp,
+                color: AppTheme.errorColor,
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // Title
+            Text(
+              'Alternate ID Missing',
+              style: AppTextStyles.largeFont(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 12.h),
+
+            // Description
+            Text(
+              'Please contact HR to configure your alternate ID for attendance access.',
+              style: AppTextStyles.mediumFont(fontSize: 16.sp),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

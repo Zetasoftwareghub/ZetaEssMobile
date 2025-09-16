@@ -27,6 +27,7 @@ class SalaryCertificateRepository {
       final response = await dio.post(
         userContext.baseUrl + SalaryCertificateApis.getSalaryCertificateList,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'userid': userContext.esCode,
@@ -69,6 +70,7 @@ class SalaryCertificateRepository {
       final response = await dio.post(
         userContext.baseUrl + SalaryCertificateApis.deleteSalaryCertificate,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'id': salaryCertificateId,
         },
@@ -87,6 +89,7 @@ class SalaryCertificateRepository {
       final response = await dio.post(
         userContext.baseUrl + SalaryCertificateApis.getSalaryCertificateDetails,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'id': certificateId,
           'emcode': userContext.empCode,
@@ -95,6 +98,8 @@ class SalaryCertificateRepository {
       );
       final salaryCertificateData =
           response.data['data'] as Map<String, dynamic>;
+      print(salaryCertificateData);
+      print('salaryCertificateData');
       return SalaryCertificateDetailsModel.fromJson(salaryCertificateData);
     });
   }

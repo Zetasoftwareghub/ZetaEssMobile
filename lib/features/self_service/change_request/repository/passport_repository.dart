@@ -26,6 +26,7 @@ class PassportRepository {
         userContext.baseUrl + ChangeRequestApis.getPassportDetails,
         options: dioHeader(token: userContext.jwtToken),
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': employeeCode ?? userContext.empCode,
         },

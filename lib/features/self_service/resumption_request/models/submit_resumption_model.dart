@@ -1,6 +1,7 @@
 class SubmitResumptionModel {
   final int reslno;
   final String suconn;
+  final String sucode;
   final String emcode;
   final String micode;
   final String selectedValue;
@@ -16,6 +17,7 @@ class SubmitResumptionModel {
 
   SubmitResumptionModel({
     required this.reslno,
+    required this.sucode,
     required this.suconn,
     required this.emcode,
     required this.micode,
@@ -34,6 +36,7 @@ class SubmitResumptionModel {
   factory SubmitResumptionModel.fromJson(Map<String, dynamic> json) {
     return SubmitResumptionModel(
       reslno: json['reslno'] ?? 0,
+      sucode: json['sucode'] ?? '0',
       suconn: json['suconn'] ?? '',
       emcode: json['emcode'] ?? '',
       micode: json['micode'] ?? '',
@@ -53,6 +56,7 @@ class SubmitResumptionModel {
   Map<String, dynamic> toJson() {
     return {
       'reslno': reslno,
+      "sucode": sucode,
       'suconn': suconn,
       'emcode': emcode,
       'micode': '112', //TODO check only for submitt

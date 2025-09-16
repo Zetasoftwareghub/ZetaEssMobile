@@ -157,6 +157,7 @@ class _SubmitSalaryCertificateScreenState
 
               final submitModel = SubmitSalaryCertificateModel(
                 suconn: user.companyConnection,
+                sucode: user.companyCode,
                 emcode: int.parse(user.empCode),
                 username: user.empName,
                 iSrid: isEditMode ? int.parse(widget.certificateId ?? '0') : 0,
@@ -168,8 +169,7 @@ class _SubmitSalaryCertificateScreenState
                 addressname: addressNameController.text,
                 url: '',
                 cocode: 0,
-                baseDirectory:
-                    ref.watch(userContextProvider).baseDirectory ?? '',
+                baseDirectory: ref.watch(userContextProvider).userBaseUrl ?? '',
               );
 
               ref

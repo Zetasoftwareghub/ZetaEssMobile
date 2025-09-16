@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../core/api_constants/common_apis/common_apis.dart';
 import '../../../core/api_constants/dio_headers.dart';
@@ -25,7 +26,8 @@ class CommonRepository {
     required UserContext userContext,
   }) {
     final baseUrl = userContext.baseUrl + CommonApis.saveSuggestion;
-
+    printFullJson(suggestion.toJson());
+    printFullJson('suggestion.toJson()');
     return handleApiCall(() async {
       final response = await dio.post(
         baseUrl,
@@ -92,6 +94,7 @@ class CommonRepository {
         data: {
           'year': year,
           'code': region,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
 
           'emcode': userContext.empCode,
@@ -117,7 +120,8 @@ class CommonRepository {
       final response = await dio.post(
         baseUrl,
         data: {
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           "emcode": userContext.empCode,
           "year": year,
         },
@@ -139,12 +143,15 @@ class CommonRepository {
   }) {
     final baseUrl = userContext.baseUrl + CommonApis.paySlipDownloadUrl;
     final data = {
-      "suconn": userContext.companyConnection,
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
       "emcode": userContext.empCode,
       "year": int.parse(year),
       "month": int.parse(monthName),
       "baseUrl": userContext.userBaseUrl,
     };
+    print(data);
+    print('payslip');
 
     return handleApiCall(() async {
       final response = await dio.post(
@@ -238,7 +245,8 @@ class CommonRepository {
           "userid": userContext.esCode,
           "pwd": newPassword,
           "oldpwd": oldPassword,
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

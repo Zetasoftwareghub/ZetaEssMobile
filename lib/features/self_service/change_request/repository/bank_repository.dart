@@ -22,6 +22,7 @@ class BankRepository {
       final res = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getCurrentBankDetails,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'iEmpCode': employeeCode ?? userContext.empCode,
         },
@@ -42,6 +43,7 @@ class BankRepository {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.bindBanksApi,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },

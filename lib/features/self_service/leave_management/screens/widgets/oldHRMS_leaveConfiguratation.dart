@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
+import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/features/self_service/leave_management/models/leave_model.dart';
@@ -14,6 +15,7 @@ import '../../../../../core/api_constants/dio_headers.dart';
 import '../../../../../core/common/no_server_screen.dart';
 import '../../controller/old_hrms_configuration_stuffs.dart';
 import '../../providers/leave_providers.dart';
+import '../helper/sandwich_helper.dart';
 
 class LeaveConfiguration extends ConsumerStatefulWidget {
   String? dateFrom;
@@ -37,404 +39,113 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
 }
 
 class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
+  bool isLoading = false;
+
+  //TODO new sandwich claude
   void setSandwich() async {
+    if (!mounted) return;
+
     List<LeaveConfigurationData> d = leaveConfigData;
-    List<LeaveConfigurationData> dSubLst = [];
+
+    if (d.isEmpty) return;
+
+    // Get leave configuration
     final userContext = ref.read(userContextProvider);
-    var responseJson = await getLeaveConfigurations(
-      widget.dateFrom.toString(),
-      widget.dateTo.toString(),
-      widget.leaveCode.toString(),
-      userContext,
-    ).timeout(
-      const Duration(seconds: 60),
-      onTimeout: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => const NoServer()),
-        );
-      },
+    final responseJson = await LeaveApiHelper.executeWithTimeout(
+      () => getLeaveConfigurations(
+        widget.dateFrom.toString(),
+        widget.dateTo.toString(),
+        widget.leaveCode.toString(),
+        userContext,
+      ),
+      'getLeaveConfigurations',
+      context,
     );
 
-    if (responseJson == null) return;
+    final leaveConfig = LeaveApiHelper.extractLeaveConfig(responseJson);
+    if (leaveConfig == null) return;
 
-    try {
-      final subLst = (responseJson['subLst'] ?? []) as List;
-      for (var item in subLst) {
-        dSubLst.add(LeaveConfigurationData.fromJson(item));
-      }
-    } catch (e) {
-      print("Error parsing subLst: $e");
-    }
+    // Extract configuration values with defaults
+    var includeOff = leaveConfig.includeOff ?? LeaveConstants.no;
+    var includeHoliday = leaveConfig.includeHolliday ?? LeaveConstants.no;
+    var glapho = leaveConfig.glapho ?? LeaveConstants.no;
+    var ltaphl = leaveConfig.ltaphl ?? LeaveConstants.no;
 
-    var includeOff = dSubLst[0].includeOff ?? "N";
-    var includeHoliday = dSubLst[0].includeHolliday ?? "N";
-    var glapho = dSubLst[0].glapho ?? "N";
-    var ltaphl = dSubLst[0].ltaphl ?? "N";
-
+    // Check preceding and trailing conditions
     var trailInclude = false;
     var precInclued = false;
 
-    if (d.first.dayType == 3 || d.first.dayType == 4) {
-      DateTime dt = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-      dt = dt.add(const Duration(days: -1));
-      bool result = true;
-      while (result) {
-        var responseJsonTra = await getLeaveDetailsByDate(
-          dt.toString(),
-          widget.leaveCode.toString(),
-        ).timeout(
-          const Duration(seconds: 60),
-          onTimeout: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const NoServer()),
-            );
-          },
-        );
-        print(precInclued);
-        print('precInclued');
-        print(responseJsonTra);
-        List<LeaveConfigDate> dTra = [];
-
-        for (var i in responseJsonTra) {
-          // for (var item in i["SubLst"]) {
-          dTra.add(LeaveConfigDate.fromJson(i));
-          // }
-        }
-        if (dTra.isNotEmpty) {
-          if (dTra.first.dayType == 1) {
-            result = false;
-            // if (dPre.first.cLsstat == "Y") { not needed is only Y when leave is approved table
-            if (dTra.first.cLsflag == "F") {
-              trailInclude = true;
-            } else {
-              if (dTra.first.halfDayType == "1" &&
-                  d.first.date != d.last.date &&
-                  d.last.dayType == 1) //gaseer
-              {
-                trailInclude = true;
-              }
-              if (dTra.first.halfDayType == "2") {
-                trailInclude = true;
-              }
-            }
-          }
-        } else {
-          result = false;
-        }
-        dt = dt.add(const Duration(days: -1));
-      }
+    if (d.first.dayType == LeaveConstants.weekOff ||
+        d.first.dayType == LeaveConstants.holiday) {
+      trailInclude = await LeaveConditionChecker.checkPrecedingTrailing(
+        d,
+        widget.leaveCode.toString(),
+        true,
+        context,
+        ref,
+      );
     }
 
-    if (d.last.dayType == 3 || d.last.dayType == 4) {
-      DateTime dt = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
-      dt = dt.add(const Duration(days: 1));
-      bool result = true;
-      while (result) {
-        var responseJsonPre = await getLeaveDetailsByDate(
-          dt.toString(),
-          widget.leaveCode.toString(),
-        ).timeout(
-          const Duration(seconds: 60),
-          onTimeout: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const NoServer()),
-            );
-          },
-        );
-        List<LeaveConfigDate> dPre = [];
-        for (var i in responseJsonPre) {
-          // for (var item in i["SubLst"]) {
-          dPre.add(LeaveConfigDate.fromJson(i));
-        }
-        if (dPre.isNotEmpty) {
-          if (dPre.first.dayType == 1) {
-            result = false;
-            // if (dPre.first.cLsstat == "Y") { not needed is only Y when leave is approved table
-            if (dPre.first.cLsflag == "F") {
-              precInclued = true;
-            } else {
-              if (dPre.first.halfDayType == "2" &&
-                  d.first.date != d.last.date &&
-                  d.first.dayType == 1) //gaseer
-              {
-                precInclued = true;
-              }
-              if (dPre.first.halfDayType == "1") {
-                precInclued = true;
-              }
-            }
-          }
-        } else {
-          result = false;
-        }
-        dt = dt.add(const Duration(days: 1));
-      }
+    if (d.last.dayType == LeaveConstants.weekOff ||
+        d.last.dayType == LeaveConstants.holiday) {
+      precInclued = await LeaveConditionChecker.checkPrecedingTrailing(
+        d,
+        widget.leaveCode.toString(),
+        false,
+        context,
+        ref,
+      );
     }
 
-    DateTime fromDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-    DateTime toDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+    // Parse date range
+    DateTime fromDate = DateFormat(
+      LeaveConstants.dateFormat,
+    ).parse(d.first.date ?? '');
+    DateTime toDate = DateFormat(
+      LeaveConstants.dateFormat,
+    ).parse(d.last.date ?? '');
 
-    DateTime startDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-    DateTime endDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+    DateTime startDate = fromDate;
+    DateTime endDate = toDate;
 
+    // Process each day in the range
     while (startDate.isBefore(endDate) || startDate.isAtSameMomentAs(endDate)) {
-      var startDateStr = DateFormat('dd/MM/yyyy').format(startDate);
+      var startDateStr = DateFormat(
+        LeaveConstants.dateFormat,
+      ).format(startDate);
       var itemLst = d.where((element) => element.date == startDateStr);
+
       if (itemLst.isNotEmpty) {
         var item = itemLst.first;
-        if (item.dayType == 3 || item.dayType == 4) {
-          if (ltaphl == "N") {
-            if (item.dayType == 3) {
-              if (includeOff == "N") {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = '';
-              } else {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = 'F';
-              }
-            } else if (item.dayType == 4) {
-              if (includeHoliday == "N") {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = '';
-              } else {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = 'F';
-              }
-            }
-          } else {
-            if (glapho == "N") //None
-            {
-              if (item.dayType == 3) {
-                if (includeOff == "N") {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = 'F';
-                }
-              } else if (item.dayType == 4) {
-                if (includeHoliday == "N") {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = 'F';
-                }
-              }
-            } else {
-              bool prec = false;
-              bool trail = false;
-              //TODO check the preceeding and trailing
-              if (d.first.dayType == 3 || d.first.dayType == 4) {
-                if (trailInclude) {
-                  trail = true;
-                }
-              }
-
-              if (d.last.dayType == 3 || d.last.dayType == 4) {
-                if (precInclued) {
-                  prec = true;
-                }
-              }
-
-              DateTime selDate = DateFormat(
-                'dd/MM/yyyy',
-              ).parse(item.date ?? '');
-
-              while (selDate.isAfter(fromDate) ||
-                  selDate.isAtSameMomentAs(fromDate)) {
-                var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
-                var itemLstTra = d.where(
-                  (element) => element.date == selDateStr,
-                );
-                if (itemLstTra.isNotEmpty) {
-                  var itemPre = itemLstTra.first;
-                  if (itemPre.dayType == 1) {
-                    if (d.first.date != d.last.date &&
-                        d.last.dayType == 1 &&
-                        itemPre.halfType == '1') {
-                      trail = true;
-                    }
-                    if (itemPre.dayFlag == "F" || itemPre.halfType == '2') {
-                      trail = true;
-                    }
-                    break;
-                  }
-                }
-                selDate = selDate.add(const Duration(days: -1));
-              }
-
-              selDate = DateFormat('dd/MM/yyyy').parse(item.date ?? '');
-              while (selDate.isBefore(toDate) ||
-                  selDate.isAtSameMomentAs(toDate)) {
-                var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
-                var itemLstPre = d.where(
-                  (element) => element.date == selDateStr,
-                );
-                if (itemLstPre.isNotEmpty) {
-                  var itemTra = itemLstPre.first;
-                  if (itemTra.dayType == 1) {
-                    if (itemTra.halfType == '2' &&
-                        d.first.date != d.last.date &&
-                        d.first.dayType == 1) {
-                      prec = true;
-                    }
-                    if (itemTra.dayFlag == "F" || itemTra.halfType == '1') {
-                      prec = true;
-                    }
-                    break;
-                  }
-                }
-                selDate = selDate.add(const Duration(days: 1));
-              }
-
-              if (glapho == "S") //Preceding & Trailing
-              {
-                // if (true) {
-                if (prec == true && trail == true) {
-                  //TODO adjusted the code to only check the preceeding before the code was  (prec==true && trail ==true)
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  //TODO ths is the issue
-
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "Y") //Preceding or Trailing
-              {
-                if (prec == true || trail == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "P") //Preceding
-              {
-                if (prec == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "T") //Trailing
-              {
-                if (trail == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              }
-            }
-          }
-        }
+        await LeaveFlagProcessor.processDayConfiguration(
+          d,
+          item,
+          startDateStr,
+          includeOff,
+          includeHoliday,
+          glapho,
+          ltaphl,
+          fromDate,
+          toDate,
+          GapLeaveConditions(preceding: precInclued, trailing: trailInclude),
+        );
       }
+
       startDate = startDate.add(const Duration(days: 1));
     }
-    //.hide();
-    setState(() {
-      leaveConfigData = d;
-    });
 
-    leaveController.setData(d);
+    // Update UI
+    if (mounted) {
+      setState(() {
+        leaveConfigData = d;
+        isLoading = false;
+      });
+      leaveController.setData(d);
+    }
   }
 
   void _getConfigurations() async {
+    setState(() => isLoading = true);
     List<LeaveConfigurationData> d = [];
     List<LeaveConfigurationData> dSubLst = [];
     List<LeaveConfigurationData> dCanLst = [];
@@ -584,7 +295,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Text('selectHalfDayType'),
+                    Text('Select Half Day Type'),
                     Padding(
                       padding: EdgeInsets.only(top: 30.0.h),
                       child: Center(
@@ -782,131 +493,142 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 30);
     return Scaffold(
-      appBar: AppBar(title: Text('leaveConfiguration')),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Material(
-            color: HexColor('#ffffff'),
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(20),
-              topLeft: Radius.circular(20),
-            ),
-            shadowColor: HexColor("#F1F1F1").withOpacity(.9),
-            elevation: 15.0,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: itemHeight,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 10),
-                      Container(
-                        margin: EdgeInsets.all(5.w),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: HexColor("#F3F3F3"),
-                          border: Border.all(color: HexColor("#F3F3F3")),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Theme(
-                          data: Theme.of(
-                            context,
-                          ).copyWith(dividerColor: HexColor("#F3F3F3")),
-                          child: SingleChildScrollView(
-                            child: DataTable(
-                              dataRowMinHeight: 20,
-                              dataRowMaxHeight: 50,
-                              horizontalMargin: 5,
-                              columnSpacing: 10,
-                              columns: <DataColumn>[
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text(
-                                      'date',
-                                      style: AppTextStyles.smallFont(),
-                                    ),
+      appBar: AppBar(title: Text('Leave Configuration')),
+      body:
+          isLoading
+              ? const Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Material(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                    ),
+                    shadowColor: HexColor("#F1F1F1").withOpacity(.9),
+                    elevation: 15.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: itemHeight,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 10),
+                              Container(
+                                margin: EdgeInsets.all(5.w),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: HexColor("#F3F3F3"),
+                                  border: Border.all(
+                                    color: HexColor("#F3F3F3"),
                                   ),
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text(
-                                      'Full\nday',
-                                      style: AppTextStyles.smallFont(),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text(
-                                      'Half\nday',
-                                      style: AppTextStyles.smallFont(),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Visibility(
-                                    visible:
-                                        (lieuDayValue()) == "Y" ? true : false,
-                                    child: Expanded(
-                                      child: Text(
-                                        'lieu Day',
-                                        style: AppTextStyles.mediumFont(),
+                                child: Theme(
+                                  data: Theme.of(
+                                    context,
+                                  ).copyWith(dividerColor: HexColor("#F3F3F3")),
+                                  child: SingleChildScrollView(
+                                    child: DataTable(
+                                      dataRowMinHeight: 20,
+                                      dataRowMaxHeight: 50,
+                                      horizontalMargin: 5,
+                                      columnSpacing: 10,
+                                      columns: <DataColumn>[
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'date'.tr(),
+                                              style: AppTextStyles.smallFont(),
+                                            ),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'Full\nday',
+                                              style: AppTextStyles.smallFont(),
+                                            ),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: Expanded(
+                                            child: Text(
+                                              'Half\nday',
+                                              style: AppTextStyles.smallFont(),
+                                            ),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: Visibility(
+                                            visible:
+                                                (lieuDayValue()) == "Y"
+                                                    ? true
+                                                    : false,
+                                            child: Expanded(
+                                              child: Text(
+                                                'lieu Day',
+                                                style:
+                                                    AppTextStyles.mediumFont(),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      rows: leaveConfigDetailRow(
+                                        leaveConfigData,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                              rows: leaveConfigDetailRow(leaveConfigData),
-                            ),
+                              ),
+                              SizedBox(height: 20.h),
+                              Center(
+                                child:
+                                    // widget.showSubmit == ""
+                                    true
+                                        ? ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const StadiumBorder(),
+                                            backgroundColor: HexColor(
+                                              "#09A5D9",
+                                            ),
+                                            padding: EdgeInsets.only(
+                                              top: 10.h,
+                                              bottom: 15.h,
+                                              left: 40.w,
+                                              right: 40.w,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            if (widget.showDetail) {
+                                              Navigator.pop(context);
+                                              return;
+                                            }
+                                            _save();
+                                          },
+                                          child: Text(
+                                            widget.showDetail
+                                                ? 'Go back'
+                                                : 'submit'.tr(),
+                                            style: AppTextStyles.mediumFont(),
+                                          ),
+                                        )
+                                        : const Text(""),
+                              ),
+                              SizedBox(height: 20.h),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(height: 20.h),
-                      Center(
-                        child:
-                            // widget.showSubmit == ""
-                            true
-                                ? ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    shape: const StadiumBorder(),
-                                    backgroundColor: HexColor("#09A5D9"),
-                                    padding: EdgeInsets.only(
-                                      top: 10.h,
-                                      bottom: 15.h,
-                                      left: 40.w,
-                                      right: 40.w,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    if (widget.showDetail) {
-                                      Navigator.pop(context);
-                                      return;
-                                    }
-                                    _save();
-                                  },
-                                  child: Text(
-                                    widget.showDetail
-                                        ? 'Go back'
-                                        : 'submit'.tr(),
-                                    style: AppTextStyles.mediumFont(),
-                                  ),
-                                )
-                                : const Text(""),
-                      ),
-                      SizedBox(height: 20.h),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -920,206 +642,6 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     return "#ffffff";
   }
 
-  // List<DataRow> leaveConfigDetailRow(
-  //   List<LeaveConfigurationData> leaveConfigList,
-  // ) {
-  //   List<DataRow> ConfigList = [];
-  //   int index = 0;
-  //   for (var i in leaveConfigList) {
-  //     var item = leaveController.leaveConfigurationData.where(
-  //       (x) => x.dLsdate == i.dLsdate,
-  //     );
-  //     ConfigList.add(
-  //       DataRow(
-  //         color: MaterialStateColor.resolveWith((states) {
-  //           return HexColor('#F3F3F3');
-  //         }),
-  //         cells: [
-  //           DataCell(
-  //             Container(
-  //               padding: EdgeInsets.only(
-  //                 top: 8.h,
-  //                 bottom: 8.h,
-  //                 left: 10.w,
-  //                 right: 10.w,
-  //               ),
-  //               decoration: BoxDecoration(
-  //                 color: HexColor(_getColor(i.dayType.toString())),
-  //                 borderRadius: BorderRadius.circular(20.r),
-  //               ),
-  //               child: Text(
-  //                 i.date.toString(),
-  //                 style: AppTextStyles.smallFont(),
-  //               ),
-  //             ),
-  //           ),
-  //           DataCell(
-  //             Container(
-  //               width: 20.h,
-  //               height: 20.h,
-  //               padding: const EdgeInsets.all(4),
-  //               decoration: BoxDecoration(
-  //                 color: HexColor("#aee2f5"),
-  //                 borderRadius: BorderRadius.circular(10),
-  //               ),
-  //               child:
-  //                   i.dayFlag == "F"
-  //                       ? Container(
-  //                         width: 10.h,
-  //                         height: 10.h,
-  //                         decoration: BoxDecoration(
-  //                           color: HexColor("#10A0DB"),
-  //                           borderRadius: BorderRadius.circular(10),
-  //                         ),
-  //                       )
-  //                       : const Text(""),
-  //             ),
-  //             onTap: () {
-  //               if (widget.showDetail) {
-  //                 return;
-  //               }
-  //               if (i.dayType == 3 || i.dayType == 4) {
-  //                 return;
-  //               }
-  //               _fullDay(i);
-  //             },
-  //           ),
-  //           DataCell(
-  //             SingleChildScrollView(
-  //               child: Column(
-  //                 children: [
-  //                   Padding(
-  //                     padding: EdgeInsets.only(top: i.dayFlag == "H" ? 10 : 0),
-  //                     child: Container(
-  //                       width: 20.h,
-  //                       height: 20.h,
-  //                       padding: const EdgeInsets.all(4),
-  //                       decoration: BoxDecoration(
-  //                         color: HexColor("#aee2f5"),
-  //                         borderRadius: BorderRadius.circular(10),
-  //                       ),
-  //                       child:
-  //                           i.dayFlag == "H"
-  //                               ? Container(
-  //                                 width: 10.h,
-  //                                 height: 10.h,
-  //                                 decoration: BoxDecoration(
-  //                                   color: HexColor("#10A0DB"),
-  //                                   borderRadius: BorderRadius.circular(10),
-  //                                 ),
-  //                               )
-  //                               : const Text(""),
-  //                     ),
-  //                   ),
-  //                   i.dayFlag == "H"
-  //                       ? InkWell(
-  //                         onTap: () {
-  //                           if (widget.showDetail) {
-  //                             return;
-  //                           }
-  //                           _halfDay(i);
-  //                         },
-  //                         child: Text(
-  //                           i.halfType == "1" ? 'First Half' : 'Second Half',
-  //                           style: AppTextStyles.smallFont(),
-  //                         ),
-  //                       )
-  //                       : Visibility(
-  //                         visible: false,
-  //                         child: Text("", style: AppTextStyles.smallFont()),
-  //                       ),
-  //                 ],
-  //               ),
-  //             ),
-  //             onTap: () {
-  //               if (widget.showDetail) {
-  //                 return;
-  //               }
-  //               if (i.dayType == 3 || i.dayType == 4) {
-  //                 return;
-  //               }
-  //
-  //               _halfDay(i);
-  //             },
-  //           ),
-  //           DataCell(
-  //             (leaveConfigDataSubLst[0].lsnote ?? 'N') == "Y"
-  //                 ? Container(
-  //                   width: 120.w,
-  //                   padding: EdgeInsets.symmetric(
-  //                     horizontal: 12.w,
-  //                     vertical: 6.h,
-  //                   ),
-  //                   decoration: BoxDecoration(
-  //                     color: Colors.blue.shade50,
-  //                     borderRadius: BorderRadius.circular(20.r), // Curved edges
-  //                     border: Border.all(
-  //                       color: HexColor('#0887A1'), // Themed border
-  //                       width: 1.w,
-  //                     ),
-  //                     boxShadow: [
-  //                       BoxShadow(
-  //                         color: Colors.blue.withOpacity(0.1),
-  //                         blurRadius: 6,
-  //                         offset: const Offset(0, 3),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   child: DropdownButtonFormField(
-  //                     isExpanded: true,
-  //                     icon: Icon(
-  //                       Icons.keyboard_arrow_down,
-  //                       color: HexColor('#0887A1'),
-  //                     ),
-  //                     decoration: const InputDecoration(
-  //                       border: InputBorder.none, // Remove underline
-  //                       isDense: true,
-  //                       contentPadding: EdgeInsets.zero,
-  //                     ),
-  //                     hint: Text(
-  //                       "-- Select --",
-  //                       style: AppTextStyles.smallFont().copyWith(
-  //                         color: Colors.grey.shade600,
-  //                       ),
-  //                     ),
-  //                     items:
-  //                         leaveConfigDataCanLst.map((dropDown) {
-  //                           return DropdownMenuItem(
-  //                             value: dropDown.iLsslno ?? '9090',
-  //                             child: Text(
-  //                               '   ${dropDown.dLsdate ?? ''}',
-  //                               style: AppTextStyles.smallFont(),
-  //                             ),
-  //                           );
-  //                         }).toList(),
-  //                     value:
-  //                         (item.first.lieuday == null ||
-  //                                 item.first.lieuday == "" ||
-  //                                 item.first.lieuday?.toLowerCase() == "null")
-  //                             ? null
-  //                             : item.first.lieuday,
-  //                     onChanged: (value) {
-  //                       print(item.first.lieuday);
-  //                       print("item.first.lieuday");
-  //                       print(value);
-  //                       print("value");
-  //                       setState(() {
-  //                         i.lieuday = value.toString();
-  //                       });
-  //                     },
-  //                   ),
-  //                 )
-  //                 : const Text(""),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //
-  //     index++;
-  //   }
-  //
-  //   return ConfigList;
-  // }
   List<DataRow> leaveConfigDetailRow(
     List<LeaveConfigurationData> leaveConfigList,
   ) {
@@ -1324,30 +846,16 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
         "leavcode": leaveType,
       };
       print(data);
-      print('data');
+      print('getLeaveCONFIG');
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",
         data: data,
         options: dioHeader(token: ref.watch(userContextProvider).jwtToken),
       );
-
+      print(responseJson.data['data']);
       return responseJson.data['data'];
     } catch (e) {
       return null;
     }
-  }
-
-  Future getLeaveDetailsByDate(String date, String ltcode) async {
-    final responseJson = await Dio().post(
-      "${ref.watch(userContextProvider).baseUrl}/api/Leave/GetLeaveDetailsByDate",
-      data: {
-        "suconn": ref.watch(userContextProvider).companyConnection,
-        "date": date,
-        "emcode": ref.watch(userContextProvider).empCode,
-        "ltcode": ltcode,
-      },
-      options: dioHeader(token: ref.watch(userContextProvider).jwtToken),
-    );
-    return responseJson.data['data']['subLst'];
   }
 }

@@ -24,6 +24,7 @@ class ApproveSalaryAdvanceRepository {
         userContext.baseUrl + ApproveApis.getApproveSalaryAdvanceList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -48,7 +49,8 @@ class ApproveSalaryAdvanceRepository {
     return handleApiCall(() async {
       final url = userContext.baseUrl + ApproveApis.approveSalaryAdvance;
       final data = {
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": requestId,
         "apremcode": userContext.empCode,
         "emcode": salaryDetails.emcode,
@@ -92,7 +94,8 @@ class ApproveSalaryAdvanceRepository {
     return handleApiCall(() async {
       final url = userContext.baseUrl + ApproveApis.rejectSalaryAdvance;
       final data = {
-        "suconn": userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         "id": requestId,
         "apremcode": userContext.empCode,
         "emcode": salaryDetails.emcode,

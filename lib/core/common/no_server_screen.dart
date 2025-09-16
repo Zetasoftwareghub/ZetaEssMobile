@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/services/NavigationService.dart';
+import 'package:zeta_ess/features/auth/screens/login_screen.dart';
+import 'package:zeta_ess/features/common/screens/main_screen.dart';
 
 class NoServer extends StatelessWidget {
   final VoidCallback? onRetry;
@@ -33,7 +36,14 @@ class NoServer extends StatelessWidget {
               ),
               SizedBox(height: 28.h),
               ElevatedButton(
-                onPressed: onRetry,
+                onPressed:
+                    onRetry ??
+                    () {
+                      NavigationService.navigateRemoveUntil(
+                        context: context,
+                        screen: MainScreen(),
+                      );
+                    },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
                     horizontal: 32.w,

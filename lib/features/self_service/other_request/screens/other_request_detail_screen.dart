@@ -740,7 +740,6 @@ class _OtherRequestDetailScreenState
         widgets.add(formWidget);
       }
     }
-    print(_strings);
 
     // Add comment sections
     // widgets.add(
@@ -752,32 +751,22 @@ class _OtherRequestDetailScreenState
     //   ),
     // );
 
-    widgets.add(
-      _buildCommentSection(
-        _lmComment,
-        _strings['comment']!,
-        _lmComment.isNotEmpty,
-        // widget.fromSelf == false && _lmComment.isNotEmpty,
-      ),
-    );
+    String? finalComment;
 
-    widgets.add(
-      _buildCommentSection(
-        _appRejComment,
-        _strings['comment']!,
-        _appRejComment.isNotEmpty,
-        // widget.fromSelf == true && _appRejComment.isNotEmpty,
-      ),
-    );
+    if (_selfComment.isNotEmpty) {
+      // TODO check this approver comment !
+      finalComment = _selfComment;
+    } else if (_appRejComment.isNotEmpty) {
+      finalComment = _appRejComment;
+    } else if (_lmComment.isNotEmpty) {
+      finalComment = _lmComment;
+    }
 
-    widgets.add(
-      _buildCommentSection(
-        _selfComment,
-        _strings['comment']!,
-        _selfComment.isNotEmpty,
-        // widget.fromSelf == true && _appRejComment.isNotEmpty,
-      ),
-    );
+    if (finalComment != null) {
+      widgets.add(
+        _buildCommentSection(finalComment, _strings['comment']!, true),
+      );
+    }
 
     // Add comment input field
     if (widget.show) {

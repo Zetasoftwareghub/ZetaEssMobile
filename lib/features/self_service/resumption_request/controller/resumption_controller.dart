@@ -91,6 +91,7 @@ class ResumptionController extends Notifier<bool> {
   Future<void> approveRejectResumption({
     required String note,
     required String requestId,
+    required String leaveId,
     required String approveRejectFlag,
     required BuildContext context,
   }) async {
@@ -102,6 +103,7 @@ class ResumptionController extends Notifier<bool> {
       note: note,
       requestId: requestId,
       approveRejectFlag: approveRejectFlag,
+      leaveId: leaveId,
     );
     state = false;
 

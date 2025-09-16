@@ -24,6 +24,7 @@ class OtherRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.getOtherRequestFirstListing,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -50,6 +51,7 @@ class OtherRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.getOtherRequestList,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'userid': userContext.esCode,
@@ -75,6 +77,7 @@ class OtherRequestRepository {
       "rtencd": micode,
       "rqtmcd": requestId,
       "micode": micode, // '0' was before
+      'sucode': userContext.companyCode,
       'suconn': userContext.companyConnection,
       'emcode': userContext.empCode,
     };
@@ -104,9 +107,8 @@ class OtherRequestRepository {
     required String baseDirectory,
     required String emmail,
     required String empMail,
+    required String sucode,
   }) async {
-    print(submitModel.map((e) => e.toJson()).toList().length);
-    print('lengthhhththththth of dfataa');
     return handleApiCall(() async {
       final payload = {
         "dtldata": submitModel.map((e) => e.toJson()).toList(),
@@ -119,8 +121,8 @@ class OtherRequestRepository {
         "baseDirectory": baseDirectory,
         "emmail": emmail,
         "emp_mail": empMail,
+        "sucode": sucode,
       };
-      printFullJson(payload);
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.submitOtherRequest,
         data: payload,
@@ -143,7 +145,7 @@ class OtherRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.getOtherRequestDetails,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'rqldcode': OtherRequestId,
         },
@@ -168,7 +170,8 @@ class OtherRequestRepository {
         data: {
           "primekey": primeKey,
           "micode": micode,
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

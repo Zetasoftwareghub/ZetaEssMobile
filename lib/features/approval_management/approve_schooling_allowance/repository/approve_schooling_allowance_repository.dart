@@ -22,7 +22,7 @@ class ApproveSchoolingAllowanceRepository {
         // + ApproveApis.getApproveSchoolingAllowanceList,
         data: {
           'userid': userContext.esCode,
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),

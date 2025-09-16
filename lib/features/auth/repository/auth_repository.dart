@@ -12,6 +12,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:zeta_ess/core/api_constants/dio_headers.dart';
 import 'package:zeta_ess/core/error_handling/api_errors.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
+import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/models/company_model.dart';
 import 'package:zeta_ess/models/user_model.dart';
 
@@ -36,7 +37,6 @@ class AuthRepository {
   FutureEither activateUrl({required String url}) async {
     try {
       final response = await dio.get('$url${AuthApis.activateUrl}');
-
       if (response.statusCode == 200 && response.data != null) {
         return right(response.data);
       } else {
@@ -94,20 +94,20 @@ class AuthRepository {
     required BuildContext context,
   }) async {
     try {
-      print('object');
+      print('object12');
       final deviceType = Platform.isAndroid ? 'android' : 'ios';
       final payloadData = {
         'userId': userName,
         'password': password.toLowerCase(),
         'deviceId': fcmToken,
         'deviceType': deviceType,
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
       };
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.loginInApi}',
         data: payloadData,
       );
-
       final data = response.data;
       // Defensive: ensure 'data' is a List and has at least one item
       final escodes = data['data'];
@@ -125,7 +125,7 @@ class AuthRepository {
         showCustomAlertBox(
           context,
           title: 'Error',
-          content: 'Unknown server response',
+          content: 'Server Connection Lost',
           type: AlertType.error,
         );
         return left(Failure(errMsg: 'Unknown error occurred'));
@@ -146,7 +146,11 @@ class AuthRepository {
     try {
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.ssoLogin}',
-        data: {'userMail': email, 'suconn': userContext.companyConnection},
+        data: {
+          'userMail': email,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
+        },
       );
 
       final data = response.data;
@@ -166,7 +170,7 @@ class AuthRepository {
         showCustomAlertBox(
           context,
           title: 'Error',
-          content: 'Unknown server response',
+          content: 'Server Connection Lost',
           type: AlertType.error,
         );
         return left(Failure(errMsg: 'Unknown error occurred'));
@@ -210,14 +214,17 @@ class AuthRepository {
   FutureEither<String?> forgotPassword({
     required UserContext userContext,
     required String userId,
+    required String sucode,
   }) async {
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + AuthApis.forgotPassword,
         data: {
-          "suconn": userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           "userid": userId,
           "activateurl": userContext.baseUrl,
+          "sucode": sucode,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

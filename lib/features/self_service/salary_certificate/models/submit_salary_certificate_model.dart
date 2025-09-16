@@ -1,5 +1,6 @@
 class SubmitSalaryCertificateModel {
   final String? suconn;
+  final String? sucode;
   final int emcode;
   final String? username;
   final int iSrid;
@@ -15,6 +16,7 @@ class SubmitSalaryCertificateModel {
 
   SubmitSalaryCertificateModel({
     required this.suconn,
+    required this.sucode,
     required this.emcode,
     required this.username,
     required this.iSrid,
@@ -31,6 +33,7 @@ class SubmitSalaryCertificateModel {
 
   Map<String?, dynamic> toJson() {
     return {
+      "sucode": sucode,
       'suconn': suconn,
       'emcode': emcode,
       'username': username,

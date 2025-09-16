@@ -33,6 +33,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
   final TextEditingController accountNumberController = TextEditingController();
   final TextEditingController accountNameController = TextEditingController();
   bool _isInitialized = false;
+  String? comment;
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
@@ -48,8 +49,8 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
     if (changeRequest.bacode != 0) {
       ref.read(bankCodeProvider.notifier).state = changeRequest.bacode;
     }
-
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -73,7 +74,13 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
 
     return bankDetailsAsync.when(
       data: (bankDetails) {
+        Future.microtask(
+          () =>
+              ref.read(bankCodeProvider.notifier).state ??=
+                  bankDetails.bankCode,
+        );
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _formSection(
               title: "Old Value",
@@ -85,12 +92,19 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
             _formSection(
               title: "New Value",
               readOnly: widget.isLineManager ?? false,
-              bankCode: ref.watch(bankCodeProvider) ?? bankDetails.bankCode,
+              bankCode: ref.watch(bankCodeProvider) ?? 0,
               accountNumber:
                   ref.watch(bankAccNoProvider) ?? bankDetails.accountNumber,
               accountName:
                   ref.watch(bankAccNameProvider) ?? bankDetails.accountName,
             ),
+            if (widget.isLineManager ?? false)
+              Column(
+                children: [
+                  titleHeaderText("Comment"),
+                  labelText(comment ?? ''),
+                ],
+              ),
           ],
         );
       },

@@ -23,7 +23,7 @@ class HomeRepository {
       final response = await dio.post(
         userContext.baseUrl + CommonApis.getEmployeeShift,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'ckdate': date,
         },
@@ -45,7 +45,7 @@ class HomeRepository {
       final response = await dio.post(
         userContext.baseUrl + CommonApis.getPunchDetails,
         data: {
-          'suconn': userContext.companyConnection,
+          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'userid': userContext.esCode,
         },
@@ -69,7 +69,7 @@ class HomeRepository {
   }) async {
     return handleApiCall(() async {
       final data = {
-        'suconn': userContext.companyConnection,
+        'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
         'cocode': 0,
         'emcode': userContext.empCode,
         'latLong': "${loc.position.latitude},${loc.position.longitude}",

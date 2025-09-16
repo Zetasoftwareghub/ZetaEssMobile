@@ -26,6 +26,7 @@ class EmployeeRepository {
       final response = await dio.post(
         userContext.baseUrl + EmployeeApi.employeeProfileDetails,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -55,11 +56,10 @@ class EmployeeRepository {
     required UserContext userContext,
   }) {
     return handleApiCall(() async {
-      print(userContext.empCode);
-      print('userContext.empCode');
       final response = await dio.post(
         userContext.baseUrl + EmployeeApi.getMainMenuAgainstEmployee,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -80,6 +80,7 @@ class EmployeeRepository {
       final response = await dio.post(
         userContext.baseUrl + EmployeeApi.getEmployeeSelfLineMenus,
         data: {
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -100,6 +101,7 @@ class EmployeeRepository {
       final baseUrl = userContext.baseUrl + CommonApis.getLeaveBalance;
       final payload = {
         'emcode': userContext.empCode,
+        'sucode': userContext.companyCode,
         'suconn': userContext.companyConnection,
         'dtleave': formatDate(DateTime.now()),
         'escode': int.parse(userContext.esCode),

@@ -1083,158 +1083,130 @@ void showCustomAlertBox(
     pageBuilder: (context, animation1, animation2) => const SizedBox.shrink(),
     transitionBuilder: (context, animation1, animation2, child) {
       return Center(
-        child: Material(
-          type: MaterialType.transparency,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, -0.3),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: animation1, curve: Curves.easeOutBack),
-            ),
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+        child: WillPopScope(
+          onWillPop: () async => false,
+          child: Material(
+            type: MaterialType.transparency,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, -0.3),
+                end: Offset.zero,
+              ).animate(
                 CurvedAnimation(parent: animation1, curve: Curves.easeOutBack),
               ),
-              child: FadeTransition(
-                opacity: animation1,
-                child: Container(
-                  width: dialogWidth,
-                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                        spreadRadius: 0,
-                      ),
-                      BoxShadow(
-                        color: alertColor.withOpacity(0.1),
-                        blurRadius: 40,
-                        offset: const Offset(0, 0),
-                        spreadRadius: 0,
-                      ),
-                    ],
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: animation1,
+                    curve: Curves.easeOutBack,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Header with colored top border and icon
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-                        decoration: BoxDecoration(
-                          color: alertColor.withOpacity(0.05),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                          ),
-                          border: Border(
-                            top: BorderSide(color: alertColor, width: 3),
-                          ),
+                ),
+                child: FadeTransition(
+                  opacity: animation1,
+                  child: Container(
+                    width: dialogWidth,
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                          spreadRadius: 0,
                         ),
-                        child: Column(
-                          children: [
-                            // Close button (if enabled)
-                            if (showCloseButton)
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () => Navigator.of(context).pop(),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 16,
-                                      color: Colors.grey.shade600,
+                        BoxShadow(
+                          color: alertColor.withOpacity(0.1),
+                          blurRadius: 40,
+                          offset: const Offset(0, 0),
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Header with colored top border and icon
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                          decoration: BoxDecoration(
+                            color: alertColor.withOpacity(0.05),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                            border: Border(
+                              top: BorderSide(color: alertColor, width: 3),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              // Close button (if enabled)
+                              if (showCloseButton)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Colors.grey.shade600,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
 
-                            SizedBox(height: showCloseButton ? 8 : 0),
+                              SizedBox(height: showCloseButton ? 8 : 0),
 
-                            // Animated Icon with bounce effect
-                            TweenAnimationBuilder(
-                              duration: const Duration(milliseconds: 600),
-                              tween: Tween<double>(begin: 0.0, end: 1.0),
-                              builder: (context, double value, child) {
-                                return Transform.scale(
-                                  scale: 0.5 + (value * 0.5),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: alertColor.withOpacity(0.1),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: alertColor.withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: alertIcon,
-                                  ),
-                                );
-                              },
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            // Title with slide animation
-                            TweenAnimationBuilder(
-                              duration: const Duration(milliseconds: 500),
-                              tween: Tween<double>(begin: 0.0, end: 1.0),
-                              builder: (context, double value, child) {
-                                return Transform.translate(
-                                  offset: Offset(0, (1 - value) * 10),
-                                  child: Opacity(
-                                    opacity: value,
-                                    child: Text(
-                                      title,
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                        fontSize: titleFontSize,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.3,
-                                      ),
-                                      textAlign: textAlign,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Content area
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        child: Column(
-                          children: [
-                            if (content != null) ...[
-                              const SizedBox(height: 8),
+                              // Animated Icon with bounce effect
                               TweenAnimationBuilder(
                                 duration: const Duration(milliseconds: 600),
                                 tween: Tween<double>(begin: 0.0, end: 1.0),
                                 builder: (context, double value, child) {
+                                  return Transform.scale(
+                                    scale: 0.5 + (value * 0.5),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: alertColor.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: alertColor.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: alertIcon,
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Title with slide animation
+                              TweenAnimationBuilder(
+                                duration: const Duration(milliseconds: 500),
+                                tween: Tween<double>(begin: 0.0, end: 1.0),
+                                builder: (context, double value, child) {
                                   return Transform.translate(
-                                    offset: Offset(0, (1 - value) * 15),
+                                    offset: Offset(0, (1 - value) * 10),
                                     child: Opacity(
                                       opacity: value,
                                       child: Text(
-                                        content,
+                                        title,
                                         style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontSize: contentFontSize,
-                                          height: 1.4,
-                                          letterSpacing: 0.1,
+                                          color: Colors.grey.shade800,
+                                          fontSize: titleFontSize,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.3,
                                         ),
                                         textAlign: textAlign,
                                       ),
@@ -1243,38 +1215,72 @@ void showCustomAlertBox(
                                 },
                               ),
                             ],
-
-                            const SizedBox(height: 20),
-
-                            // Action buttons
-                            if (customActions != null)
-                              ...customActions
-                            else
-                              TweenAnimationBuilder(
-                                duration: const Duration(milliseconds: 700),
-                                tween: Tween<double>(begin: 0.0, end: 1.0),
-                                builder: (context, double value, child) {
-                                  return Transform.translate(
-                                    offset: Offset(0, (1 - value) * 10),
-                                    child: Opacity(
-                                      opacity: value,
-                                      child: _buildActionButtons(
-                                        context,
-                                        primaryButtonText,
-                                        secondaryButtonText,
-                                        onPrimaryPressed,
-                                        onSecondaryPressed,
-                                        alertColor,
-                                        buttonFontSize,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+
+                        // Content area
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          child: Column(
+                            children: [
+                              if (content != null) ...[
+                                const SizedBox(height: 8),
+                                TweenAnimationBuilder(
+                                  duration: const Duration(milliseconds: 600),
+                                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                                  builder: (context, double value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, (1 - value) * 15),
+                                      child: Opacity(
+                                        opacity: value,
+                                        child: Text(
+                                          content,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontSize: contentFontSize,
+                                            height: 1.4,
+                                            letterSpacing: 0.1,
+                                          ),
+                                          textAlign: textAlign,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+
+                              const SizedBox(height: 20),
+
+                              // Action buttons
+                              if (customActions != null)
+                                ...customActions
+                              else
+                                TweenAnimationBuilder(
+                                  duration: const Duration(milliseconds: 700),
+                                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                                  builder: (context, double value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, (1 - value) * 10),
+                                      child: Opacity(
+                                        opacity: value,
+                                        child: _buildActionButtons(
+                                          context,
+                                          primaryButtonText,
+                                          secondaryButtonText,
+                                          onPrimaryPressed,
+                                          onSecondaryPressed,
+                                          alertColor,
+                                          buttonFontSize,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

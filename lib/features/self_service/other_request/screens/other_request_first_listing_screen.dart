@@ -49,7 +49,6 @@ class OtherRequestFirstListingScreen extends ConsumerWidget {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border(left: BorderSide(color: color, width: 6.w)),
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
@@ -60,43 +59,70 @@ class OtherRequestFirstListingScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                child: ListTile(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 3.h,
-                  ),
-                  title: Text(
-                    item.menuName?.toUpperCase() ?? 'No name',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-
-                  trailing: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14.sp,
-                      color: color,
-                    ),
-                  ),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    NavigationService.navigateToScreen(
-                      context: context,
-                      screen: OtherRequestListingScreen(
-                        title: item.menuName?.toUpperCase() ?? 'No Name',
-                        requestId: item.lRTPAC, //rqtmcd
-                        micode: item.menuId,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40.w, // adjust as per design
+                      height: 60.h, // match your tile height
+                      decoration: BoxDecoration(
+                        color: color, // your dynamic color
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12.r),
+                          bottomLeft: Radius.circular(12.r),
+                        ),
                       ),
-                    );
-                    // navigate or perform action
-                  },
+                      alignment: Alignment.center,
+                      child: Text(
+                        item.count.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 3.h,
+                        ),
+                        title: Text(
+                          (item.menuName?.toUpperCase() ?? 'No name'),
+
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+
+                        trailing: Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14.sp,
+                            color: color,
+                          ),
+                        ),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          NavigationService.navigateToScreen(
+                            context: context,
+                            screen: OtherRequestListingScreen(
+                              title: item.menuName?.toUpperCase() ?? 'No Name',
+                              requestId: item.lRTPAC, //rqtmcd
+                              micode: item.menuId,
+                            ),
+                          );
+                          // navigate or perform action
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               );
             },

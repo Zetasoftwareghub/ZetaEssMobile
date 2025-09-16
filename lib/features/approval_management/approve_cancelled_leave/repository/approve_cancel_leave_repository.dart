@@ -27,6 +27,7 @@ class ApproveLeaveRepository {
         userContext.baseUrl + ApproveApis.getApproveCancelLeaveList,
         data: {
           'userid': userContext.esCode,
+          'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
@@ -48,12 +49,15 @@ class ApproveLeaveRepository {
   }) {
     final data = {
       "userid": userContext.esCode,
-      "suconn": userContext.companyConnection,
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
       "emcode": userContext.empCode,
       "lsslno": lsslno,
       "laslno": laslno,
       "clslno": clslno,
     };
+    print(data);
+    print('aaa11');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.getApproveCancelLeaveDetails,
@@ -61,6 +65,8 @@ class ApproveLeaveRepository {
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
+        print(response.data['data']);
+        print('response.data');
         final raw = response.data['data'] as Map<String, dynamic>;
         return CancelLeaveModel.fromJson(raw);
       } else {

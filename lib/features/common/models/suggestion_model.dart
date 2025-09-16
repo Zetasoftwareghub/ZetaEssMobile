@@ -1,5 +1,5 @@
 class SuggestionModel {
-  final String? suconn;
+  final String? suconn, sucode;
   final int id;
   final String? emcode;
   final String? dpDate;
@@ -12,6 +12,7 @@ class SuggestionModel {
 
   SuggestionModel({
     required this.suconn,
+    required this.sucode,
     required this.id,
     required this.emcode,
     required this.dpDate,
@@ -26,6 +27,7 @@ class SuggestionModel {
   factory SuggestionModel.fromJson(Map<String?, dynamic> json) {
     return SuggestionModel(
       suconn: json['suconn'] ?? '',
+      sucode: json['sucode'] ?? '',
       id: json['id'] ?? 0,
       emcode: json['emcode'] ?? '0',
       dpDate: json['dpDate'] ?? '',
@@ -40,6 +42,7 @@ class SuggestionModel {
 
   Map<String?, dynamic> toJson() {
     return {
+      "sucode": sucode,
       'suconn': suconn,
       'id': id,
       'emcode': emcode,

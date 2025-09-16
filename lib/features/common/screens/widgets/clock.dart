@@ -144,7 +144,7 @@ class _RealTimeClockState extends ConsumerState<RealTimeClock>
 
     // Show loader if we don't have time yet
     if (locationTime == null) {
-      return const Loader();
+      return const Text('');
     }
 
     return Column(

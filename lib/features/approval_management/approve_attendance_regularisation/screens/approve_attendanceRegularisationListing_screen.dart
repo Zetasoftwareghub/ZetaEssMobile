@@ -12,7 +12,8 @@ import '../../../../core/utils.dart';
 import '../controller/approve_attendance_regularisation_controller.dart';
 import 'approve_regularise_detail_screen.dart';
 
-class ApproveAttendanceRegularisationListingScreen extends ConsumerWidget {
+class ApproveAttendanceRegularisationListingScreen
+    extends ConsumerStatefulWidget {
   final String title;
 
   const ApproveAttendanceRegularisationListingScreen({
@@ -21,12 +22,28 @@ class ApproveAttendanceRegularisationListingScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ApproveAttendanceRegularisationListingScreen> createState() =>
+      _ApproveAttendanceRegularisationListingScreenState();
+}
+
+class _ApproveAttendanceRegularisationListingScreenState
+    extends ConsumerState<ApproveAttendanceRegularisationListingScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.microtask(
+      () => ref.invalidate(approveAttendanceRegularisationListProvider),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final regList = ref.watch(approveAttendanceRegularisationListProvider);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(title: Text(widget.title)),
         body: Column(
           children: [
             TabBar(

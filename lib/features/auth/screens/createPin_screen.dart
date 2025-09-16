@@ -10,6 +10,7 @@ import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 import 'package:zeta_ess/features/auth/screens/widgets/customPinPut_widget.dart';
 
 import '../../../core/common/alert_dialog/alertBox_function.dart';
+import '../../../core/network_connection_checker/connectivity_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/secure_stroage_service.dart';
 import '../../common/screens/main_screen.dart';
@@ -167,12 +168,13 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
   final TextEditingController pinController = TextEditingController();
   late AnimationController _animationController;
   late Animation<double> _breathingAnimation;
+  final connectivityService = ConnectivityService();
 
   @override
   void initState() {
     super.initState();
 
-    // Breathing effect for greeting card
+    // Breathing animation setup
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -182,9 +184,42 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(localAuthProvider.notifier).authenticateWithBiometrics(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 🔹 First check internet before biometrics
+      final hasInternet = await connectivityService.hasInternet();
+      if (!mounted) return;
+
+      if (!hasInternet) {
+        _showNoInternetPopup();
+      } else {
+        // ✅ Continue with biometrics when online
+        ref
+            .read(localAuthProvider.notifier)
+            .authenticateWithBiometrics(context);
+      }
     });
+  }
+
+  Future<void> _showNoInternetPopup() async {
+    showNoInternetPopup(
+      context: context,
+      onPressed: () async {
+        Navigator.of(context).pop();
+
+        final hasInternet = await connectivityService.hasInternet();
+
+        if (!mounted) return;
+
+        if (!hasInternet) {
+          _showNoInternetPopup(); // 🔄 keep showing until back online
+        } else {
+          // ✅ Resume biometrics once connected
+          ref
+              .read(localAuthProvider.notifier)
+              .authenticateWithBiometrics(context);
+        }
+      },
+    );
   }
 
   @override
@@ -379,7 +414,10 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
           content: 'pleaseTryAgain'.tr(),
           type: AlertType.error,
           primaryButtonText: 'retry'.tr(),
-          onPrimaryPressed: () => Navigator.pop(context),
+          onPrimaryPressed: () {
+            pinController.clear();
+            Navigator.pop(context);
+          },
         );
       }
     } else {

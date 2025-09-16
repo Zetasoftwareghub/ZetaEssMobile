@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/api_constants/approval_manager_apis/approve_apis.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
 import '../../../../core/providers/userContext_provider.dart';
@@ -21,6 +22,7 @@ class ApproveChangeRequestRepository {
     required ApproveChangeRequestModel approve,
   }) {
     return handleApiCall(() async {
+      printFullJson(approve.toJson());
       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveRejectChangeRequest,
         data: approve.toJson(),

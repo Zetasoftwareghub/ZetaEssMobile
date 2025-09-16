@@ -59,8 +59,12 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
 
     _remarkController.text = model.remark ?? '';
     if (model.lieuDate.isNotEmpty) {
-      final parsedDate = DateFormat("dd MMM yyyy").parse(model.lieuDate);
+      final parsedDate = DateFormat(
+        "dd MMM yyyy",
+        "en_US",
+      ).parse(model.lieuDate.trim());
       final formattedDate = DateFormat("dd/MM/yyyy").format(parsedDate);
+
       ref.read(lieuDateProvider.notifier).state = formattedDate;
     }
     ref.read(selectedFromTimeProvider.notifier).state = model.fromTime ?? '';
@@ -269,6 +273,7 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
               final request = SubmitLieuDayRequest(
                 rqldcode: isEditMode ? widget.lieuDayId ?? '0' : '0',
                 suconn: user.companyConnection,
+                sucode: user.companyCode,
                 emcode: user.empCode,
                 micode: '',
                 lieuDayDate: date,

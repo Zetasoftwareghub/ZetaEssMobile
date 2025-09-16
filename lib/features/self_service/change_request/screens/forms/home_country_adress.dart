@@ -45,7 +45,7 @@ class _HomeCountryAddressFormState
   final TextEditingController nexOfKinPhoneNumberCtrl = TextEditingController();
 
   bool _isInitialized = false;
-  String? countryCode;
+  String? countryCode, comment;
 
   @override
   void initState() {
@@ -67,6 +67,7 @@ class _HomeCountryAddressFormState
     setState(() => countryCode = getValueFromDetails(details, "Country"));
 
     _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
   }
 
   @override
@@ -91,14 +92,17 @@ class _HomeCountryAddressFormState
       error: (err, _) => ErrorText(error: err.toString()),
       data: (data) {
         // home address
-        addressLine1Ctrl.text = data.homeAddressLine1 ?? '';
-        streetNameCtrl.text = data.homeStreetName ?? '';
-        cityCtrl.text = data.homeTownCityName ?? '';
-        stateCtrl.text = data.homeStateName ?? '';
-        countryCtrl.text = data.homeCountryCode ?? '';
-        postBoxCtrl.text = data.homePostBox ?? '';
-
+        if (widget.reqId == null) {
+          addressLine1Ctrl.text = data.homeAddressLine1 ?? '';
+          streetNameCtrl.text = data.homeStreetName ?? '';
+          cityCtrl.text = data.homeTownCityName ?? '';
+          stateCtrl.text = data.homeStateName ?? '';
+          countryCtrl.text = data.homeCountryCode ?? '';
+          postBoxCtrl.text = data.homePostBox ?? '';
+        }
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             _formSection(
               title: 'Old Value',
@@ -111,6 +115,13 @@ class _HomeCountryAddressFormState
               readOnly: widget.isLineManager ?? false,
               countryCode: (countryCode ?? data.countryCode) ?? 'IND',
             ),
+            if (widget.isLineManager ?? false)
+              Column(
+                children: [
+                  titleHeaderText("Comment"),
+                  labelText(comment ?? ''),
+                ],
+              ),
             80.heightBox,
           ],
         );

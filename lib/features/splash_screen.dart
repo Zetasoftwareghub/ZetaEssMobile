@@ -9,7 +9,9 @@ import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
 import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 
+import '../core/common/alert_dialog/alertBox_function.dart';
 import '../core/constants/constants.dart';
+import '../core/network_connection_checker/connectivity_service.dart';
 import '../core/providers/storage_repository_provider.dart';
 import 'auth/controller/localAuth_controller.dart';
 import 'auth/screens/createPin_screen.dart';
@@ -187,32 +189,64 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 
+  // Future<void> _startModernAnimation() async {
+  //   _mainController.forward();
+  //
+  //   // Start logo animation immediately
+  //   _logoController.forward();
+  //
+  //   // Add delay before tools showcase starts
+  //   await Future.delayed(const Duration(milliseconds: 600));
+  //   if (mounted) {
+  //     _toolsController.forward();
+  //
+  //     // Add additional delay before tools showcase begins
+  //     await Future.delayed(const Duration(milliseconds: 400));
+  //     if (mounted) {
+  //       await _startToolsShowcase(); // Wait for tools showcase to complete
+  //     }
+  //   }
+  //
+  //   // Show welcome message and navigate
+  //   if (mounted) {
+  //     setState(() {
+  //       _currentStatus = 'Welcome to Modern HRMS';
+  //     });
+  //     await Future.delayed(const Duration(milliseconds: 400));
+  //     _navigateWithEnterpriseTransition();
+  //   }
+  // }
+
   Future<void> _startModernAnimation() async {
     _mainController.forward();
-
-    // Start logo animation immediately
     _logoController.forward();
 
-    // Add delay before tools showcase starts
     await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) {
       _toolsController.forward();
-
-      // Add additional delay before tools showcase begins
       await Future.delayed(const Duration(milliseconds: 400));
       if (mounted) {
-        await _startToolsShowcase(); // Wait for tools showcase to complete
+        await _startToolsShowcase();
       }
     }
 
-    // Show welcome message and navigate
-    if (mounted) {
-      setState(() {
-        _currentStatus = 'Welcome to Modern HRMS';
-      });
-      await Future.delayed(const Duration(milliseconds: 400));
-      _navigateWithEnterpriseTransition();
-    }
+    // ✅ DRY internet check
+    if (!mounted) return;
+    await handleNoInternet(
+      context: context,
+      onConnected: () async {
+        if (!mounted) return;
+
+        setState(() {
+          _currentStatus = 'Welcome to Modern HRMS';
+        });
+
+        await Future.delayed(const Duration(milliseconds: 400));
+        if (mounted) {
+          _navigateWithEnterpriseTransition();
+        }
+      },
+    );
   }
 
   Future<void> _startToolsShowcase() async {

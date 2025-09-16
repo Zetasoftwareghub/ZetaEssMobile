@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
@@ -10,14 +11,19 @@ import 'package:zeta_ess/features/approval_management/approveExpense_claim/scree
 import 'package:zeta_ess/features/approval_management/approveLeave_management/screens/approve_leaveListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/approveLieuDay_request/screens/approve_lieuDayListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/approve_attendance_regularisation/screens/approve_attendanceRegularisationListing_screen.dart';
+import 'package:zeta_ess/features/approval_management/approve_change_request/screens/approve_change_request_listing.dart';
+import 'package:zeta_ess/features/approval_management/approve_loan/screens/approve_loanListing_screen.dart';
+import 'package:zeta_ess/features/approval_management/approve_other_request/screens/approve_first_otherRequestListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/approve_other_request/screens/approve_otherRequest_listing.dart';
 import 'package:zeta_ess/features/approval_management/approve_resumption_request/screens/approve_resumptionListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/approve_salary_advance/screens/approve_salaryAdvanceListing_screen.dart';
 import 'package:zeta_ess/features/approval_management/approve_salary_certificate/screens/approve_salaryCertificateListing_screen.dart';
 import 'package:zeta_ess/features/self_service/attendance_regularisation/screens/attandanceRegularisation_datePick.dart';
+import 'package:zeta_ess/features/self_service/change_request/screens/change_request_listing_screen.dart';
 import 'package:zeta_ess/features/self_service/expense_claim/screens/expenseClaimListing_screen.dart';
 import 'package:zeta_ess/features/self_service/leave_management/screens/leaveListing_screen.dart';
 import 'package:zeta_ess/features/self_service/lieuDay_request/screens/lieuDayListing_screen.dart';
+import 'package:zeta_ess/features/self_service/loan/screens/loanListing_screen.dart';
 import 'package:zeta_ess/features/self_service/other_request/screens/other_request_first_listing_screen.dart';
 import 'package:zeta_ess/features/self_service/resumption_request/screens/resumptionListing_screen.dart';
 import 'package:zeta_ess/features/self_service/salary_advance/screens/salaryAdvanceListing_screen.dart';
@@ -29,10 +35,28 @@ import '../../auth/screens/login_screen.dart';
 import '../models/notification_model.dart';
 import '../providers/common_ui_providers.dart';
 
-class NotificationsScreen extends ConsumerWidget {
+class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Force refresh when screen is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.refresh(menuAgainstEmployeeProvider);
+      ref.refresh(getPendingRequestNotificationProvider);
+      ref.refresh(getPendingApprovalsNotificationProvider);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final menuAsync = ref.watch(menuAgainstEmployeeProvider);
     final pendingRequestAsync = ref.watch(
       getPendingRequestNotificationProvider,
@@ -43,15 +67,7 @@ class NotificationsScreen extends ConsumerWidget {
 
     return menuAsync.when(
       loading: () => CustomScreenLoader(loadingText: 'loading_menus'.tr()),
-      error: (e, st) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          NavigationService.navigateRemoveUntil(
-            context: context,
-            screen: const LoginScreen(),
-          );
-        });
-        return const SizedBox();
-      },
+      error: (e, st) => ErrorText(error: e.toString()),
       data: (menu) {
         final List<Tab> tabs = [];
         final List<Widget> tabViews = [];
@@ -147,92 +163,8 @@ class NotificationsScreen extends ConsumerWidget {
       },
     );
   }
-  // @override
-  // Widget build(BuildContext context, WidgetRef ref) {
-  //   final pendingRequestAsync = ref.watch(
-  //     getPendingRequestNotificationProvider,
-  //   );
-  //   final pendingApprovalsAsync = ref.watch(
-  //     getPendingApprovalsNotificationProvider,
-  //   );
-  //
-  //   return DefaultTabController(
-  //     length: 2,
-  //     child: Scaffold(
-  //       backgroundColor: Colors.grey[50],
-  //       appBar: AppBar(
-  //         title: Text(
-  //           'Notifications'.tr(),
-  //           style: TextStyle(
-  //             fontSize: 20.sp,
-  //             fontWeight: FontWeight.w600,
-  //             color: Colors.black87,
-  //           ),
-  //         ),
-  //         backgroundColor: Colors.white,
-  //         elevation: 0,
-  //         iconTheme: const IconThemeData(color: Colors.black87),
-  //         bottom: PreferredSize(
-  //           preferredSize: Size.fromHeight(60.h),
-  //           child: Container(
-  //             margin: EdgeInsets.symmetric(horizontal: 16.w),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[100],
-  //               borderRadius: BorderRadius.circular(12.r),
-  //             ),
-  //             child: TabBar(
-  //               indicator: BoxDecoration(
-  //                 color: AppTheme.primaryColor,
-  //                 borderRadius: BorderRadius.circular(10.r),
-  //               ),
-  //               indicatorSize: TabBarIndicatorSize.tab,
-  //               indicatorPadding: EdgeInsets.all(4.w),
-  //               labelColor: Colors.white,
-  //               unselectedLabelColor: Colors.grey[600],
-  //               labelStyle: TextStyle(
-  //                 fontSize: 13.sp,
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //               unselectedLabelStyle: TextStyle(
-  //                 fontSize: 13.sp,
-  //                 fontWeight: FontWeight.w500,
-  //               ),
-  //               tabs: [
-  //                 Tab(text: 'My Requests'.tr()),
-  //                 Tab(text: 'My Approvals'.tr()),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       body: SafeArea(
-  //         child: Padding(
-  //           padding: EdgeInsets.only(top: 16.h),
-  //           child: TabBarView(
-  //             children: [
-  //               _buildTabContent(
-  //                 pendingRequestAsync.when(
-  //                   data: (list) => _buildNotificationList(context, list, true),
-  //                   loading: () => Loader(),
-  //                   error: (e, _) => _buildErrorState(e.toString()),
-  //                 ),
-  //               ),
-  //               _buildTabContent(
-  //                 pendingApprovalsAsync.when(
-  //                   data:
-  //                       (list) => _buildNotificationList(context, list, false),
-  //                   loading: () => Loader(),
-  //                   error: (e, _) => _buildErrorState(e.toString()),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
+  // @override
   Widget _buildTabContent(Widget child) {
     return Padding(padding: AppPadding.screenPadding, child: child);
   }
@@ -512,23 +444,36 @@ class NotificationsScreen extends ConsumerWidget {
   ) {
     final id = model.id?.trim();
     final name = model.name?.trim();
-
+    print(id);
+    print('tapp');
     if (isRequestTab) {
       switch (id) {
+        case "9":
+          NavigationService.navigatePushReplacement(
+            context: context,
+            screen: LoanListingScreen(title: 'loan_request'.tr()),
+          );
+          break;
+        case "97":
+          NavigationService.navigatePushReplacement(
+            context: context,
+            screen: ChangeRequestListingScreen(title: 'change__request'.tr()),
+          );
+          break;
         case "152":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: AttendanceRegularisationDatePick(),
           );
           break;
         case "5":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: LeaveListingScreen(title: 'leave_requests'.tr()),
           );
           break;
         case "6":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: SalaryCertificateListingScreen(
               title: 'salary_certificate_requests'.tr(),
@@ -536,7 +481,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "7":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: SalaryAdvanceListingScreen(
               title: 'salary_advance_requests'.tr(),
@@ -544,27 +489,27 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "8":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ExpenseClaimListingScreen(
-              title: 'expense_claim_requests'.tr(),
+              title: 'expense_claim_request'.tr(),
             ),
           );
           break;
         case "9999":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: OtherRequestFirstListingScreen(title: 'other_requests'),
           );
           break;
         case "112":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ResumptionListingScreen(title: "resumption_requests".tr()),
           );
           break;
         case "84":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: LieuDayListingScreen(title: "lieu_days_requests".tr()),
           );
@@ -574,19 +519,33 @@ class NotificationsScreen extends ConsumerWidget {
     } else {
       switch (name) {
         case "Pending Approve Leave":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveLeaveListingScreen(title: 'approve_leave'),
           );
           break;
+        case "Pending Approve Change Request":
+          NavigationService.navigatePushReplacement(
+            context: context,
+            screen: ApproveChangeRequestListing(
+              title: 'change_request_approve'.tr(),
+            ),
+          );
+          break;
+        case "Pending Approve Loan Request":
+          NavigationService.navigatePushReplacement(
+            context: context,
+            screen: ApproveLoanListingScreen(title: 'loan_approve'),
+          );
+          break;
         case "Pending Approve Resumption":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ApproveResumptionListingScreen(title: 'approve_resumption'),
           );
           break;
         case "Pending Approve Leave Cancellation Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ApproveLeaveListingScreen(
               title: 'approve_leave_cancellation',
@@ -594,7 +553,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Expense Claim Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveExpenseClaimListingScreen(
               title: 'approve_expense_claims',
@@ -602,7 +561,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Salary Advance Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryAdvanceListingScreen(
               title: 'approve_salary_advance',
@@ -610,7 +569,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Salary Certificate Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryCertificateListingScreen(
               title: 'approve_salary_certificate',
@@ -618,7 +577,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Attendance Regularization Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveAttendanceRegularisationListingScreen(
               title: 'approve_attendance_regularization',
@@ -626,17 +585,15 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Other Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
-            screen: const ApproveOtherRequestListingScreen(
-              title: 'approve_other_requests',
-              micode: 'micode', // TODO: Pass actual micode
-              requestId: 'requestId', // TODO: Pass actual requestId
+            screen: const ApproveOtherRequestFirstListingScreen(
+              title: 'other_requests',
             ),
           );
           break;
         case "Pending Approve Lieu Days Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveLieuDayListingScreen(
               title: 'approve_lieu_days',
@@ -752,19 +709,19 @@ class NotificationsScreen extends ConsumerWidget {
     if (isRequestTab) {
       switch (id) {
         case "152":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: AttendanceRegularisationDatePick(),
           );
           break;
         case "5":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: LeaveListingScreen(title: 'leave_requests'.tr()),
           );
           break;
         case "6":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: SalaryCertificateListingScreen(
               title: 'salary_certificate_requests'.tr(),
@@ -772,7 +729,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "7":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: SalaryAdvanceListingScreen(
               title: 'salary_certificates_requests'.tr(),
@@ -780,7 +737,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "8":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ExpenseClaimListingScreen(
               title: 'expense_claim_requests'.tr(),
@@ -788,19 +745,19 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "9999":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: OtherRequestFirstListingScreen(title: 'other_requests'),
           );
           break;
         case "112":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ResumptionListingScreen(title: "resumption_requests".tr()),
           );
           break;
         case "84":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: LieuDayListingScreen(title: "lieu_days_requests".tr()),
           );
@@ -810,43 +767,43 @@ class NotificationsScreen extends ConsumerWidget {
     } else {
       switch (name) {
         case "Pending Approve Leave":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveLeaveListingScreen(title: 'approve_leave'),
           );
           break;
         case "Pending Approve Resumption":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: ApproveResumptionListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Leave Cancellation Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context, //TODO this was cancel leave listing screen
             screen: ApproveLeaveListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Expense Claim Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveExpenseClaimListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Salary Advance Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryAdvanceListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Salary Certificate Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryCertificateListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Attendance Regularization Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveAttendanceRegularisationListingScreen(
               title: 'title',
@@ -854,7 +811,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Other Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context, //TODO need req id micode passs karo
             screen: const ApproveOtherRequestListingScreen(
               title: 'title',
@@ -864,7 +821,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Lieu Days Request":
-          NavigationService.navigateToScreen(
+          NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveLieuDayListingScreen(title: 'title'),
           );

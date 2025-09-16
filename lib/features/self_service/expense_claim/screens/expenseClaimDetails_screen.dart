@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/common/common_text.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
 import 'package:zeta_ess/core/common/customDateTime_pickers/month_and_year_picker.dart';
@@ -13,6 +14,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/expense_claim/controller/expenseClaim_controller.dart';
 import 'package:zeta_ess/features/self_service/expense_claim/models/expense_claim_model.dart';
 
+import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../providers/expense_claim_providers.dart';
 
@@ -41,8 +43,6 @@ class _ExpenseClaimDetailsScreenState
   ExpenseClaimModel? expenseClaimModel;
   @override
   Widget build(BuildContext context) {
-    print(widget.expenseClaimId);
-    print('widget.expenseClaimId');
     final details = ref.watch(
       expenseClaimDetailsProvider(widget.expenseClaimId ?? 0),
     );
@@ -95,10 +95,16 @@ class _ExpenseClaimDetailsScreenState
                       title: 'approved_amount',
                       subTitle: claimDetail.approveAmount,
                     ),
-                    detailInfoRow(title: "note", subTitle: claimDetail.note),
+                    detailInfoRow(
+                      title: "note",
+                      subTitle:
+                          claimDetail.note == 'null' ? '' : claimDetail.note,
+                    ),
 
-                    titleHeaderText('comment'.tr()),
-                    Text(claimDetail.comment ?? ''),
+                    if (claimDetail.comment?.isNotEmpty ?? false) ...[
+                      titleHeaderText('comment'.tr()),
+                      Text(claimDetail.comment ?? ''),
+                    ],
                     10.heightBox,
                     if (widget.isLineManager ?? false) ...[
                       Form(
@@ -114,6 +120,14 @@ class _ExpenseClaimDetailsScreenState
                             inputField(
                               hint: 'Approve Amount'.tr(),
                               controller: approveAmountController,
+                              onChanged: (amount) {
+                                validateApproveAmount(
+                                  context: context,
+                                  controller: approveAmountController,
+                                  requestedAmount: claimDetail.amount,
+                                );
+                              },
+
                               keyboardType: TextInputType.number,
                               isRequired: true,
                             ),
@@ -127,7 +141,7 @@ class _ExpenseClaimDetailsScreenState
                         ),
                       ),
                     ],
-                    80.heightBox,
+                    100.heightBox,
                   ],
                 );
               },
@@ -142,12 +156,21 @@ class _ExpenseClaimDetailsScreenState
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
+                    final isValid = validateApproveAmount(
+                      context: context,
+                      controller: approveAmountController,
+                      requestedAmount: expenseClaimModel?.amount ?? '0',
+                    );
+
+                    if (!isValid) return;
+
                     if (approveRejectMonthYear.text.isEmpty) {
-                      showSnackBar(
-                        context: context,
-                        content: 'Select month and year',
-                        color: AppTheme.errorColor,
+                      showCustomAlertBox(
+                        context,
+                        title: 'Select month and year',
+                        type: AlertType.error,
                       );
+
                       return;
                     }
                     if (approveRejectMonthYear.text.isNotEmpty ||
@@ -168,20 +191,22 @@ class _ExpenseClaimDetailsScreenState
                             );
                       }
                     } else {
-                      showSnackBar(
-                        context: context,
-                        content: requiredFieldsText,
-                        color: AppTheme.errorColor,
+                      showCustomAlertBox(
+                        context,
+                        title: requiredFieldsText.tr(),
+                        type: AlertType.error,
                       );
+                      return;
                     }
                   },
                   onReject: () {
                     if (commentController.text.isEmpty) {
-                      showSnackBar(
-                        context: context,
-                        content: 'Give reject comment',
-                        color: AppTheme.errorColor,
+                      showCustomAlertBox(
+                        context,
+                        title: 'Give reject comment',
+                        type: AlertType.error,
                       );
+
                       return;
                     }
                     if (expenseClaimModel != null) {
