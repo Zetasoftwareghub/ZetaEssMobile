@@ -94,7 +94,6 @@ class ExpenseClaimListView extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final claim = items[index];
-
         return InkWell(
           onTap: () => navigateToDetail(claim, context),
           child: Consumer(

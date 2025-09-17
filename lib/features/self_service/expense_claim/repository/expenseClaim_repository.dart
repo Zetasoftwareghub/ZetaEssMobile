@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:zeta_ess/core/error_handling/type_defs.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/api_constants/dio_headers.dart';
 import '../../../../core/api_constants/self_service_apis/expense_claim_apis.dart';
@@ -23,7 +24,8 @@ class ExpenseClaimRepository {
   }) async {
     try {
       final data = {
-        'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
         'emcode': int.parse(userContext.empCode),
         'userid': int.parse(userContext.esCode),
       };
@@ -32,6 +34,8 @@ class ExpenseClaimRepository {
         data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
+      printFullJson(response.data);
+      print('response.data');
       if (response.statusCode == 200 && response.data['success'] == true) {
         return right(ExpenseClaimListResponse.fromJson(response.data));
       } else {
@@ -53,7 +57,8 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.submitExpenseClaim,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': int.parse(userContext.empCode),
           'username': userContext.empName,
           "baseDirectory": '', //TODO give this ! frmo locall
@@ -74,7 +79,8 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.deleteExpenseClaims,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'id': claimId,
           'escode': userContext.esCode,
         },
@@ -94,7 +100,8 @@ class ExpenseClaimRepository {
       final response = await dio.post(
         userContext.baseUrl + ExpenseClaimApis.getExpenseClaimDetails,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'id': claimId,
           'emcode': userContext.empCode,
         },

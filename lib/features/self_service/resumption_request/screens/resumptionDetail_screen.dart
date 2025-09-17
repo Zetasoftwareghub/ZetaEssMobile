@@ -135,8 +135,9 @@ class _ResumptionDetailsScreenState
                       children: [
                         if (resumption.prevComment?.trim().isNotEmpty ?? false)
                           Text(resumption.prevComment!),
-                        if (resumption.appRejComment?.trim().isNotEmpty ??
-                            false)
+                        if ((resumption.appRejComment?.trim().isNotEmpty ??
+                                false) &&
+                            (resumption.prevComment?.isEmpty ?? false))
                           Text(resumption.appRejComment!),
                       ],
                     ),

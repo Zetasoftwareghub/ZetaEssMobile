@@ -191,6 +191,7 @@ class ExpenseClaimModel {
       'expnam': expnam,
       'url': url,
       'cocode': cocode,
+      'approveAmount': approveAmount,
     };
   }
 

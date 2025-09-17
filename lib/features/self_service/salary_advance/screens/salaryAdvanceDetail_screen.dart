@@ -91,7 +91,7 @@ class _SalaryAdvanceDetailScreenState
 
                       titleHeaderText("comment".tr()),
                       Text(
-                        advance.appRejComment.isEmpty
+                      advance.lmComment.isNotEmpty ? advance.lmComment :   advance.appRejComment.isEmpty
                             ? advance.prevComment
                             : advance.appRejComment,
                       ),
