@@ -2,7 +2,7 @@ name: zeta_ess
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+2
+version: 1.0.0+4
 
 environment:
   sdk: ^3.7.2
@@ -56,6 +56,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.7
   flutter_launcher_icons: ^0.13.1
+  mockito: ^5.5.1
 
 flutter:
   generate: true

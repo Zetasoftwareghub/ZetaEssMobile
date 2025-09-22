@@ -211,7 +211,12 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
                         labelText('remarks'.tr()),
                         _buildRemarksField(),
                         SizedBox(height: 16.h),
-                        FileUploadButton(),
+                        FileUploadButton(
+                          editFileUrl:
+                              (data?.attachmentUrl ?? '').isEmpty
+                                  ? null
+                                  : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${data?.attachmentUrl}',
+                        ),
                         80.heightBox,
                       ],
                     ),

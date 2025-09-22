@@ -445,8 +445,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   ) {
     final id = model.id?.trim();
     final name = model.name?.trim();
-    print(id);
-    print('tapp');
+
     if (isRequestTab) {
       switch (id) {
         case "9":

@@ -1,8 +1,3 @@
-// import 'package:dio/dio.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:fpdart/fpdart.dart';
-//
-// import '../../core/api_constants/auth_apis/auth_api.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -49,43 +44,6 @@ class AuthRepository {
     }
   }
 
-  // FutureEither activateUrl({required String url}) async {
-  //   Future<Response<dynamic>?> tryRequest(String baseUrl) async {
-  //     try {
-  //       final response = await dio.get('$baseUrl${AuthApis.activateUrl}');
-  //       if (response.statusCode == 200 && response.data != null) {
-  //         return response;
-  //       }
-  //     } catch (_) {
-  //       // swallow error → return null
-  //     }
-  //     return null;
-  //   }
-  //
-  //   // First attempt
-  //   final firstResponse = await tryRequest(url);
-  //   // If first failed, flip scheme
-  //   final alternativeUrl =
-  //       url.startsWith('http://')
-  //           ? url.replaceFirst('http://', 'https://')
-  //           : url.startsWith('https://')
-  //           ? url.replaceFirst('https://', 'http://')
-  //           : null;
-  //
-  //   Response<dynamic>? secondResponse;
-  //   if (firstResponse == null && alternativeUrl != null) {
-  //     secondResponse = await tryRequest(alternativeUrl);
-  //   }
-  //
-  //   final result = firstResponse ?? secondResponse;
-  //
-  //   if (result != null) {
-  //     return right(result.data);
-  //   } else {
-  //     return left(Failure(errMsg: 'Invalid Activation Url'));
-  //   }
-  // }
-
   FutureEither<UserModel> loginUser({
     required UserContext userContext,
     required String fcmToken,
@@ -94,7 +52,6 @@ class AuthRepository {
     required BuildContext context,
   }) async {
     try {
-      print('object12');
       final deviceType = Platform.isAndroid ? 'android' : 'ios';
       final payloadData = {
         'userId': userName,

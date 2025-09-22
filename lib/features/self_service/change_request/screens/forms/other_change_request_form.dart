@@ -88,7 +88,7 @@ class _OtherChangeRequestFormState
             onChanged: (v) => updateField(ref, "Other Change Request", v),
             controller: otherChangeRequestCtrl,
           ),
-          if (widget.isLineManager)
+          if ((widget.isLineManager ?? false) && (comment?.isNotEmpty ?? false))
             Column(
               children: [titleHeaderText("Comment"), labelText(comment ?? '')],
             ),

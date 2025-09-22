@@ -2,11 +2,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../../core/common/widgets/showCase_widget.dart';
 import '../../../../../core/services/NavigationService.dart';
 import '../../../../../core/theme/common_theme.dart';
+import '../../../approval_management/approveExpense_claim/screens/approve_expenseClaimListing_screen.dart';
+import '../../../approval_management/approveLeave_management/screens/approve_leaveListing_screen.dart';
+import '../../../approval_management/approveLieuDay_request/screens/approve_lieuDayListing_screen.dart';
+import '../../../approval_management/approve_attendance_regularisation/screens/approve_attendanceRegularisationListing_screen.dart';
+import '../../../approval_management/approve_cancelled_leave/screens/approve_cancelLeaveListing_screen.dart';
+import '../../../approval_management/approve_change_request/screens/approve_change_request_listing.dart';
+import '../../../approval_management/approve_loan/screens/approve_loanListing_screen.dart';
+import '../../../approval_management/approve_resumption_request/screens/approve_resumptionListing_screen.dart';
+import '../../../approval_management/approve_salary_advance/screens/approve_salaryAdvanceListing_screen.dart';
+import '../../../approval_management/approve_salary_certificate/screens/approve_salaryCertificateListing_screen.dart';
+import '../../../approval_management/approve_schooling_allowance/screens/approve_schoolingAllowanceListing_screen.dart';
 import '../../../self_service/attendance_regularisation/screens/attandanceRegularisation_datePick.dart';
+import '../../../self_service/change_request/screens/change_request_listing_screen.dart';
 import '../../../self_service/expense_claim/screens/expenseClaimListing_screen.dart';
 import '../../../self_service/leave_management/screens/leaveListing_screen.dart';
 import '../../../self_service/lieuDay_request/screens/lieuDayListing_screen.dart';
@@ -198,22 +209,45 @@ class _QuickActionItemState extends State<_QuickActionItem>
   //TODO change this with self service and approvals tabs
 
   final Map<String, Widget Function(String key)> quickActionTabs = {
+    // ===== Requests =====
     'submit_leave': (key) => LeaveListingScreen(title: key),
     'resumption_request': (key) => ResumptionListingScreen(title: key),
+    'resumption_requests': (key) => ResumptionListingScreen(title: key),
     'lieu_day_request': (key) => LieuDayListingScreen(title: key),
     'expense_claim_request': (key) => ExpenseClaimListingScreen(title: key),
     'salary_advance_requests': (key) => SalaryAdvanceListingScreen(title: key),
     'loan_request': (key) => LoanListingScreen(title: key),
-    'leave_balances': (key) => LeaveBalancesScreen(title: key),
-    'attendance_history': (key) => AttendanceHistoryScreen(),
     'other_requests': (key) => OtherRequestFirstListingScreen(title: key),
     'attendance_regularisation_request':
         (key) => AttendanceRegularisationDatePick(),
-    // (key) => AttendanceRegularisationDatePick(title: key),
     'schooling_allowance_request':
         (key) => SchoolingAllowanceListingScreen(title: key),
     'salary_certificate_request':
         (key) => SalaryCertificateListingScreen(title: key),
+
+    // ===== Approvals =====
+    'approve_leave': (key) => ApproveLeaveListingScreen(title: key),
+    'cancel_approved_leave':
+        (key) => ApproveCancelLeaveListingScreen(title: key),
+    'resumption_approve': (key) => ApproveResumptionListingScreen(title: key),
+    'lieu_day_approve': (key) => ApproveLieuDayListingScreen(title: key),
+    'expense_claim_approve':
+        (key) => ApproveExpenseClaimListingScreen(title: key),
+    'salary_advance_approve':
+        (key) => ApproveSalaryAdvanceListingScreen(title: key),
+    'loan_approve': (key) => ApproveLoanListingScreen(title: key),
+    'attendance_regularisation_approve':
+        (key) => ApproveAttendanceRegularisationListingScreen(title: key),
+    'schooling_allowance_approve':
+        (key) => ApproveSchoolingAllowanceListingScreen(title: key),
+    'change_request_approve': (key) => ApproveChangeRequestListing(title: key),
+    'salary_certificate_approve':
+        (key) => ApproveSalaryCertificateListingScreen(title: key),
+
+    // ===== Extras =====
+    'change_request': (key) => ChangeRequestListingScreen(title: key),
+    'leave_balances': (key) => LeaveBalancesScreen(title: key),
+    'attendance_history': (key) => AttendanceHistoryScreen(),
   };
 
   @override
@@ -267,14 +301,13 @@ class _QuickActionItemState extends State<_QuickActionItem>
               onTapUp: _onTapUp,
               onTapCancel: _onTapCancel,
               onTap: () {
-                print(widget.action);
-                print("widget.action");
-                print(widget.action['title']);
-                final builder = quickActionTabs[widget.action['title']];
-                if (builder != null) {
+                final builderVal = quickActionTabs[widget.action['title']];
+                if (builderVal != null) {
                   NavigationService.navigateToScreen(
                     context: context,
-                    screen: builder(widget.action['title'].tr()),
+                    screen: builderVal(
+                      (widget.action['title'].toString()).tr(),
+                    ),
                   );
                 } else {
                   debugPrint('No screen mapped for ${widget.action['title']}');
@@ -348,7 +381,7 @@ class _QuickActionItemState extends State<_QuickActionItem>
                         SizedBox(height: 6.h),
                         Flexible(
                           child: Text(
-                            widget.action['title'],
+                            (widget.action['title'].toString()).tr(),
                             style: AppTextStyles.mediumFont(
                               fontWeight: FontWeight.w600,
                               fontSize: 11.sp,

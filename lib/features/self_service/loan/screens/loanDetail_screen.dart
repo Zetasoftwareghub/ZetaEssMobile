@@ -12,12 +12,12 @@ import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/approval_management/approve_loan/models/approve_loan_model.dart';
 import 'package:zeta_ess/features/self_service/loan/models/loan_list_model.dart';
-
-import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
+import '../../../../core/services/validator_services.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../approval_management/approve_loan/controller/approve_loan_controller.dart';
 import '../providers/loan_providers.dart';
+import 'loanDetail_screen.dart';
 
 class LoanDetailScreen extends ConsumerStatefulWidget {
   final bool? isLineManager;
@@ -48,120 +48,130 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
     final loanDetailsAsync = ref.watch(loanDetailsProvider(widget.loanId));
     return Scaffold(
       appBar: AppBar(title: Text('details'.tr())),
-      body: loanDetailsAsync.when(
-        loading: () => Loader(),
-        error: (err, _) => ErrorText(error: err.toString()),
-        data: (loan) {
-          approveAmountController.text = loan.loanAmount.toString();
-          return SafeArea(
-            child: Padding(
-              padding: AppPadding.screenPadding,
-              child: ListView(
-                children: [
-                  titleHeaderText('employee_details'.tr()),
-                  detailInfoRow(
-                    title: 'employee_id'.tr(),
-                    subTitle: loan.employeeCode.toString(),
-                  ),
-                  detailInfoRow(
-                    title: 'employee_name'.tr(),
-                    subTitle: widget.loanListModel?.emname,
-                  ), // Replace if available
+      body:
+          ref.watch(approveLoanControllerProvider)
+              ? Loader()
+              : loanDetailsAsync.when(
+                loading: () => Loader(),
+                error: (err, _) => ErrorText(error: err.toString()),
+                data: (loan) {
+                  approveAmountController.text = loan.loanAmount.toString();
+                  return SafeArea(
+                    child: Padding(
+                      padding: AppPadding.screenPadding,
+                      child: ListView(
+                        children: [
+                          titleHeaderText('employee_details'.tr()),
+                          detailInfoRow(
+                            title: 'employee_id'.tr(),
+                            subTitle: loan.employeeCode.toString(),
+                          ),
+                          detailInfoRow(
+                            title: 'employee_name'.tr(),
+                            subTitle: widget.loanListModel?.emname,
+                          ), // Replace if available
 
-                  titleHeaderText("submitted_details".tr()),
-                  detailInfoRow(
-                    title: 'submitted_date'.tr(),
-                    subTitle: loan.submittedDate,
-                  ),
-                  detailInfoRow(
-                    title: 'loan_type'.tr(),
-                    subTitle: widget.loanListModel?.loanType,
-                  ), // Replace if available
-                  detailInfoRow(
-                    title: "repayment_period".tr(),
-                    subTitle: '${loan.approvedMonths} Months',
-                  ),
-                  detailInfoRow(
-                    title: 'amount'.tr(),
-                    subTitle: '${loan.loanAmount}',
-                  ),
+                          titleHeaderText("submitted_details".tr()),
+                          detailInfoRow(
+                            title: 'submitted_date'.tr(),
+                            subTitle: loan.submittedDate,
+                          ),
+                          detailInfoRow(
+                            title: 'loan_type'.tr(),
+                            subTitle: widget.loanListModel?.loanType,
+                          ), // Replace if available
+                          detailInfoRow(
+                            title: "repayment_period".tr(),
+                            subTitle: '${loan.approvedMonths} Months',
+                          ),
+                          detailInfoRow(
+                            title: 'amount'.tr(),
+                            subTitle: '${loan.loanAmount}',
+                          ),
 
-                  detailInfoRow(
-                    title: 'loan_start_date'.tr(),
-                    subTitle: loan.repaymentStartDate,
-                  ),
+                          detailInfoRow(
+                            title: 'loan_start_date'.tr(),
+                            subTitle: loan.repaymentStartDate,
+                          ),
 
-                  detailInfoRow(
-                    title: 'status'.tr(),
-                    subTitle: widget.loanListModel?.loanStatus ?? 'N/A',
-                  ),
-                  detailInfoRow(title: "note".tr(), subTitle: loan.note ?? '—'),
-                  detailInfoRow(
-                    title: "Approved Date".tr(),
-                    subTitle: loan.approvedDate ?? '—',
-                  ),
-                  detailInfoRow(
-                    title: "Approved amount".tr(),
-                    subTitle: loan.approvedAmount.toString() ?? '—',
-                  ),
+                          detailInfoRow(
+                            title: 'status'.tr(),
+                            subTitle: widget.loanListModel?.loanStatus ?? 'N/A',
+                          ),
+                          detailInfoRow(
+                            title: "note".tr(),
+                            subTitle: loan.note ?? '—',
+                          ),
+                          if (!(widget.isLineManager ?? false) &&
+                              loan.approvedDate.isNotEmpty)
+                            detailInfoRow(
+                              title: "Approved Date".tr(),
+                              subTitle: loan.approvedDate,
+                            ),
+                          detailInfoRow(
+                            title: "Approved amount".tr(),
+                            subTitle: loan.approvedAmount.toString() ?? '—',
+                          ),
 
-                  titleHeaderText("comment".tr()),
-                  Text(loan.approverNote),
-                  titleHeaderText("attachments".tr()),
-                  AttachmentWidget(
-                    attachmentUrl:
-                        loan.filePath == null ||
-                                (loan.filePath?.isEmpty ?? false)
-                            ? null
-                            : '${ref.watch(userContextProvider).userBaseUrl}/${loan.filePath}',
-                  ),
-                  15.heightBox,
-                  if (widget.isLineManager ?? false) ...[
-                    CustomDateField(
-                      hintText: 'Approve date',
-                      initialDate:
-                          ref.watch(selectedDateProvider) ??
-                          formatDate(DateTime.now()),
-                      onDateSelected: (date) {
-                        ref.read(selectedDateProvider.notifier).state = date;
-                      },
+                          titleHeaderText("comment".tr()),
+                          Text(loan.approverNote),
+                          titleHeaderText("attachments".tr()),
+                          AttachmentWidget(
+                            attachmentUrl:
+                                loan.filePath == null ||
+                                        (loan.filePath?.isEmpty ?? false)
+                                    ? null
+                                    : '${ref.watch(userContextProvider).userBaseUrl}/${loan.filePath}',
+                          ),
+                          15.heightBox,
+                          if (widget.isLineManager ?? false) ...[
+                            CustomDateField(
+                              hintText: 'Approve date',
+                              initialDate: ref.watch(selectedDateProvider),
+                              onDateSelected: (date) {
+                                ref.read(selectedDateProvider.notifier).state =
+                                    date;
+                              },
+                            ),
+                            10.heightBox,
+                            inputField(
+                              hint: 'Approve amount',
+                              controller: approveAmountController,
+                              keyboardType: TextInputType.number,
+                              onChanged: (amount) {
+                                ValidatorServices.validateApproveAmount(
+                                  context: context,
+                                  controller: approveAmountController,
+                                  requestedAmount: loan.loanAmount.toString(),
+                                );
+                              },
+                            ),
+                            10.heightBox,
+
+                            inputField(
+                              hint: 'Enter approve/reject comment',
+                              controller: commentController,
+                            ),
+                          ],
+                          80.heightBox,
+                        ],
+                      ),
                     ),
-                    10.heightBox,
-                    inputField(
-                      hint: 'Approve amount',
-                      controller: approveAmountController,
-                      keyboardType: TextInputType.number,
-
-                      onChanged: (amount) {
-                        validateApproveAmount(
-                          context: context,
-                          controller: approveAmountController,
-                          requestedAmount: loan.loanAmount.toString(),
-                        );
-                      },
-                    ),
-                    10.heightBox,
-
-                    inputField(
-                      hint: 'Enter approve/reject comment',
-                      controller: commentController,
-                    ),
-                  ],
-                  80.heightBox,
-                ],
+                  );
+                },
               ),
-            ),
-          );
-        },
-      ),
       bottomSheet:
-          widget.isLineManager ?? false
+          ref.watch(approveLoanControllerProvider)
+              ? Loader()
+              : ref.watch(approveLoanControllerProvider)
+              ? Loader()
+              : widget.isLineManager ?? false
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
                     final loan = loanDetailsAsync.value;
 
-                    final isValid = validateApproveAmount(
+                    final isValid = ValidatorServices.validateApproveAmount(
                       context: context,
                       controller: approveAmountController,
                       requestedAmount: loan?.loanAmount.toString() ?? '0',
@@ -200,6 +210,12 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                         );
                   },
                   onReject: () {
+                    /*  onReject: () {
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
                     final loan = loanDetailsAsync.value;
                     final userContext = ref.watch(userContextProvider);
 
@@ -304,8 +320,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 //       bottomSheet:
 //           isLineManager ?? false
 //               ? SafeArea(
-//                 child: ApproveRejectButtons(onApprove: () {}, onReject: () {}),
-//               )
+//                 child: ApproveRejectButtons(onApprove: () {},            onReject: () {
+
 //               : const SizedBox.shrink(),
 //     );
 //   }

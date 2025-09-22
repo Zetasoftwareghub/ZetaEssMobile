@@ -98,7 +98,8 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
               accountName:
                   ref.watch(bankAccNameProvider) ?? bankDetails.accountName,
             ),
-            if (widget.isLineManager ?? false)
+            if ((widget.isLineManager ?? false) &&
+                (comment?.isNotEmpty ?? false))
               Column(
                 children: [
                   titleHeaderText("Comment"),

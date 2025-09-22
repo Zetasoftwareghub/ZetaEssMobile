@@ -118,7 +118,7 @@ class SchoolingAllowanceDetailScreen extends StatelessWidget {
       bottomSheet:
           isLineManager ?? false
               ? SafeArea(
-                child: ApproveRejectButtons(onApprove: () {}, onReject: () {}),
+                child: ApproveRejectButtons(onApprove: () {},            onReject: () {   }),
               )
               : const SizedBox.shrink(),
     );

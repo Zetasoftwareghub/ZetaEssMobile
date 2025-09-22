@@ -25,6 +25,7 @@ class LeaveConfigurationEdit extends ConsumerStatefulWidget {
   String? leaveCode;
   String? showSubmit;
   bool fromAppTab = false;
+  bool isResumptionLeave = false;
   bool? selectedSameValues;
   bool isLieuDay;
   String lssNo;
@@ -38,6 +39,7 @@ class LeaveConfigurationEdit extends ConsumerStatefulWidget {
   LeaveConfigurationEdit({
     Key? key,
     this.dateFrom,
+    this.isResumptionLeave = false,
     required this.isLieuDay,
     this.dateTo,
     this.leaveCode,
@@ -1129,6 +1131,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                         : const Text(""),
               ),
               onTap: () {
+                if (widget.isResumptionLeave) return;
+
                 if (i.dayType == 3 || i.dayType == 4 || widget.fromAppTab) {
                   return;
                 }
@@ -1165,6 +1169,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                     i.dayFlag == "H"
                         ? InkWell(
                           onTap: () {
+                            if (widget.isResumptionLeave) return;
+
                             _halfDay(i);
                           },
                           child: Text(
@@ -1177,6 +1183,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                 ),
               ),
               onTap: () {
+                if (widget.isResumptionLeave) return;
+
                 if (i.dayType == 3 || i.dayType == 4 || widget.fromAppTab) {
                   return;
                 }

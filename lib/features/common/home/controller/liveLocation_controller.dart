@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,164 +9,416 @@ class LiveLocation {
   final String placeName;
 
   LiveLocation({required this.position, required this.placeName});
+
+  @override
+  String toString() =>
+      'LiveLocation(lat: ${position.latitude}, lng: ${position.longitude}, place: $placeName)';
+}
+
+// Custom Exceptions
+class LocationServiceDisabledException implements Exception {
+  final String message;
+  LocationServiceDisabledException([
+    this.message = 'Location services are disabled',
+  ]);
+  @override
+  String toString() => message;
+}
+
+class LocationPermissionDeniedException implements Exception {
+  final String message;
+  LocationPermissionDeniedException([
+    this.message = 'Location permission denied',
+  ]);
+  @override
+  String toString() => message;
+}
+
+class LocationPermissionPermanentlyDeniedException implements Exception {
+  final String message;
+  LocationPermissionPermanentlyDeniedException([
+    this.message = 'Location permission permanently denied',
+  ]);
+  @override
+  String toString() => message;
 }
 
 class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
   StreamSubscription<Position>? _positionStream;
+  Timer? _timeoutTimer;
+  Timer? _serviceMonitorTimer;
 
   LiveLocationController() : super(const AsyncValue.loading()) {
-    _startListening();
+    _initialize();
   }
 
-  Future<void> _startListening() async {
+  // Initialize location tracking
+  Future<void> _initialize() async {
     try {
-      // Check permission
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever ||
-          permission == LocationPermission.unableToDetermine) {
-        throw Exception('Location permissions are permanently denied.');
-      }
-
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        state = AsyncValue.error(
-          'Location services are disabled. Please enable location services.',
-          StackTrace.current,
-        );
-        return;
-      }
-      // Start listening to location changes
-      _positionStream = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 10, // update when user moves 10 meters
-        ),
-      ).listen((position) async {
-        String placeName = await _getPlaceNameFromCoordinates(position);
-
-        state = AsyncValue.data(
-          LiveLocation(position: position, placeName: placeName),
-        );
-      });
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      await _checkLocationServices();
+      await _checkLocationPermission();
+      await _startLocationTracking();
+    } catch (e, stackTrace) {
+      _cancelTimeoutTimer(); // Cancel timeout on error
+      state = AsyncValue.error(e, stackTrace);
     }
   }
 
+  // Helper method to cancel timeout timer
+  void _cancelTimeoutTimer() {
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
+  }
+
+  // Check if location services are enabled
+  Future<void> _checkLocationServices() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw LocationServiceDisabledException(
+        'Location services are disabled. Please enable them in device settings.',
+      );
+    }
+  }
+
+  // Check and request location permission
+  Future<void> _checkLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw LocationPermissionDeniedException(
+          'Location permission denied by user.',
+        );
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw LocationPermissionPermanentlyDeniedException(
+        'Location permission permanently denied. Please enable it in app settings.',
+      );
+    }
+
+    if (permission == LocationPermission.unableToDetermine) {
+      throw LocationPermissionDeniedException(
+        'Unable to determine location permission status.',
+      );
+    }
+  }
+
+  // Start location tracking with continuous monitoring
+  Future<void> _startLocationTracking() async {
+    // Cancel any existing stream and timers
+    await _positionStream?.cancel();
+    _cancelTimeoutTimer();
+
+    // Set a timeout for getting first location
+    _timeoutTimer = Timer(const Duration(seconds: 30), () {
+      // Only show timeout error if still in loading state
+      if (state is AsyncLoading && mounted) {
+        state = AsyncValue.error(
+          LocationServiceDisabledException(
+            'Unable to get location. Please check your location and try again.',
+          ),
+          StackTrace.current,
+        );
+      }
+    });
+
+    try {
+      Position? initialPosition;
+      try {
+        initialPosition = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+      } on TimeoutException {
+        initialPosition = await Geolocator.getLastKnownPosition();
+        try {
+          if (initialPosition == null) {
+            throw LocationServiceDisabledException(
+              'Unable to fetch location (timeout). Try moving to an open area.',
+            );
+          }
+        } catch (e) {
+          if (e is PermissionDeniedException) {
+            throw LocationPermissionDeniedException();
+          } else {
+            throw Exception('Location error: $e');
+          }
+        }
+      } catch (e) {
+        // Handle other location errors
+        if (e.toString().contains('PERMISSION_DENIED')) {
+          throw LocationPermissionDeniedException(
+            'Location permission is required to continue.',
+          );
+        } else if (e.toString().contains('LOCATION_SERVICES_DISABLED')) {
+          throw LocationServiceDisabledException(
+            'Please enable location services to continue.',
+          );
+        } else {
+          throw LocationServiceDisabledException(
+            'Unable to get your location. Please check your location settings.',
+          );
+        }
+      }
+
+      if (initialPosition != null) {
+        final placeName = await _getPlaceNameFromCoordinates(initialPosition);
+
+        // SUCCESS: Cancel timeout timer immediately and update state
+        _cancelTimeoutTimer();
+
+        if (mounted) {
+          state = AsyncValue.data(
+            LiveLocation(position: initialPosition, placeName: placeName),
+          );
+        }
+      }
+
+      // Start listening to position stream with error handling
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10, // Update when user moves 10 meters
+        ),
+      ).listen(
+        (Position position) async {
+          try {
+            // Double-check location services are still enabled
+            final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+            if (!serviceEnabled) {
+              if (mounted) {
+                state = AsyncValue.error(
+                  LocationServiceDisabledException(
+                    'Location services were disabled. Please enable them to continue.',
+                  ),
+                  StackTrace.current,
+                );
+              }
+              return;
+            }
+
+            final placeName = await _getPlaceNameFromCoordinates(position);
+
+            if (mounted) {
+              state = AsyncValue.data(
+                LiveLocation(position: position, placeName: placeName),
+              );
+            }
+          } catch (e) {
+            // If geocoding fails, still update position with unknown location
+            if (mounted) {
+              state = AsyncValue.data(
+                LiveLocation(position: position, placeName: 'Unknown location'),
+              );
+            }
+          }
+        },
+        onError: (error, stackTrace) {
+          // Cancel timeout timer on stream error
+          _cancelTimeoutTimer();
+
+          // Convert technical errors to user-friendly messages
+          String userFriendlyMessage;
+
+          if (error is TimeoutException) {
+            userFriendlyMessage =
+                'Unable to get location. Please check your location signal and try again.';
+          } else if (error.toString().contains('PERMISSION_DENIED')) {
+            userFriendlyMessage =
+                'Location permission is required. Please enable it in settings.';
+          } else if (error.toString().toLowerCase().contains('location') &&
+              error.toString().toLowerCase().contains('disabled')) {
+            userFriendlyMessage =
+                'Location services are disabled. Please enable them in device settings.';
+          } else if (error.toString().contains('location') ||
+              error.toString().contains('NETWORK_ERROR')) {
+            userFriendlyMessage =
+                'Unable to get location. Please check your location and network connection.';
+          } else {
+            userFriendlyMessage =
+                'Unable to get your location. Please try again.';
+          }
+
+          if (mounted) {
+            state = AsyncValue.error(
+              LocationServiceDisabledException(userFriendlyMessage),
+              StackTrace.current,
+            );
+          }
+        },
+      );
+
+      // Start periodic location service monitoring
+      _startLocationServiceMonitoring();
+    } catch (e, stackTrace) {
+      // Cancel timeout timer on any error
+      _cancelTimeoutTimer();
+
+      // Ensure we always show user-friendly errors
+      if (e is LocationServiceDisabledException ||
+          e is LocationPermissionDeniedException ||
+          e is LocationPermissionPermanentlyDeniedException) {
+        if (mounted) {
+          state = AsyncValue.error(e, StackTrace.current);
+        }
+      } else {
+        if (mounted) {
+          state = AsyncValue.error(
+            LocationServiceDisabledException(
+              'Unable to get your location. Please check your settings and try again.',
+            ),
+            StackTrace.current,
+          );
+        }
+      }
+    }
+  }
+
+  // Monitor location services periodically
+  void _startLocationServiceMonitoring() {
+    _serviceMonitorTimer?.cancel();
+    _serviceMonitorTimer = Timer.periodic(const Duration(seconds: 5), (
+      timer,
+    ) async {
+      try {
+        // Only monitor if we have a successful location state
+        if (state.hasValue && mounted) {
+          final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+          if (!serviceEnabled) {
+            timer.cancel();
+            state = AsyncValue.error(
+              LocationServiceDisabledException(
+                'Location services were disabled. Please enable them to continue.',
+              ),
+              StackTrace.current,
+            );
+          }
+        }
+      } catch (e) {
+        // Silent fail for monitoring - don't change state
+        print('Location service monitoring error: $e');
+      }
+    });
+  }
+
+  // Get place name from coordinates with error handling
   Future<String> _getPlaceNameFromCoordinates(Position position) async {
     try {
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (placemarks.isNotEmpty) {
-        final place = placemarks[0];
-        return [
-          place.street, // e.g. "350 5th Ave"
-          place.subLocality, // e.g. "Manhattan"
-          place.locality, // e.g. "New York"
-          place.country, // e.g. "USA"
-        ].where((e) => e != null && e.isNotEmpty).join(', ');
+        final place = placemarks.first;
+        final addressParts = <String>[
+          if (place.street?.isNotEmpty == true) place.street!,
+          if (place.subLocality?.isNotEmpty == true) place.subLocality!,
+          if (place.locality?.isNotEmpty == true) place.locality!,
+          if (place.administrativeArea?.isNotEmpty == true)
+            place.administrativeArea!,
+          if (place.country?.isNotEmpty == true) place.country!,
+        ];
+
+        return addressParts.isNotEmpty
+            ? addressParts.join(', ')
+            : 'Unknown location';
       }
       return 'Unknown location';
-    } catch (_) {
+    } catch (e) {
+      print('Geocoding error: $e');
       return 'Unable to get location name';
     }
+  }
+
+  // Public method to retry location request
+  Future<void> retry() async {
+    _cancelTimeoutTimer(); // Cancel any existing timeout
+    state = const AsyncValue.loading();
+    await _initialize();
+  }
+
+  // Method to handle manual retry with comprehensive checks
+  Future<void> manualRetry() async {
+    _cancelTimeoutTimer(); // Cancel any existing timeout
+    state = const AsyncValue.loading();
+
+    try {
+      // Check location services first
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw LocationServiceDisabledException();
+      }
+
+      // Check permission status
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.deniedForever) {
+        throw LocationPermissionPermanentlyDeniedException();
+      }
+
+      if (permission == LocationPermission.denied) {
+        final newPermission = await Geolocator.requestPermission();
+        if (newPermission == LocationPermission.denied) {
+          throw LocationPermissionDeniedException();
+        }
+        if (newPermission == LocationPermission.deniedForever) {
+          throw LocationPermissionPermanentlyDeniedException();
+        }
+      }
+
+      // If all checks pass, start tracking
+      await _startLocationTracking();
+    } catch (e, stackTrace) {
+      _cancelTimeoutTimer(); // Cancel timeout on error
+      if (mounted) {
+        state = AsyncValue.error(e, stackTrace);
+      }
+    }
+  }
+
+  // Helper method to open location settings
+  Future<bool> openLocationSettings() async {
+    try {
+      return await Geolocator.openLocationSettings();
+    } catch (e) {
+      print('Could not open location settings: $e');
+      return false;
+    }
+  }
+
+  // Helper method to open app settings
+  Future<bool> openAppSettings() async {
+    try {
+      return await Geolocator.openAppSettings();
+    } catch (e) {
+      print('Could not open app settings: $e');
+      return false;
+    }
+  }
+
+  // Get current location status
+  Future<Map<String, dynamic>> getLocationStatus() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final permission = await Geolocator.checkPermission();
+
+    return {
+      'serviceEnabled': serviceEnabled,
+      'permission': permission.toString(),
+      'canRequestPermission': permission == LocationPermission.denied,
+      'needsAppSettings': permission == LocationPermission.deniedForever,
+    };
   }
 
   @override
   void dispose() {
     _positionStream?.cancel();
+    _cancelTimeoutTimer();
+    _serviceMonitorTimer?.cancel();
     super.dispose();
   }
 }
-
-/*
-// Location Controller Class
-class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
-  LiveLocationController() : super(const AsyncValue.loading()) {
-    _initializeLocation();
-  }
-
-  Future<void> _initializeLocation() async {
-    try {
-      await _getCurrentLocation();
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<void> _getCurrentLocation() async {
-    state = const AsyncValue.loading();
-
-    try {
-      // ✅ Only check permission; do NOT check if location is enabled manually
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied');
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        throw Exception('Location permissions are permanently denied.');
-      }
-
-      // ✅ This will show the **default system dialog** if location is OFF
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
-
-      String placeName = await _getPlaceNameFromCoordinates(position);
-
-      state = AsyncValue.data(
-        LiveLocation(position: position, placeName: placeName),
-      );
-    } catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-    }
-  }
-
-  Future<String> _getPlaceNameFromCoordinates(Position position) async {
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-        return '${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}';
-      }
-      return 'Unknown location';
-    } catch (e) {
-      return 'Unable to get location name';
-    }
-  }
-
-  // Method to manually refresh location
-  Future<void> refreshLocation() async {
-    await _getCurrentLocation();
-  }
-
-  // Method to handle permission granted scenario
-  Future<void> onPermissionGranted() async {
-    // Wait a bit for the system to process the permission
-    await Future.delayed(const Duration(milliseconds: 500));
-    await _getCurrentLocation();
-  }
-}
-*/
 
 // Provider definition
 final liveLocationControllerProvider =
@@ -176,75 +427,3 @@ final liveLocationControllerProvider =
     ) {
       return LiveLocationController();
     });
-
-// Alternative: FutureProvider approach (simpler but less control)
-final liveLocationFutureProvider = FutureProvider<LiveLocation>((ref) async {
-  // Check if location services are enabled
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    throw Exception('Location services are disabled');
-  }
-
-  // Check location permission
-  LocationPermission permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      throw Exception('Location permissions are denied');
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    throw Exception('Location permissions are permanently denied');
-  }
-
-  //TODO check this is right or wrtong newly given code !
-  // Position position = await Geolocator.getCurrentPosition(
-  //   desiredAccuracy: LocationAccuracy.high,
-  //   timeLimit: const Duration(seconds: 10),
-  // );
-
-  Position? position;
-  try {
-    position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-
-      timeLimit: const Duration(seconds: 10),
-    );
-  } on TimeoutException {
-    position = await Geolocator.getLastKnownPosition();
-    if (position == null) {
-      throw Exception('Unable to get location..');
-    }
-  }
-
-  // Get place name
-  String placeName = 'Unknown location';
-  try {
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (placemarks.isNotEmpty) {
-      Placemark place = placemarks[0];
-      placeName =
-          '${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}';
-    }
-  } catch (e) {
-    placeName = 'Unable to get location name';
-  }
-
-  return LiveLocation(position: position, placeName: placeName);
-});
-
-// Permission handler helper
-class LocationPermissionHandler {
-  static Future<void> handlePermissionResult(WidgetRef ref) async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.whileInUse ||
-        permission == LocationPermission.always) {
-      // Permission granted, refresh the location
-    }
-  }
-}

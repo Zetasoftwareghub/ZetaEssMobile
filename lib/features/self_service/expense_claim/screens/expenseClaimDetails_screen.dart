@@ -13,18 +13,19 @@ import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/expense_claim/controller/expenseClaim_controller.dart';
 import 'package:zeta_ess/features/self_service/expense_claim/models/expense_claim_model.dart';
-
-import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
+import '../../../../core/services/validator_services.dart';
 import '../providers/expense_claim_providers.dart';
 
 class ExpenseClaimDetailsScreen extends ConsumerStatefulWidget {
   final int? expenseClaimId;
   final bool? isLineManager;
+  final bool isSubmittedTab;
 
   const ExpenseClaimDetailsScreen({
     super.key,
     this.isLineManager,
+    this.isSubmittedTab = false,
     required this.expenseClaimId,
   });
 
@@ -49,114 +50,125 @@ class _ExpenseClaimDetailsScreenState
 
     return Scaffold(
       appBar: AppBar(title: Text('expense_claim'.tr())),
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: SingleChildScrollView(
-            child: details.when(
-              data: (claimDetail) {
-                expenseClaimModel = claimDetail;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    titleHeaderText('employee_details'),
-                    detailInfoRow(
-                      title: 'employee_id',
-                      subTitle: claimDetail.employeeID,
-                    ),
-                    detailInfoRow(
-                      title: 'employee_name',
-                      subTitle: claimDetail.employeeName,
-                    ),
-                    20.heightBox,
-                    titleHeaderText('submitted_details'.tr()),
-                    Divider(height: 24.h),
-                    detailInfoRow(
-                      title: 'requested_date',
-                      subTitle: claimDetail.reqdate,
-                    ),
-                    detailInfoRow(
-                      title: 'requested_month_and_year',
-                      subTitle: claimDetail.monthyear,
-                    ),
-                    // detailInfoRow(
-                    //   title: 'approved_month_and_year'.tr(),
-                    //   subTitle: claimDetail.approveMonthYear,
-                    // ),
-                    detailInfoRow(
-                      title: 'Expense claim',
-                      subTitle: claimDetail.expenseClaimName,
-                    ),
-                    detailInfoRow(
-                      title: 'requested_amount',
-                      subTitle: claimDetail.amount,
-                    ),
-                    detailInfoRow(
-                      title: 'approved_amount',
-                      subTitle: claimDetail.approveAmount,
-                    ),
-                    detailInfoRow(
-                      title: "note",
-                      subTitle:
-                          claimDetail.note == 'null' ? '' : claimDetail.note,
-                    ),
-
-                    if (claimDetail.comment?.isNotEmpty ?? false) ...[
-                      titleHeaderText('comment'.tr()),
-                      Text(claimDetail.comment ?? ''),
-                    ],
-                    10.heightBox,
-                    if (widget.isLineManager ?? false) ...[
-                      Form(
-                        key: _formKey,
-                        child: Column(
+      body:
+          ref.watch(expenseClaimControllerProvider)
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenPadding,
+                  child: SingleChildScrollView(
+                    child: details.when(
+                      data: (claimDetail) {
+                        expenseClaimModel = claimDetail;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            MonthYearPickerField(
-                              controller: approveRejectMonthYear,
-                              label: 'Approve/Reject month and year'.tr(),
+                            titleHeaderText('employee_details'),
+                            detailInfoRow(
+                              title: 'employee_id',
+                              subTitle: claimDetail.employeeID,
                             ),
-                            10.heightBox,
+                            detailInfoRow(
+                              title: 'employee_name',
+                              subTitle: claimDetail.employeeName,
+                            ),
+                            20.heightBox,
+                            titleHeaderText('submitted_details'.tr()),
+                            Divider(height: 24.h),
+                            detailInfoRow(
+                              title: 'requested_date',
+                              subTitle: claimDetail.reqdate,
+                            ),
+                            detailInfoRow(
+                              title: 'requested_month_and_year',
+                              subTitle: claimDetail.monthyear,
+                            ),
+                            // detailInfoRow(
+                            //   title: 'approved_month_and_year'.tr(),
+                            //   subTitle: claimDetail.approveMonthYear,
+                            // ),
+                            detailInfoRow(
+                              title: 'Expense claim',
+                              subTitle: claimDetail.expenseClaimName,
+                            ),
+                            detailInfoRow(
+                              title: 'requested_amount',
+                              subTitle: claimDetail.amount,
+                            ),
+                            if (!widget.isSubmittedTab)
+                              detailInfoRow(
+                                title: 'approved_amount',
+                                subTitle: claimDetail.approveAmount,
+                              ),
+                            detailInfoRow(
+                              title: "note",
+                              subTitle:
+                                  claimDetail.note == 'null'
+                                      ? ''
+                                      : claimDetail.note,
+                            ),
 
-                            inputField(
-                              hint: 'Approve Amount'.tr(),
-                              controller: approveAmountController,
-                              onChanged: (amount) {
-                                validateApproveAmount(
-                                  context: context,
-                                  controller: approveAmountController,
-                                  requestedAmount: claimDetail.amount,
-                                );
-                              },
-
-                              keyboardType: TextInputType.number,
-                              isRequired: true,
-                            ),
+                            if (claimDetail.comment?.isNotEmpty ?? false) ...[
+                              titleHeaderText('comment'.tr()),
+                              Text(claimDetail.comment ?? ''),
+                            ],
                             10.heightBox,
-                            inputField(
-                              hint: 'Approve/Reject Comment'.tr(),
-                              controller: commentController,
-                              isRequired: true,
-                            ),
+                            if (widget.isLineManager ?? false) ...[
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    MonthYearPickerField(
+                                      controller: approveRejectMonthYear,
+                                      label:
+                                          'Approve/Reject month and year'.tr(),
+                                    ),
+                                    10.heightBox,
+
+                                    inputField(
+                                      hint: 'Approve Amount'.tr(),
+                                      controller: approveAmountController,
+                                      onChanged: (amount) {
+                                        ValidatorServices.validateApproveAmount(
+                                          context: context,
+                                          controller: approveAmountController,
+                                          requestedAmount: claimDetail.amount,
+                                        );
+                                      },
+
+                                      keyboardType: TextInputType.number,
+                                      isRequired: true,
+                                    ),
+                                    10.heightBox,
+                                    inputField(
+                                      hint: 'Approve/Reject Comment'.tr(),
+                                      controller: commentController,
+                                      isRequired: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            100.heightBox,
                           ],
-                        ),
-                      ),
-                    ],
-                    100.heightBox,
-                  ],
-                );
-              },
-              error: (error, stackTrace) => ErrorText(error: error.toString()),
-              loading: () => Loader(),
-            ),
-          ),
-        ),
-      ),
+                        );
+                      },
+                      error:
+                          (error, stackTrace) =>
+                              ErrorText(error: error.toString()),
+                      loading: () => Loader(),
+                    ),
+                  ),
+                ),
+              ),
       bottomSheet:
-          widget.isLineManager ?? false
+          ref.watch(expenseClaimControllerProvider)
+              ? Loader()
+              : widget.isLineManager ?? false
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
-                    final isValid = validateApproveAmount(
+                    final isValid = ValidatorServices.validateApproveAmount(
                       context: context,
                       controller: approveAmountController,
                       requestedAmount: expenseClaimModel?.amount ?? '0',
@@ -164,10 +176,11 @@ class _ExpenseClaimDetailsScreenState
 
                     if (!isValid) return;
 
-                    if (approveRejectMonthYear.text.isEmpty) {
+                    if (approveRejectMonthYear.text.isEmpty ||
+                        approveAmountController.text.isEmpty) {
                       showCustomAlertBox(
                         context,
-                        title: 'Select month and year',
+                        title: 'Please give approve date and amount',
                         type: AlertType.error,
                       );
 
@@ -200,15 +213,13 @@ class _ExpenseClaimDetailsScreenState
                     }
                   },
                   onReject: () {
-                    if (commentController.text.isEmpty) {
-                      showCustomAlertBox(
-                        context,
-                        title: 'Give reject comment',
-                        type: AlertType.error,
-                      );
+                    /*  onReject: () {
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
 
-                      return;
-                    }
                     if (expenseClaimModel != null) {
                       ref
                           .read(expenseClaimControllerProvider.notifier)

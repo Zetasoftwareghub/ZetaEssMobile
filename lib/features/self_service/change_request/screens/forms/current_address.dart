@@ -56,7 +56,8 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
-
+    printFullJson(getValueFromDetails(details, "Post box"));
+    print('12312312change');
     addressLine1Controller.text =
         getValueFromDetails(details, "House No.") ?? '';
     streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
@@ -70,7 +71,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     personalEmailController.text =
         getValueFromDetails(details, "Personal Email id") ?? '';
     officialEmailController.text =
-        getValueFromDetails(details, "Official Email id") ?? '';
+        getValueFromDetails(details, "Official Email id.") ?? '';
     setState(() => countryCode = getValueFromDetails(details, "Country"));
     _isInitialized = true;
     setState(() => comment = changeRequest.comment);
@@ -108,7 +109,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           postBoxController.text = data.postBox ?? '';
           phoneNumberController.text = data.phoneNumber ?? '';
           mobileNumberController.text = data.mobileNumber ?? '';
-          personalEmailController.text = data.emailId ?? '';
+          personalEmailController.text = data.personalMailId ?? '';
           officialEmailController.text = data.emailId ?? '';
           countryCode ??= data.countryCode ?? 'IND';
         }
@@ -146,16 +147,17 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
             ),
             detailInfoRow(
               title: "Personal Email id",
-              subTitle: data.emailId ?? '',
+              subTitle: data.personalMailId ?? '',
             ),
             detailInfoRow(
               title: "Official Email id",
-              subTitle: data.emailId ?? '',
+              subTitle: data.emailId ?? '', //TODO issue in backend
             ),
 
             SizedBox(height: 16.h),
             _formSection(readOnly: widget.isLineManager ?? false),
-            if (widget.isLineManager ?? false)
+            if ((widget.isLineManager ?? false) &&
+                (comment?.isNotEmpty ?? false))
               Column(
                 children: [
                   titleHeaderText("Comment"),

@@ -51,6 +51,7 @@ class _ExpenseClaimListingScreenState
                       ExpenseClaimListView(
                         items: data.submitted.expenseClaimList,
                         listRights: data.submitted.listRights,
+                        isSubmittedTab: true,
                       ),
                       ExpenseClaimListView(items: data.approved),
                       ExpenseClaimListView(items: data.rejected),
@@ -80,8 +81,13 @@ class _ExpenseClaimListingScreenState
 class ExpenseClaimListView extends StatelessWidget {
   final List<ExpenseClaimModel> items;
   final ListRightsModel? listRights;
-
-  const ExpenseClaimListView({super.key, required this.items, this.listRights});
+  final bool isSubmittedTab;
+  const ExpenseClaimListView({
+    super.key,
+    required this.items,
+    this.listRights,
+    this.isSubmittedTab = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +140,10 @@ class ExpenseClaimListView extends StatelessWidget {
   void navigateToDetail(ExpenseClaimModel claim, BuildContext context) {
     NavigationService.navigateToScreen(
       context: context,
-      screen: ExpenseClaimDetailsScreen(expenseClaimId: claim.expenseClaimId),
+      screen: ExpenseClaimDetailsScreen(
+        expenseClaimId: claim.expenseClaimId,
+        isSubmittedTab: isSubmittedTab,
+      ),
     );
   }
 }

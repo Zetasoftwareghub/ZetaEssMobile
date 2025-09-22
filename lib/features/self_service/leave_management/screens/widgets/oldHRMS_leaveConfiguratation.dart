@@ -23,6 +23,7 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
   String? leaveCode;
   // String? showSubmit; TODO eth view  nte case ann thonnunu !
   final bool showDetail;
+  final bool isResumptionLeave;
 
   LeaveConfiguration({
     Key? key,
@@ -30,6 +31,7 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
     this.dateTo,
     this.leaveCode,
     this.showDetail = false,
+    this.isResumptionLeave = false,
     // this.showSubmit,
   }) : super(key: key);
 
@@ -697,6 +699,8 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                         : const Text(""),
               ),
               onTap: () {
+                if (widget.isResumptionLeave) return;
+
                 if (widget.showDetail) {
                   return;
                 }
@@ -736,6 +740,8 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                     i.dayFlag == "H"
                         ? InkWell(
                           onTap: () {
+                            if (widget.isResumptionLeave) return;
+
                             if (widget.showDetail) {
                               return;
                             }
@@ -754,6 +760,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 ),
               ),
               onTap: () {
+                if (widget.isResumptionLeave) return;
                 if (widget.showDetail) {
                   return;
                 }

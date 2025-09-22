@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
@@ -9,6 +10,7 @@ import 'package:zeta_ess/core/utils.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/services/validator_services.dart';
 import '../controller/approve_cacncel_leave_controller.dart';
 import '../controller/approve_reject.dart';
 import '../models/cancel_leave_model.dart';
@@ -111,7 +113,7 @@ class _CancelLeaveDetailsScreenState
                   loading: () => Loader(),
                   error:
                       (error, _) =>
-                          Center(child: Text("Error: ${error.toString()}")),
+                          ErrorText(error: "Error: ${error.toString()}"),
                 ),
           ),
         ),

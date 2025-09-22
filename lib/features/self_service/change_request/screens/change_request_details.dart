@@ -10,6 +10,7 @@ import 'package:zeta_ess/features/self_service/change_request/models/change_requ
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/loader.dart';
 import '../../../../core/providers/userContext_provider.dart';
+import '../../../../core/services/validator_services.dart';
 import '../../../approval_management/approve_change_request/controller/approve_change_request_controoler.dart';
 import '../../../approval_management/approve_change_request/models/approve_change_req.dart';
 import '../providers/change_request_providers.dart';
@@ -29,7 +30,6 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncData = ref.watch(changeRequestDetailsFetchProvider(reqId));
-    const bool isViewMode = true;
     ChangeRequestModel? changeRequestModel;
     return Scaffold(
       appBar: AppBar(title: Text(title, style: TextStyle(fontSize: 16.sp))),
@@ -107,11 +107,9 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                   },
                   onReject: () {
                     final userContext = ref.watch(userContextProvider);
-
                     final approveChangeRequestModel = ApproveChangeRequestModel(
                       suconn: userContext.companyConnection,
                       sucode: userContext.companyCode,
-
                       chRqCd: changeRequestModel?.chrqcd ?? 0,
                       chApBy: changeRequestModel?.chapby,
                       bcSlNo: '0',

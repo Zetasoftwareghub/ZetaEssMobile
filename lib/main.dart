@@ -23,17 +23,6 @@ Future<void> main() async {
 
 Future<void> _initialise() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  //
-  // // Capture async errors
-  // PlatformDispatcher.instance.onError = (error, stack) {
-  //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-  //   return true;
-  // };
-
-  // await FirebaseNotificationService.initialize();
-
   await EasyLocalization.ensureInitialized();
 }
 

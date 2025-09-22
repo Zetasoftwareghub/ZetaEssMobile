@@ -142,31 +142,6 @@ class _SubmitEditOtherRequestState
       }
     }
   }
-  // void _initializeForm(FormResponseModel formData) {
-  //   setState(() {
-  //     _formData = formData;
-  //     _isLoading = false;
-  //   });
-  //
-  //   // Initialize controllers and default values
-  //   for (var field in formData.formFieldList) {
-  //     String fieldKey = field.generateFieldId();
-  //
-  //     // Initialize text controllers for text fields
-  //     if (field.fieldTypeCases == FormFieldType.textField ||
-  //         field.fieldTypeCases == FormFieldType.textArea) {
-  //       _controllers[fieldKey] = TextEditingController();
-  //     }
-  //
-  //     // Initialize checkbox values
-  //     if (field.fieldTypeCases == FormFieldType.checkbox) {
-  //       _selectedCheckboxValues[fieldKey] = [];
-  //     }
-  //
-  //     // Initialize default values
-  //     _formValues[fieldKey] = _getDefaultValue(field);
-  //   }
-  // }
 
   dynamic _getDefaultValue(FormFieldModel field) {
     switch (field.fieldTypeCases) {
@@ -184,6 +159,13 @@ class _SubmitEditOtherRequestState
   }
 
   String? _validateField(FormFieldModel field, dynamic value) {
+    // If value already exists (prefilled), skip required validation
+    if (value != null) {
+      if (value is String && value.isNotEmpty) return null;
+      if (value is List && value.isNotEmpty) return null;
+      if (value is Map && value.isNotEmpty) return null; // for file uploads
+    }
+
     if (field.isRequired) {
       if (value == null ||
           (value is String && value.isEmpty) ||
@@ -504,72 +486,6 @@ class _SubmitEditOtherRequestState
       return "404";
     }
   }
-  // Widget _buildFileUploadField(FormFieldModel field, String fieldKey) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
-  //     child: FormField<PlatformFile?>(
-  //       validator: (value) => _validateField(field, value),
-  //       builder: (FormFieldState<PlatformFile?> state) {
-  //         return Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text(
-  //               field.fieldName + (field.isRequired ? ' *' : ''),
-  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-  //             ),
-  //             SizedBox(height: 8),
-  //             InkWell(
-  //               onTap: () async {
-  //                 FilePickerResult? result = await FilePicker.platform
-  //                     .pickFiles(withData: true);
-  //                 if (result != null) {
-  //                   setState(() {
-  //                     _selectedFiles[fieldKey] = result.files.single;
-  //                     _formValues[fieldKey] = result.files.single;
-  //                   });
-  //                   state.didChange(result.files.single);
-  //                 }
-  //               },
-  //               child: Container(
-  //                 width: double.infinity,
-  //                 padding: EdgeInsets.all(12),
-  //                 decoration: BoxDecoration(
-  //                   border: Border.all(color: Colors.grey),
-  //                   borderRadius: BorderRadius.circular(4),
-  //                 ),
-  //                 child: Row(
-  //                   children: [
-  //                     Icon(Icons.attach_file),
-  //                     SizedBox(width: 8),
-  //                     Expanded(
-  //                       child: Text(
-  //                         _selectedFiles[fieldKey]?.name ?? 'Select file',
-  //                         style: TextStyle(
-  //                           color:
-  //                               _selectedFiles[fieldKey] != null
-  //                                   ? Colors.black
-  //                                   : Colors.grey[600],
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ),
-  //             if (state.hasError)
-  //               Padding(
-  //                 padding: const EdgeInsets.only(top: 8.0),
-  //                 child: Text(
-  //                   state.errorText!,
-  //                   style: TextStyle(color: Colors.red, fontSize: 12),
-  //                 ),
-  //               ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 
   Future<void> _selectDate(FormFieldModel field, String fieldKey) async {
     final DateTime? picked = await showDatePicker(
@@ -612,48 +528,6 @@ class _SubmitEditOtherRequestState
     // Extract the field ID from the field
     return field.fieldID.toString();
   }
-
-  // List<SubmitOtherRequestModel> _buildSubmissionData() {
-  //   final List<SubmitOtherRequestModel> formData = [];
-  //
-  //   _formData?.formFieldList.forEach((field) async {
-  //     String fieldKey = field.generateFieldId();
-  //     dynamic value = _formValues[fieldKey];
-  //
-  //     final rqtscd = _extractRqtscd(field);
-  //
-  //     String rtcont = "";
-  //     String rtflnm = "";
-  //
-  //     if (field.fieldTypeCases == FormFieldType.fileUpload && value != null) {
-  //       final file = value as PlatformFile;
-  //       rtflnm = file.extension ?? 'extension';
-  //       final bytes = await File(file.path!).readAsBytes();
-  //       print(bytes);
-  //       rtcont = base64Encode(bytes);
-  //     }
-  //
-  //     // Convert value to string based on field type
-  //     String rtenvl = "";
-  //     if (field.fieldTypeCases == FormFieldType.checkbox) {
-  //       rtenvl = (value as List<String>).join(',');
-  //     } else if (value != null) {
-  //       rtenvl = value.toString();
-  //     }
-  //
-  //     formData.add(
-  //       SubmitOtherRequestModel(
-  //         rqtscd: rqtscd,
-  //         rtenvl: rtenvl,
-  //         rtcont: rtcont,
-  //         rtflnm: rtflnm,
-  //         rtescd: "0",
-  //       ),
-  //     );
-  //   });
-  //
-  //   return formData;
-  // }
 
   Future<List<SubmitOtherRequestModel>> _buildSubmissionData() async {
     final List<SubmitOtherRequestModel> formData = [];

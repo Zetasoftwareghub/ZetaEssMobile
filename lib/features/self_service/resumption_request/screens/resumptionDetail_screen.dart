@@ -12,6 +12,7 @@ import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
 import '../../../../core/common/widgets/attachment_viewer.dart';
 import '../../../../core/providers/userContext_provider.dart';
+import '../../../../core/services/validator_services.dart';
 import '../../../../core/theme/common_theme.dart';
 import '../controller/resumption_controller.dart';
 import '../models/resumption_details_model.dart';
@@ -177,6 +178,12 @@ class _ResumptionDetailsScreenState
                         );
                   },
                   onReject: () {
+                    /*  onReject: () {
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
                     if (commentController.text.isEmpty) {
                       showCustomAlertBox(
                         context,

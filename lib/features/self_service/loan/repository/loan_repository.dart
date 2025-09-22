@@ -73,6 +73,7 @@ class LoanRepository {
       'iLqslno': loanId,
     };
     print(data);
+    print('loan data');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.loanDetailsApi,
@@ -92,10 +93,7 @@ class LoanRepository {
     required LoanSubmitRequestModel submitModel,
     required UserContext userContext,
   }) async {
-    print('aaa');
     return handleApiCall(() async {
-      printFullJson(submitModel.toJson());
-      print('loadnsubmitModel.toJson()');
       final response = await dio.post(
         userContext.baseUrl + LoanApis.submitLoanApi,
         data: submitModel.toJson(),

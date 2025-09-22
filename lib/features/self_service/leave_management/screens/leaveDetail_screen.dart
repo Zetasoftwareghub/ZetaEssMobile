@@ -14,8 +14,10 @@ import 'package:zeta_ess/features/self_service/leave_management/screens/widgets/
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/error_text.dart';
 import '../../../../core/common/widgets/attachment_viewer.dart';
 import '../../../../core/common/widgets/customElevatedButton_widget.dart';
+import '../../../../core/services/validator_services.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/leave_providers.dart';
 
@@ -159,8 +161,6 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                                   NavigationService.navigateToScreen(
                                     context: context,
                                     screen: LeaveMoreDetailsScreen(
-                                      fromAppTab: true,
-                                      showSubmit: 'true',
                                       leaveCode:
                                           leave.leaveId
                                               .toString(), //todo leave code ind
@@ -185,7 +185,7 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                       loading: () => Loader(),
                       error:
                           (error, _) =>
-                              Center(child: Text("Error: ${error.toString()}")),
+                              ErrorText(error: "Error: ${error.toString()}"),
                     );
               },
             ),

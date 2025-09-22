@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/common/widgets/customElevatedButton_widget.dart';
+import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/leave_management/repository/leave_repository.dart';
 
 import '../../../../../core/api_constants/dio_headers.dart';
@@ -24,16 +25,12 @@ class LeaveMoreDetailsScreen extends ConsumerStatefulWidget {
   final String? dateFrom;
   final String? dateTo;
   final String? leaveCode;
-  final String? showSubmit;
-  final bool fromAppTab;
   final String lssNo;
   const LeaveMoreDetailsScreen({
     Key? key,
     this.dateFrom,
     this.dateTo,
     this.leaveCode,
-    this.showSubmit,
-    required this.fromAppTab,
     required this.lssNo,
   }) : super(key: key);
 
@@ -206,15 +203,10 @@ class _LeaveMoreDetailsScreenState
   }
 
   void _getConfigurations() async {
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
     try {
-      if (widget.showSubmit == "true") {
-        Future.microtask(() async => await _getLeaveDetails());
-      } else {
-        Future.microtask(() async => await _getLeaveConfigurationsEdit());
-      }
+      Future.microtask(() async => await _getLeaveDetails());
+
       _setSandwichLogic();
     } catch (e) {
       print('Error getting configurations: $e');
@@ -232,7 +224,7 @@ class _LeaveMoreDetailsScreenState
           userContext: ref.watch(userContextProvider),
           leaveId: int.parse(widget.leaveCode ?? '0'),
         );
-    print(leaveDetails);
+    printFullJson(leaveDetails);
     print("leaveDetails");
     if (leaveDetails == null) {
       _navigateToNoServer();
@@ -461,276 +453,6 @@ class _LeaveMoreDetailsScreenState
         (leaveConfigDataSubLst[0].ltlieu ?? 'N') == "Y";
   }
 
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Leave Configuration')),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        _buildDataTable(),
-                        SizedBox(height: 20.h),
-                        _buildSubmitButton(),
-                        SizedBox(height: 20.h),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDataTable() {
-    return Container(
-      margin: EdgeInsets.all(5.w),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: HexColor("#F3F3F3"),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: SingleChildScrollView(
-        child: DataTable(
-          horizontalMargin: 5,
-          columnSpacing: 10,
-          columns: [
-            DataColumn(
-              label: Text(
-                'Date',
-                style: TextStyle(
-                  color: HexColor("#212121"),
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Full Day',
-                style: TextStyle(
-                  color: HexColor("#212121"),
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'Half Day',
-                style: TextStyle(
-                  color: HexColor("#212121"),
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (_isLieuDayEnabled())
-              DataColumn(
-                label: Text(
-                  'Lieu Day',
-                  style: TextStyle(
-                    color: HexColor("#212121"),
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-          ],
-          rows: _buildDataRows(),
-        ),
-      ),
-    );
-  }
-
-  List<DataRow> _buildDataRows() {
-    return leaveConfigData.map((item) {
-      return DataRow(
-        color: MaterialStateColor.resolveWith((states) => HexColor('#F3F3F3')),
-        cells: [
-          _buildDateCell(item),
-          _buildFullDayCell(item),
-          _buildHalfDayCell(item),
-          if (_isLieuDayEnabled()) _buildLieuDayCell(item),
-        ],
-      );
-    }).toList();
-  }
-
-  DataCell _buildDateCell(LeaveConfigurationEditData item) {
-    return DataCell(
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
-        decoration: BoxDecoration(
-          color: HexColor(_getDateColor(item.dayType.toString())),
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Text(
-          item.date.toString(),
-          style: TextStyle(fontSize: 13.sp, color: Colors.black),
-        ),
-      ),
-    );
-  }
-
-  DataCell _buildFullDayCell(LeaveConfigurationEditData item) {
-    return DataCell(
-      Container(
-        width: 20.h,
-        height: 20.h,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: HexColor("#aee2f5"),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child:
-            item.dayFlag == "F"
-                ? Container(
-                  decoration: BoxDecoration(
-                    color: HexColor("#10A0DB"),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                )
-                : null,
-      ),
-      onTap: () {
-        if (item.dayType == 3 || item.dayType == 4 || widget.fromAppTab) return;
-        _setFullDay(item);
-      },
-    );
-  }
-
-  DataCell _buildHalfDayCell(LeaveConfigurationEditData item) {
-    return DataCell(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 20.h,
-            height: 20.h,
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: HexColor("#aee2f5"),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child:
-                item.dayFlag == "H"
-                    ? Container(
-                      decoration: BoxDecoration(
-                        color: HexColor("#10A0DB"),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    )
-                    : null,
-          ),
-          if (item.dayFlag == "H")
-            InkWell(
-              onTap: () => _showHalfDaySelector(item),
-              child: Text(
-                item.halfType == "1" ? "F Half" : "S Half",
-                style: TextStyle(fontSize: 10),
-              ),
-            ),
-        ],
-      ),
-      onTap: () {
-        if (item.dayType == 3 || item.dayType == 4 || widget.fromAppTab) return;
-        _setHalfDay(item);
-      },
-    );
-  }
-
-  DataCell _buildLieuDayCell(LeaveConfigurationEditData item) {
-    return DataCell(
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 3.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child:
-            widget.fromAppTab
-                ? Text(
-                  item.ludate ?? '',
-                  style: TextStyle(fontSize: 13.sp, color: Colors.black),
-                )
-                : DropdownButtonFormField<String>(
-                  value: dateChanged ? null : (item.luslno ?? "").toString(),
-                  hint: Text(
-                    "-- Select --",
-                    style: TextStyle(fontSize: 13.sp, color: Colors.black),
-                  ),
-                  items:
-                      leaveConfigDataCanLst
-                          .map(
-                            (canItem) => DropdownMenuItem<String>(
-                              value: canItem.iLsslno,
-                              child: Text(
-                                canItem.dLsdate.toString(),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      item.lieuday = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1.w,
-                        color: HexColor('#0887A1'),
-                      ),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1.w,
-                        color: HexColor('#0887A1'),
-                      ),
-                    ),
-                  ),
-                ),
-      ),
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    if (widget.showSubmit == "") return const SizedBox();
-
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shape: const StadiumBorder(),
-        backgroundColor: HexColor("#09A5D9"),
-        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 40.w),
-      ),
-      onPressed: () => Navigator.pop(context),
-      child: Text(
-        'Go Back',
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -754,11 +476,11 @@ class _LeaveMoreDetailsScreenState
                             children: [
                               _buildEnhancedDataTable(),
                               SizedBox(height: 24.h),
-                              if (widget.showSubmit != "")
-                                CustomElevatedButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text('Go Back'),
-                                ),
+
+                              CustomElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('Go Back'),
+                              ),
                               SizedBox(height: 20.h),
                             ],
                           ),
@@ -923,8 +645,7 @@ class _LeaveMoreDetailsScreenState
 
   Widget _buildEnhancedFullDayCell(LeaveConfigurationEditData item) {
     bool isSelected = item.dayFlag == "F";
-    bool isDisabled =
-        item.dayType == 3 || item.dayType == 4 || widget.fromAppTab;
+    bool isDisabled = item.dayType == 3 || item.dayType == 4;
 
     return GestureDetector(
       onTap: isDisabled ? null : () => _setFullDay(item),
@@ -970,8 +691,7 @@ class _LeaveMoreDetailsScreenState
 
   Widget _buildEnhancedHalfDayCell(LeaveConfigurationEditData item) {
     bool isSelected = item.dayFlag == "H";
-    bool isDisabled =
-        item.dayType == 3 || item.dayType == 4 || widget.fromAppTab;
+    bool isDisabled = item.dayType == 3 || item.dayType == 4;
 
     return GestureDetector(
       onTap: isDisabled ? null : () => _setHalfDay(item),
@@ -1044,75 +764,22 @@ class _LeaveMoreDetailsScreenState
   Widget _buildEnhancedLieuDayCell(LeaveConfigurationEditData item) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w),
-      child:
-          widget.fromAppTab
-              ? Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: HexColor("#F3F4F6"),
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: HexColor("#E5E7EB")),
-                ),
-                child: Text(
-                  item.ludate ?? '',
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: HexColor("#374151"),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-              : Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: HexColor("#E5E7EB")),
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: dateChanged ? null : (item.luslno ?? "").toString(),
-                  hint: Text(
-                    "-- Select --",
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: HexColor("#9CA3AF"),
-                    ),
-                  ),
-                  items:
-                      leaveConfigDataCanLst
-                          .map(
-                            (canItem) => DropdownMenuItem<String>(
-                              value: canItem.iLsslno,
-                              child: Text(
-                                canItem.dLsdate.toString(),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  color: HexColor("#374151"),
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      item.lieuday = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                  dropdownColor: Colors.white,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: HexColor("#9CA3AF"),
-                  ),
-                ),
-              ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: HexColor("#F3F4F6"),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: HexColor("#E5E7EB")),
+        ),
+        child: Text(
+          item.ludate ?? '',
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: HexColor("#374151"),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 
@@ -1123,15 +790,18 @@ class _LeaveMoreDetailsScreenState
     UserContext userContext,
   ) async {
     try {
+      final data = {
+        "suconn": ref.watch(userContextProvider).companyConnection,
+        "emcode": ref.watch(userContextProvider).empCode,
+        "dtfrm": dateFrom,
+        "dtto": dateTo,
+        "leavcode": leaveType,
+      };
+      print(data);
+      print('leaeve details');
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",
-        data: {
-          "suconn": ref.watch(userContextProvider).companyConnection,
-          "emcode": ref.watch(userContextProvider).empCode,
-          "dtfrm": dateFrom,
-          "dtto": dateTo,
-          "leavcode": leaveType,
-        },
+        data: data,
         options: dioHeader(token: ref.watch(userContextProvider).jwtToken),
       );
 

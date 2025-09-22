@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
+import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/services/validator_services.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/salary_certificate/models/salary_certificate_detail_model.dart';
@@ -51,87 +53,98 @@ class _SalaryCertificateDetailsScreenState
 
     return Scaffold(
       appBar: AppBar(title: Text(detailAppBarText.tr())),
-      body: asyncValue.when(
-        loading: () => const Loader(),
-        error: (err, _) => Center(child: Text("Error: ${err.toString()}")),
-        data: (details) {
-          salaryModel = details;
-          return SafeArea(
-            child: Padding(
-              padding: AppPadding.screenPadding,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // -- section: Employee Details
-                    titleHeaderText("employee_details".tr()),
-                    detailInfoRow(
-                      title: "employee_id".tr(),
-                      subTitle: details.employeeCode ?? "-",
-                    ),
-                    detailInfoRow(
-                      title: "employee_name".tr(),
-                      subTitle: details.employeeName ?? "-",
-                    ),
+      body:
+          ref.watch(salaryCertificateControllerProvider)
+              ? Loader()
+              : asyncValue.when(
+                loading: () => const Loader(),
+                error: (err, _) => ErrorText(error: "Error: ${err.toString()}"),
+                data: (details) {
+                  salaryModel = details;
+                  return SafeArea(
+                    child: Padding(
+                      padding: AppPadding.screenPadding,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // -- section: Employee Details
+                            titleHeaderText("employee_details".tr()),
+                            detailInfoRow(
+                              title: "employee_id".tr(),
+                              subTitle: details.employeeCode ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "employee_name".tr(),
+                              subTitle: details.employeeName ?? "-",
+                            ),
 
-                    // -- section: Submitted Details
-                    titleHeaderText("submitted_details".tr()),
-                    detailInfoRow(
-                      title: "requested_date".tr(),
-                      subTitle: details.submissionDate ?? "-",
-                    ),
-                    detailInfoRow(
-                      title: "requested_month_and_year_from".tr(),
-                      subTitle: details.fromMonth ?? "-",
-                    ),
-                    detailInfoRow(
-                      title: "requested_month_and_year_to".tr(),
-                      subTitle: details.toMonth ?? "-",
-                    ),
-                    detailInfoRow(
-                      title: "salary_certificate_purpose".tr(),
-                      subTitle: details.purpose ?? "-",
-                    ),
-                    detailInfoRow(
-                      title: "remarks".tr(),
-                      subTitle: details.remarks ?? "-",
-                    ),
+                            // -- section: Submitted Details
+                            titleHeaderText("submitted_details".tr()),
+                            detailInfoRow(
+                              title: "requested_date".tr(),
+                              subTitle: details.submissionDate ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "requested_month_and_year_from".tr(),
+                              subTitle: details.fromMonth ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "requested_month_and_year_to".tr(),
+                              subTitle: details.toMonth ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "salary_certificate_purpose".tr(),
+                              subTitle: details.purpose ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "remarks".tr(),
+                              subTitle: details.remarks ?? "-",
+                            ),
+                            detailInfoRow(
+                              title: "address_name".tr(),
+                              subTitle: details.accountName ?? "-",
+                            ),
 
-                    detailInfoRow(
-                      title: "address_name".tr(),
-                      subTitle: details.accountName ?? "-",
-                    ),
+                            if ((details
+                                        .approvalOrRejectionComment
+                                        ?.isNotEmpty ??
+                                    false) ||
+                                (details.lineManagerComment?.isNotEmpty ??
+                                    false)) ...[
+                              titleHeaderText("comment".tr()),
+                              Text(
+                                details
+                                            .approvalOrRejectionComment
+                                            ?.isNotEmpty ==
+                                        true
+                                    ? details.approvalOrRejectionComment!
+                                    : details.lineManagerComment?.isNotEmpty ==
+                                        true
+                                    ? details.lineManagerComment!
+                                    : details.previousComment ?? '',
+                              ),
+                            ],
 
-                    if ((details.approvalOrRejectionComment?.isNotEmpty ??
-                            false) ||
-                        (details.lineManagerComment?.isNotEmpty ?? false)) ...[
-                      titleHeaderText("comment".tr()),
-                      Text(
-                        details.approvalOrRejectionComment?.isNotEmpty == true
-                            ? details.approvalOrRejectionComment!
-                            : details.lineManagerComment?.isNotEmpty == true
-                            ? details.lineManagerComment!
-                            : details.previousComment ?? '',
+                            10.heightBox,
+                            if (widget.isLineManager ?? false)
+                              inputField(
+                                hint: 'Approve/Reject Comment'.tr(),
+                                controller: commentController,
+                                minLines: 3,
+                              ),
+                            100.heightBox,
+                          ],
+                        ),
                       ),
-                    ],
-
-                    10.heightBox,
-                    if (widget.isLineManager ?? false)
-                      inputField(
-                        hint: 'Approve/Reject Comment'.tr(),
-                        controller: commentController,
-                        minLines: 3,
-                      ),
-                    100.heightBox,
-                  ],
-                ),
+                    ),
+                  );
+                },
               ),
-            ),
-          );
-        },
-      ),
       bottomSheet:
-          widget.isLineManager ?? false
+          ref.watch(salaryCertificateControllerProvider)
+              ? Loader()
+              : widget.isLineManager ?? false
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
@@ -148,15 +161,14 @@ class _SalaryCertificateDetailsScreenState
                     }
                   },
                   onReject: () {
-                    if (commentController.text.isEmpty) {
-                      showCustomAlertBox(
-                        context,
-                        title: 'Please give reject comment',
-                        type: AlertType.error,
-                      );
+                    
+                                 /*  onReject: () {   
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
 
-                      return;
-                    }
                     ref
                         .read(salaryCertificateControllerProvider.notifier)
                         .approveRejectSalary(

@@ -9,7 +9,7 @@ import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/common/home/providers/punch_providers.dart';
-import 'package:zeta_ess/services/location_service.dart';
+import 'package:zeta_ess/features/common/home/widgets/location_retry_button.dart';
 
 import '../../../../core/common/error_text.dart';
 import '../../../../core/common/loader.dart';
@@ -30,7 +30,6 @@ class PunchHomeView extends ConsumerStatefulWidget {
 }
 
 class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
-  LiveLocation? currentLocation;
   final isPunchingProvider = StateProvider<bool>((ref) => false);
 
   @override
@@ -83,7 +82,6 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
         7.widthBox,
         liveLocation.when(
           data: (loc) {
-            currentLocation = loc;
             return Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start, // Add this
@@ -109,11 +107,7 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                 children: [
                   const Loader(),
                   8.widthBox,
-                  ElevatedButton(
-                    onPressed:
-                        () => ref.refresh(liveLocationControllerProvider),
-                    child: Text('retry'.tr()),
-                  ),
+                  CustomLocationRetryButton(),
                 ],
               ),
           error: (e, _) {
@@ -129,10 +123,7 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                     style: AppTextStyles.smallFont(color: AppTheme.errorColor),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => ref.refresh(liveLocationControllerProvider),
-                  child: Text('retry'.tr()),
-                ),
+                CustomLocationRetryButton(),
               ],
             );
           },
@@ -204,30 +195,56 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                                 );
                                 return;
                               }
+
                               ref.read(isPunchingProvider.notifier).state =
                                   true;
 
-                              final hasPermission =
-                                  await LocationService.hasPermission();
-                              if (!hasPermission) {
+                              // Simple validation using your LiveLocationController
+                              final notifier = ref.read(
+                                liveLocationControllerProvider.notifier,
+                              );
+                              final status = await notifier.getLocationStatus();
+
+                              // Check location services
+                              if (!status['serviceEnabled']) {
                                 showSnackBar(
                                   context: context,
                                   content:
-                                      'Location is disabled or not granted',
+                                      'Location services are disabled. Please enable them.',
+                                  color: AppTheme.errorColor,
                                 );
                                 ref.read(isPunchingProvider.notifier).state =
                                     false;
-
                                 return;
                               }
 
-                              if (currentLocation != null) {
+                              // Check app permission
+                              if (status['needsAppSettings'] ||
+                                  status['canRequestPermission']) {
+                                showSnackBar(
+                                  context: context,
+                                  content:
+                                      'Location permission is required. Please enable it.',
+                                  color: AppTheme.errorColor,
+                                );
+                                ref.read(isPunchingProvider.notifier).state =
+                                    false;
+                                return;
+                              }
+
+                              // Check if we have current location
+                              final locationState = ref.read(
+                                liveLocationControllerProvider,
+                              );
+                              if (locationState.hasValue) {
+                                final currentLocation = locationState.value!;
                                 final ipAddress = await getWifiIpAddress();
 
                                 await ref
                                     .read(savePunchProvider.notifier)
                                     .save(
-                                      loc: currentLocation!,
+                                      loc:
+                                          currentLocation, // Use position from LiveLocation
                                       isCheckIn: isCheckIn,
                                       locationTime:
                                           ref
@@ -240,10 +257,12 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                                 ref.invalidate(punchDetailsProvider);
                               } else {
                                 showSnackBar(
-                                  content: 'Location is not fetched',
+                                  content:
+                                      'Location is not available. Please wait and try again.',
                                   context: context,
                                 );
                               }
+
                               ref.read(isPunchingProvider.notifier).state =
                                   false;
                             },

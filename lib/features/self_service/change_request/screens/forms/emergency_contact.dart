@@ -136,7 +136,8 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
 
             SizedBox(height: 16.h),
             _formSection(readOnly: widget.isLineManager ?? false),
-            if (widget.isLineManager ?? false)
+            if ((widget.isLineManager ?? false) &&
+                (comment?.isNotEmpty ?? false))
               Column(
                 children: [
                   titleHeaderText("Comment"),

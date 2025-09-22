@@ -5,7 +5,7 @@ class OtherRequestListingModel {
   String? name;
   String? requestName;
   String? primaryKey;
-  String? comment;
+  String? comment, status;
 
   OtherRequestListingModel({
     this.date,
@@ -13,6 +13,7 @@ class OtherRequestListingModel {
     this.requestName,
     this.primaryKey,
     this.comment,
+    this.status,
   });
 
   factory OtherRequestListingModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +23,7 @@ class OtherRequestListingModel {
       requestName: json['rqName']?.toString(),
       primaryKey: json['rtEnCd']?.toString() ?? "0",
       comment: json['rteant']?.toString() ?? "",
+      status: json['apstat']?.toString() ?? "",
     );
   }
 }

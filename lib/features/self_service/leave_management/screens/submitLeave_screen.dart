@@ -228,8 +228,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                           );
                         },
                         error:
-                            (error, stackTrace) =>
-                                ErrorText(error: '$error'),
+                            (error, stackTrace) => ErrorText(error: '$error'),
                         loading: () => const Loader(),
                       ),
                 ),
@@ -244,6 +243,9 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                           MaterialPageRoute(
                             builder:
                                 (context) => LeaveConfigurationEdit(
+                                  isResumptionLeave:
+                                      widget.submitResumptionModel != null,
+
                                   dateFrom: dateFrom,
                                   dateTo: dateTo,
                                   leaveCode: ref.watch(
@@ -308,6 +310,8 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                           MaterialPageRoute(
                             builder:
                                 (context) => LeaveConfiguration(
+                                  isResumptionLeave:
+                                      widget.submitResumptionModel != null,
                                   dateFrom: dateFrom,
                                   dateTo: dateTo,
                                   leaveCode: ref.watch(

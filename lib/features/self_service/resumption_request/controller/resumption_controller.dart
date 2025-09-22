@@ -24,7 +24,6 @@ class ResumptionController extends Notifier<bool> {
   Future<void> submitResumptionLeave({
     required SubmitResumptionModel submitResumptionModel,
     required BuildContext context,
-    required bool isEditMode,
     bool isFromLeaveSubmit = false,
   }) async {
     state = true;
@@ -41,19 +40,21 @@ class ResumptionController extends Notifier<bool> {
         showSnackBar(context: context, content: 'Error occurred : ${l.errMsg}');
       },
       (response) {
+        print(isFromLeaveSubmit);
+        print('isFromLeaveSubmit');
         ref.invalidate(resumptionListProvider);
         if (response?.toLowerCase() == 'saved successfully' ||
             response?.toLowerCase() == 'updated successfully') {
           ref.read(fileUploadProvider.notifier).clearFile();
-
+          if (isFromLeaveSubmit) {
+            Navigator.pop(context);
+          }
           Navigator.pop(context);
           showCustomAlertBox(
             context,
             title:
                 isFromLeaveSubmit
-                    ? 'Resumption and Leave Submitted' //TODO check this correctly and give for tessting
-                    : isEditMode
-                    ? 'resumption_request'.tr() + 'updated successfully'.tr()
+                    ? 'Resumption and Leave Submitted' //TODO check this correctly and give for testing !
                     : 'resumption_request'.tr() + 'submitted'.tr(),
             type: AlertType.success,
           );

@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../../core/api_constants/dio_headers.dart';
 import '../../../../../core/common/no_server_screen.dart';
@@ -32,7 +33,8 @@ class LeaveApiHelper {
     try {
       final subLst = (responseJson['subLst'] ?? []) as List;
       if (subLst.isEmpty) return null;
-
+      printFullJson(subLst.first);
+      print("subLst.first");
       return LeaveConfigurationData.fromJson(subLst.first);
     } catch (e) {
       print("Error parsing subLst: $e");

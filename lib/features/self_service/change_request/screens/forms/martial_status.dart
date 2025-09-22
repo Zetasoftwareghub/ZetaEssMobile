@@ -127,7 +127,8 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
                                 value;
                           },
                 ),
-                if (widget.isLineManager ?? false)
+                if ((widget.isLineManager ?? false) &&
+                    (comment?.isNotEmpty ?? false))
                   Column(
                     children: [
                       titleHeaderText("Comment"),

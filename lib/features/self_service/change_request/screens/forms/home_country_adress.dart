@@ -115,7 +115,8 @@ class _HomeCountryAddressFormState
               readOnly: widget.isLineManager ?? false,
               countryCode: (countryCode ?? data.countryCode) ?? 'IND',
             ),
-            if (widget.isLineManager ?? false)
+            if ((widget.isLineManager ?? false) &&
+                (comment?.isNotEmpty ?? false))
               Column(
                 children: [
                   titleHeaderText("Comment"),

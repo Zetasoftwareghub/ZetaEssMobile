@@ -48,16 +48,19 @@ class OtherRequestRepository {
     required String? micode,
   }) async {
     return handleApiCall(() async {
+      final data = {
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        'emcode': userContext.empCode,
+        'userid': userContext.esCode,
+        'rfcode': requestId,
+        'micode': micode,
+      };
+      print(data);
+      print('other123');
       final response = await dio.post(
         userContext.baseUrl + OtherRequestApis.getOtherRequestList,
-        data: {
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-          'userid': userContext.esCode,
-          'rfcode': requestId,
-          'micode': micode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {

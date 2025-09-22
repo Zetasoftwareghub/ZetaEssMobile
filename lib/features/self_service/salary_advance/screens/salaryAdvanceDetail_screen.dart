@@ -8,10 +8,9 @@ import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/salary_advance/models/salary_advance_details.dart';
-
-import '../../../../core/common/alert_dialog/amount_validation.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
+import '../../../../core/services/validator_services.dart';
 import '../controller/salary_advance_controller.dart';
 import '../providers/salaryAdvance_provider.dart';
 
@@ -42,95 +41,105 @@ class _SalaryAdvanceDetailScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(detailAppBarText.tr())),
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: ref
-              .watch(salaryAdvanceDetailsProvider(widget.advanceId))
-              .when(
-                data: (advance) {
-                  salaryDetails = advance;
-                  return ListView(
-                    children: [
-                      titleHeaderText('salary_advance_details'.tr()),
+      body:
+          ref.watch(salaryAdvanceControllerProvider)
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenPadding,
+                  child: ref
+                      .watch(salaryAdvanceDetailsProvider(widget.advanceId))
+                      .when(
+                        data: (advance) {
+                          salaryDetails = advance;
+                          return ListView(
+                            children: [
+                              titleHeaderText('salary_advance_details'.tr()),
 
-                      detailInfoRow(
-                        title: 'employee_id'.tr(),
-                        subTitle: advance.empId,
-                      ),
-                      detailInfoRow(
-                        title: 'employee_name'.tr(),
-                        subTitle: advance.name,
-                      ),
-                      detailInfoRow(
-                        title: '${'requested'.tr()} ${'amount'.tr()}',
-                        subTitle: advance.amount,
-                      ),
+                              detailInfoRow(
+                                title: 'employee_id'.tr(),
+                                subTitle: advance.empId,
+                              ),
+                              detailInfoRow(
+                                title: 'employee_name'.tr(),
+                                subTitle: advance.name,
+                              ),
+                              detailInfoRow(
+                                title: '${'requested'.tr()} ${'amount'.tr()}',
+                                subTitle: advance.amount,
+                              ),
 
-                      if (widget.showApproveAmount)
-                        detailInfoRow(
-                          title: '${'approved'.tr()} ${'amount'.tr()}',
-                          subTitle: advance.appAmount,
-                        ),
+                              if (widget.showApproveAmount)
+                                detailInfoRow(
+                                  title: '${'approved'.tr()} ${'amount'.tr()}',
+                                  subTitle: advance.appAmount,
+                                ),
 
-                      detailInfoRow(
-                        title: 'Month and year'.tr(),
-                        subTitle: advance.dateFrom,
-                      ),
-                      detailInfoRow(
-                        title: 'Payment mode'.tr(),
-                        subTitle:
-                            advance.iRqmode == '1'
-                                ? 'With Payroll'
-                                : 'Without Payroll',
-                      ),
-                      detailInfoRow(
-                        title: 'note'.tr(),
-                        subTitle: advance.note.isNotEmpty ? advance.note : '--',
-                      ),
+                              detailInfoRow(
+                                title: 'Month and year'.tr(),
+                                subTitle: advance.dateFrom,
+                              ),
+                              detailInfoRow(
+                                title: 'Payment mode'.tr(),
+                                subTitle:
+                                    advance.iRqmode == '1'
+                                        ? 'With Payroll'
+                                        : 'Without Payroll',
+                              ),
+                              detailInfoRow(
+                                title: 'note'.tr(),
+                                subTitle:
+                                    advance.note.isNotEmpty
+                                        ? advance.note
+                                        : '--',
+                              ),
 
-                      titleHeaderText("comment".tr()),
-                      Text(
-                      advance.lmComment.isNotEmpty ? advance.lmComment :   advance.appRejComment.isEmpty
-                            ? advance.prevComment
-                            : advance.appRejComment,
-                      ),
+                              titleHeaderText("comment".tr()),
+                              Text(
+                                advance.lmComment.isNotEmpty
+                                    ? advance.lmComment
+                                    : advance.appRejComment.isEmpty
+                                    ? advance.prevComment
+                                    : advance.appRejComment,
+                              ),
 
-                      if (widget.isLineManager ?? false) ...[
-                        inputField(
-                          hint: 'Approve amount'.tr(),
-                          controller: amountController,
-                          keyboardType: TextInputType.number,
-                          onChanged: (amount) {
-                            validateApproveAmount(
-                              context: context,
-                              controller: amountController,
-                              requestedAmount: advance.amount,
-                            );
-                          },
-                        ),
-                        10.heightBox,
-                        inputField(
-                          hint: 'Approve/Reject Comment'.tr(),
-                          minLines: 3,
-                          controller: commentController,
-                        ),
-                      ],
-                      100.heightBox,
-                    ],
-                  );
-                },
-                error: (error, _) => ErrorText(error: error.toString()),
-                loading: () => Loader(),
+                              if (widget.isLineManager ?? false) ...[
+                                inputField(
+                                  hint: 'Approve amount'.tr(),
+                                  controller: amountController,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (amount) {
+                                    ValidatorServices.validateApproveAmount(
+                                      context: context,
+                                      controller: amountController,
+                                      requestedAmount: advance.amount,
+                                    );
+                                  },
+                                ),
+                                10.heightBox,
+                                inputField(
+                                  hint: 'Approve/Reject Comment'.tr(),
+                                  minLines: 3,
+                                  controller: commentController,
+                                ),
+                              ],
+                              100.heightBox,
+                            ],
+                          );
+                        },
+                        error: (error, _) => ErrorText(error: error.toString()),
+                        loading: () => Loader(),
+                      ),
+                ),
               ),
-        ),
-      ),
       bottomSheet:
-          widget.isLineManager ?? false
+          ref.watch(salaryAdvanceControllerProvider)
+              ? Loader()
+              : widget.isLineManager ?? false
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
-                    final isValid = validateApproveAmount(
+                    final isValid = ValidatorServices.validateApproveAmount(
                       context: context,
                       controller: amountController,
                       requestedAmount: salaryDetails?.amount ?? '0',
@@ -175,6 +184,12 @@ class _SalaryAdvanceDetailScreenState
                         );
                   },
                   onReject: () {
+                    /*  onReject: () {
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
                     if (commentController.text.isEmpty) {
                       showCustomAlertBox(
                         context,

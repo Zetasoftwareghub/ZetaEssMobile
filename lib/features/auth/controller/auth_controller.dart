@@ -195,19 +195,28 @@ class AuthController extends Notifier<bool> {
           context: context,
         );
     state = false;
-    return res.fold((l) => null, (userData) async {
-      ref.read(userDataProvider.notifier).state = userData;
+    return res.fold(
+      (l) {
+        showSnackBar(
+          context: context,
+          content: 'Please verify your email with HR ',
+          color: AppTheme.errorColor,
+        );
+      },
+      (userData) async {
+        ref.read(userDataProvider.notifier).state = userData;
 
-      NavigationService.navigateRemoveUntil(
-        context: context,
-        screen: const CreatePinScreen(),
-      );
-      final userModel = jsonEncode(userData.toJson());
-      await SecureStorageService.write(
-        key: StorageKeys.userModel,
-        value: userModel,
-      );
-    });
+        NavigationService.navigateRemoveUntil(
+          context: context,
+          screen: const CreatePinScreen(),
+        );
+        final userModel = jsonEncode(userData.toJson());
+        await SecureStorageService.write(
+          key: StorageKeys.userModel,
+          value: userModel,
+        );
+      },
+    );
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -275,7 +284,7 @@ class AuthController extends Notifier<bool> {
       await _googleSignIn.signOut();
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      state = false;
+      // state = false;
 
       if (googleUser == null) return;
 
@@ -293,8 +302,11 @@ class AuthController extends Notifier<bool> {
       if (user != null && user.email != null) {
         await ssoLogin(email: user.email!, context: context);
       }
-    } catch (e) {
+    } catch (e, st) {
       state = false;
+      debugPrint('Google Sign-In Error: $e');
+      debugPrintStack(stackTrace: st);
+
       showSnackBar(
         context: context,
         content: 'Google Sign-In failed',

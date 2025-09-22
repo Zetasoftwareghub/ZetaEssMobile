@@ -48,9 +48,13 @@ class LeaveController extends Notifier<bool> {
         showSnackBar(context: context, content: 'Error occured in cancelling');
       },
       (response) {
-        if (response == 'Leave cancellation request submitted successfully') {
-          showSnackBar(context: context, content: response);
+        if (response.toString().contains('submitted successfully')) {
           Navigator.pop(context);
+
+          showSnackBar(
+            context: context,
+            content: 'Leave cancellation submitted',
+          );
         } else {
           showCustomAlertBox(
             context,
@@ -281,7 +285,7 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
                   .submitResumptionLeave(
                     submitResumptionModel: submitResumptionModel,
                     context: context,
-                    isEditMode: false,
+                    isFromLeaveSubmit: true,
                   );
             } else {
               Navigator.pop(context);

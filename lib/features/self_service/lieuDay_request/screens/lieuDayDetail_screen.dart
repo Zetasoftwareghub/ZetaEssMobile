@@ -12,6 +12,7 @@ import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
 import '../../../../core/providers/userContext_provider.dart';
+import '../../../../core/services/validator_services.dart';
 import '../../../approval_management/approveLieuDay_request/controller/approve_lieu_day_controller.dart';
 import '../controller/lieuDay_notifier.dart';
 
@@ -39,100 +40,108 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(detailAppBarText.tr())),
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: result.when(
-            loading: () => const Loader(),
-            error: (err, _) => Center(child: Text('Error: $err')),
-            data: (lieuDay) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    titleHeaderText('lieu_day_details'.tr()),
-                    detailInfoRow(
-                      title: 'lieu_day_date'.tr(),
-                      subTitle: lieuDay.lieuDate,
-                    ),
-                    detailInfoRow(
-                      title: 'leave_type'.tr(),
-                      subTitle: lieuDay.type,
-                    ),
-                    detailInfoRow(
-                      title: 'time'.tr(),
-                      subTitle: "${lieuDay.fromTime} - ${lieuDay.toTime}",
-                    ),
-                    detailInfoRow(
-                      title: 'remarks'.tr(),
-                      subTitle:
-                          lieuDay.remark.isNotEmpty ? lieuDay.remark : '-',
-                    ),
-                    titleHeaderText('attachments'.tr()),
+      body:
+          ref.watch(approveLieuDayControllerProvider)
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenPadding,
+                  child: result.when(
+                    loading: () => const Loader(),
+                    error: (err, _) => Center(child: Text('Error: $err')),
+                    data: (lieuDay) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            titleHeaderText('lieu_day_details'.tr()),
+                            detailInfoRow(
+                              title: 'lieu_day_date'.tr(),
+                              subTitle: lieuDay.lieuDate,
+                            ),
+                            detailInfoRow(
+                              title: 'leave_type'.tr(),
+                              subTitle: lieuDay.type,
+                            ),
+                            detailInfoRow(
+                              title: 'time'.tr(),
+                              subTitle:
+                                  "${lieuDay.fromTime} - ${lieuDay.toTime}",
+                            ),
+                            detailInfoRow(
+                              title: 'remarks'.tr(),
+                              subTitle:
+                                  lieuDay.remark.isNotEmpty
+                                      ? lieuDay.remark
+                                      : '-',
+                            ),
+                            titleHeaderText('attachments'.tr()),
 
-                    AttachmentWidget(
-                      attachmentUrl:
-                          lieuDay.attachmentUrl.isEmpty
-                              ? null
-                              : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
+                            AttachmentWidget(
+                              attachmentUrl:
+                                  lieuDay.attachmentUrl.isEmpty
+                                      ? null
+                                      : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/CustomerReports/LieuDayFiles/${lieuDay.attachmentUrl}',
 
-                      height: 200.h,
-                    ),
+                              height: 200.h,
+                            ),
 
-                    // -- Employee Details section
-                    titleHeaderText('employee_details'.tr()),
-                    detailInfoRow(
-                      title: 'employee_id'.tr(),
-                      subTitle: lieuDay.employeeId,
-                    ),
-                    detailInfoRow(
-                      title: 'employee_name'.tr(),
-                      subTitle: lieuDay.employeeName,
-                    ),
-                    detailInfoRow(
-                      title: 'department'.tr(),
-                      subTitle: lieuDay.department,
-                    ),
-                    detailInfoRow(
-                      title: 'designation'.tr(),
-                      subTitle: lieuDay.designation,
-                    ),
-                    detailInfoRow(
-                      title: 'category'.tr(),
-                      subTitle: lieuDay.category,
-                    ),
-                    detailInfoRow(
-                      title: 'date_of_joining'.tr(),
-                      subTitle: lieuDay.dateOfJoining,
-                    ),
-                    detailInfoRow(
-                      title: 'remark'.tr(),
-                      subTitle: lieuDay.remark,
-                    ),
-                    if (lieuDay.previousComment.isNotEmpty) ...[
-                      titleHeaderText('Comment'),
-                      Text(lieuDay.previousComment),
-                    ],
-                    10.heightBox,
-                    if (widget.isLineManager ?? false)
-                      inputField(
-                        hint: 'Approve/Reject Comment'.tr(),
-                        controller: commentController,
-                      ),
+                            // -- Employee Details section
+                            titleHeaderText('employee_details'.tr()),
+                            detailInfoRow(
+                              title: 'employee_id'.tr(),
+                              subTitle: lieuDay.employeeId,
+                            ),
+                            detailInfoRow(
+                              title: 'employee_name'.tr(),
+                              subTitle: lieuDay.employeeName,
+                            ),
+                            detailInfoRow(
+                              title: 'department'.tr(),
+                              subTitle: lieuDay.department,
+                            ),
+                            detailInfoRow(
+                              title: 'designation'.tr(),
+                              subTitle: lieuDay.designation,
+                            ),
+                            detailInfoRow(
+                              title: 'category'.tr(),
+                              subTitle: lieuDay.category,
+                            ),
+                            detailInfoRow(
+                              title: 'date_of_joining'.tr(),
+                              subTitle: lieuDay.dateOfJoining,
+                            ),
+                            detailInfoRow(
+                              title: 'remark'.tr(),
+                              subTitle: lieuDay.remark,
+                            ),
+                            if (lieuDay.previousComment.isNotEmpty) ...[
+                              titleHeaderText('Comment'),
+                              Text(lieuDay.previousComment),
+                            ],
+                            10.heightBox,
+                            if (widget.isLineManager ?? false)
+                              inputField(
+                                hint: 'Approve/Reject Comment'.tr(),
+                                controller: commentController,
+                              ),
 
-                    // if (!(widget.isLineManager ?? false)) ...[
+                            // if (!(widget.isLineManager ?? false)) ...[
 
-                    // ],
-                    100.heightBox,
-                  ],
+                            // ],
+                            100.heightBox,
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
       bottomSheet:
-          (widget.isLineManager ?? false)
+          ref.watch(approveLieuDayControllerProvider)
+              ? Loader()
+              : (widget.isLineManager ?? false)
               ? SafeArea(
                 child: ApproveRejectButtons(
                   onApprove: () {
@@ -145,7 +154,13 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                           context: context,
                         );
                   },
-                  onReject: () {
+                             onReject: () {   
+                                 /*  onReject: () {   
+                        ValidatorServices.validateCommentAndShowAlert(
+                          context: context,
+                          controller: commentController,
+                        );
+                    if (isInvalid) return; */
                     ref
                         .read(approveLieuDayControllerProvider.notifier)
                         .approveRejectLieu(

@@ -25,16 +25,18 @@ class LeaveRepository {
     required int leaveId,
   }) async {
     try {
+      final data = {
+        "escode": userContext.esCode,
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        "id": leaveId,
+        "emcode": userContext.empCode,
+      };
+      printFullJson(data);
+      print('objectleave');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getEditLeaveDetails,
-        data: {
-          "escode": userContext.esCode,
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-
-          "id": leaveId,
-          "emcode": userContext.empCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
       return response.data['data'];

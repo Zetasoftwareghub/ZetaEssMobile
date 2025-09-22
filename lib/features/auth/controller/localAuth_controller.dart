@@ -132,7 +132,15 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
 
     res.fold(
       (failure) {
-        //TODO check what to do here
+        showSnackBar(
+          context: context,
+          content: 'Server error - redirecting to url screen',
+          color: AppTheme.errorColor,
+        );
+        NavigationService.navigateRemoveUntil(
+          context: context,
+          screen: ActivationUrlScreen(),
+        );
       },
       (activateResponse) {
         if (activateResponse["data"] != "Authorized") {

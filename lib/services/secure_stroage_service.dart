@@ -2,7 +2,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zeta_ess/core/api_constants/keys/storage_keys.dart';
 
 class SecureStorageService {
-  static final _storage = FlutterSecureStorage();
+  // static final _storage = FlutterSecureStorage();
+  static FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  // For tests: inject mock
+  static void testInit(FlutterSecureStorage storage) {
+    _storage = storage;
+  }
 
   static Future<void> write({
     required String key,

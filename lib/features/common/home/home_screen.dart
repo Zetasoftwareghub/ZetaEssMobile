@@ -87,7 +87,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeaderSection(scaffoldKey: _scaffoldKey),
-
                   if (widget.quickActions.isNotEmpty)
                     QuickActionsSection(
                       showcaseKey: _showcaseKeys.quickViewKey,

@@ -234,7 +234,6 @@ class _SubmitResumptionScreenState
                             .submitResumptionLeave(
                               submitResumptionModel: submitResumptionModel,
                               context: context,
-                              isEditMode: false,
                             );
                       }
                     },

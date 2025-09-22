@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCVi1VwFdwKBK-osmIzmlsodDLpUPA6MFo',
-    appId: '1:234422163440:android:d828c86022b0ca914c2f35',
+    appId: '1:234422163440:android:c1771d61f18f71074c2f35',
     messagingSenderId: '234422163440',
     projectId: 'zeta-ess',
     databaseURL: 'https://zeta-ess.firebaseio.com',
@@ -60,14 +60,14 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAYv0TXelGnefwGFpkJuSapUV44Bvq_nG8',
-    appId: '1:234422163440:ios:35cc614fc7ecc2794c2f35',
+    appId: '1:234422163440:ios:f72ba0cde8b5b8034c2f35',
     messagingSenderId: '234422163440',
     projectId: 'zeta-ess',
     databaseURL: 'https://zeta-ess.firebaseio.com',
     storageBucket: 'zeta-ess.firebasestorage.app',
     androidClientId: '234422163440-1h7t84vcvbm5f8t3i5coikde21etffta.apps.googleusercontent.com',
-    iosClientId: '234422163440-p3pqf9175setkjbfhe330sg8o2990kl4.apps.googleusercontent.com',
-    iosBundleId: 'com.example.zetaEss',
+    iosClientId: '234422163440-5n1qdm63h0m79h4pd1rqdul28td1fq8h.apps.googleusercontent.com',
+    iosBundleId: 'com.zeta.zetaEss',
   );
 
 }

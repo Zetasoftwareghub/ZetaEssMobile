@@ -243,7 +243,8 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                               // ref.read(passportHolderValueProvider.notifier).state = value;
                             },
                   ),
-                  if (widget.isLineManager)
+                  if ((widget.isLineManager) &&
+                      (comment?.isNotEmpty ?? false))
                     Column(
                       children: [
                         titleHeaderText("Comment"),
