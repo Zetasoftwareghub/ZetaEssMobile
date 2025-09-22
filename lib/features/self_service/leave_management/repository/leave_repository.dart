@@ -32,8 +32,6 @@ class LeaveRepository {
         "id": leaveId,
         "emcode": userContext.empCode,
       };
-      printFullJson(data);
-      print('objectleave');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getEditLeaveDetails,
         data: data,
@@ -41,8 +39,6 @@ class LeaveRepository {
       );
       return response.data['data'];
     } catch (e) {
-      print(e.toString());
-      print('e.toString()');
       return [];
     }
   }
