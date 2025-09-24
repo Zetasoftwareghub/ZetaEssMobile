@@ -6,9 +6,11 @@ import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
 import 'package:zeta_ess/core/utils.dart';
+import 'package:zeta_ess/features/auth/controller/auth_controller.dart';
 import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 import 'package:zeta_ess/features/auth/screens/widgets/customPinPut_widget.dart';
 
+import '../../../core/api_constants/keys/storage_keys.dart';
 import '../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../core/network_connection_checker/connectivity_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -259,35 +261,54 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
   _confirmPin() async {
     final authState = ref.watch(localAuthProvider);
     final authNotifier = ref.read(localAuthProvider.notifier);
+    final user = ref.read(userDataProvider);
 
-    if (authState.hasPin) {
-      final isValid = await authNotifier.verifyPin(pinController.text, context);
-      if (isValid && mounted) {
-        NavigationService.navigateRemoveUntil(
-          context: context,
-          screen: const MainScreen(),
-        );
-      } else {
-        showCustomAlertBox(
+    if (user != null) {
+      if (authState.hasPin) {
+        final isValid = await authNotifier.verifyPin(
+          pinController.text,
           context,
-          title: 'invalidPin'.tr(),
-          content: 'pleaseTryAgain'.tr(),
-          type: AlertType.error,
-          primaryButtonText: 'retry'.tr(),
-          onPrimaryPressed: () {
-            pinController.clear();
-            Navigator.pop(context);
-          },
         );
+        if (isValid && mounted) {
+          ref
+              .read(authControllerProvider.notifier)
+              .loginUser(
+                userName: user.userName,
+                password: user.password,
+                context: context,
+                fromPinScreen: true,
+              );
+        } else {
+          showCustomAlertBox(
+            context,
+            title: 'invalidPin'.tr(),
+            content: 'pleaseTryAgain'.tr(),
+            type: AlertType.error,
+            primaryButtonText: 'retry'.tr(),
+            onPrimaryPressed: () {
+              pinController.clear();
+              Navigator.pop(context);
+            },
+          );
+        }
+      } else {
+        await authNotifier.savePin(pinController.text);
+        if (mounted) {
+          ref
+              .read(authControllerProvider.notifier)
+              .loginUser(
+                userName: user.userName,
+                password: user.password,
+                context: context,
+                fromPinScreen: true,
+              );
+        }
       }
     } else {
-      await authNotifier.savePin(pinController.text);
-      if (mounted) {
-        NavigationService.navigateRemoveUntil(
-          context: context,
-          screen: const MainScreen(),
-        );
-      }
+      NavigationService.navigateRemoveUntil(
+        context: context,
+        screen: const LoginScreen(),
+      );
     }
   }
 

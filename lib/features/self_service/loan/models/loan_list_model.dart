@@ -109,7 +109,10 @@ class LoanListModel {
           json['lqapfg'] is int
               ? json['lqapfg']
               : int.tryParse(json['lqapfg']?.toString() ?? '0') ?? 0,
-      loanStatus: json['apstat']?.toString(),
+      loanStatus:
+          (json['lmname'] ?? "").toString().isEmpty
+              ? json['apstat']?.toString()
+              : json['lmname']?.toString(),
       lmname: json['lmname']?.toString(),
       crcode: json['crcode']?.toString() ?? '',
       lqapnt: json['lqapnt']?.toString(),

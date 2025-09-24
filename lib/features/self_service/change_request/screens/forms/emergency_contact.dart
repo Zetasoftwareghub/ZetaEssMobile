@@ -48,12 +48,35 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
   bool _isInitialized = false;
   String? comment;
 
+  void addListener(TextEditingController controller, String fieldName) {
+    controller.addListener(() {
+      updateField(ref, fieldName, controller.text);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+
+    // reset provider state
     Future.microtask(
       () => ref.read(changeRequestDetailsListProvider.notifier).state = [],
     );
+
+    addListener(nameCtrl1, "Contact 1");
+    addListener(relationCtrl1, "Relation 1");
+    addListener(phoneCtrl1, "Phone No. 1");
+    addListener(emailCtrl1, "Email Id 1");
+
+    addListener(nameCtrl2, "Contact 2");
+    addListener(relationCtrl2, "Relation 2");
+    addListener(phoneCtrl2, "Phone No. 2");
+    addListener(emailCtrl2, "Email Id 2");
+
+    addListener(nameCtrl3, "Contact 3");
+    addListener(relationCtrl3, "Relation 3");
+    addListener(phoneCtrl3, "Phone No 3");
+    addListener(emailCtrl3, "Email Id 3");
   }
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {

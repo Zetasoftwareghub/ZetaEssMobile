@@ -120,21 +120,11 @@ class _SubmitResumptionScreenState
                           ?.dtNxtWrkDay,
 
                   onDateSelected: (dateString) {
-                    if (dateString !=
-                        ref
-                            .watch(selectedResumptionLeaveTypeProvider)
-                            ?.dtNxtWrkDay) {
-                      final modifiedDate = DateFormat(
-                        'dd/MM/yyyy',
-                      ).parse(dateString).subtract(const Duration(days: 1));
+                    final formattedDate = DateFormat(
+                      'dd/MM/yyyy',
+                    ).format(DateFormat('dd/MM/yyyy').parse(dateString));
 
-                      final formattedDate = DateFormat(
-                        'dd/MM/yyyy',
-                      ).format(modifiedDate);
-
-                      ref.read(newlySelectedDate.notifier).state =
-                          formattedDate;
-                    }
+                    ref.read(newlySelectedDate.notifier).state = formattedDate;
                   },
                 ),
                 SizedBox(height: 16.h),
@@ -175,6 +165,10 @@ class _SubmitResumptionScreenState
                   child: CustomElevatedButton(
                     onPressed: () {
                       final user = ref.watch(userContextProvider);
+                      final selectedLeave = ref.watch(
+                        selectedResumptionLeaveTypeProvider,
+                      );
+
                       if (selectedLeave == null) {
                         showCustomAlertBox(
                           context,
@@ -185,6 +179,7 @@ class _SubmitResumptionScreenState
                       }
 
                       final filedData = ref.watch(fileUploadProvider).value;
+                      final newlyDate = ref.watch(newlySelectedDate);
 
                       final submitResumptionModel = SubmitResumptionModel(
                         reslno: 0,
@@ -195,6 +190,7 @@ class _SubmitResumptionScreenState
                         selectedValue: selectedLeave.lsslno ?? '',
                         selectedText: selectedLeave.dates ?? '',
                         resDate:
+                            newlyDate ?? //todo check the latest bug steev told about resumption date
                             selectedLeave.dtNxtWrkDay?.replaceAll('/', '-') ??
                             '',
                         note: noteController.text,
@@ -204,31 +200,28 @@ class _SubmitResumptionScreenState
                             selectedMeetingStatus == 'Yes' ? 'Y' : 'N',
                         laslno: selectedLeave.laslno ?? '',
                         lvtype: selectedLeave.lvtype ?? '',
-                        baseDirectory:
-                            ref.watch(userContextProvider).userBaseUrl ?? '',
+                        baseDirectory: user.userBaseUrl ?? '',
                       );
-                      if (ref.watch(newlySelectedDate) != null) {
-                        if (ref.watch(newlySelectedDate) !=
-                            ref
-                                .watch(selectedResumptionLeaveTypeProvider)
-                                ?.dtNxtWrkDay) {
-                          NavigationService.navigateToScreen(
-                            context: context,
-                            screen: SubmitLeaveScreen(
-                              submitResumptionModel: submitResumptionModel,
-                              fromDateResumption:
-                                  ref
-                                      .watch(
-                                        selectedResumptionLeaveTypeProvider,
-                                      )
-                                      ?.dtNxtWrkDay,
-                              toDateResumption: ref.watch(newlySelectedDate),
-                            ),
-                          );
-                        }
-                      }
-                      //todo need to submit leave if newlySelectedDate != resu date  do it correctlyyyy !
-                      else {
+
+                      if (newlyDate != null &&
+                          newlyDate != selectedLeave.dtNxtWrkDay) {
+                        // 👇 Subtract 1 day here before navigation
+                        final modifiedDate = DateFormat(
+                          'dd/MM/yyyy',
+                        ).parse(newlyDate).subtract(const Duration(days: 1));
+                        final formattedDate = DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(modifiedDate);
+
+                        NavigationService.navigateToScreen(
+                          context: context,
+                          screen: SubmitLeaveScreen(
+                            submitResumptionModel: submitResumptionModel,
+                            fromDateResumption: selectedLeave.dtNxtWrkDay,
+                            toDateResumption: formattedDate,
+                          ),
+                        );
+                      } else {
                         ref
                             .read(resumptionControllerProvider.notifier)
                             .submitResumptionLeave(
@@ -264,236 +257,3 @@ class _SubmitResumptionScreenState
     );
   }
 }
-
-/*
-TODO i have seen no edit in resumption request screen OLD APP
-class SubmitResumptionScreen extends ConsumerStatefulWidget {
-  final int? resumptionId;
-  const SubmitResumptionScreen({super.key, this.resumptionId});
-
-  @override
-  ConsumerState<SubmitResumptionScreen> createState() =>
-      _SubmitResumptionScreenState();
-}
-
-class _SubmitResumptionScreenState
-    extends ConsumerState<SubmitResumptionScreen> {
-  final TextEditingController noteController = TextEditingController();
-  String? selectedMeetingStatus = 'Yes';
-
-  final selectedResumptionLeaveTypeProvider =
-      StateProvider<ResumptionLeaveModel?>((ref) => null);
-
-  bool isEditMode = false;
-  bool hasPrefilled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isEditMode = widget.resumptionId != null;
-  }
-
-  void prefillIfEdit(ResumptionDetailModel model) {
-    if (hasPrefilled || !isEditMode) return;
-print(model.rewkmt)
-    noteController.text = model.renote ?? '';
-    selectedMeetingStatus = model.rewkmt;
-    print(model.laslno);
-    print('model.laslno');
-    // Set leave object into provider
-    final refLeave = ResumptionLeaveModel(
-      lsslno: model.laslno,
-      laslno: model.laslno,
-      lvtype: model.leaveType,
-      dates: model.dates,
-      dtNxtWrkDay: model.redate,
-      noOfDays: model.lsrndy,
-      leavetype: model.leaveType,
-    );
-
-    ref.read(selectedResumptionLeaveTypeProvider.notifier).state = refLeave;
-
-    hasPrefilled = true;
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isLoading = ref.watch(resumptionControllerProvider);
-    final selectedLeave = ref.watch(selectedResumptionLeaveTypeProvider);
-
-    final resumptionDetails =
-        isEditMode
-            ? ref.watch(resumptionDetailProvider(widget.resumptionId!))
-            : null;
-
-    final detail = resumptionDetails?.maybeWhen(
-      data: (d) => d,
-      orElse: () => null,
-    );
-
-    if (detail != null && !hasPrefilled) {
-      Future.microtask(() => prefillIfEdit(detail));
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          isEditMode
-              ? '${'edit'.tr()} ${'resumption_request'.tr()}'
-              : '${submitText.tr()} ${'resumption_request'.tr()}',
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                labelText('leave'.tr(), isRequired: true),
-                ref
-                    .watch(resumptionLeavesProvider)
-                    .when(
-                      data: (leaves) {
-                        print(leaves.first.laslno);
-                        print('leaves.first.laslno');
-                        return CustomDropdown<ResumptionLeaveModel>(
-                          value:
-                              selectedLeave != null
-                                  ? leaves.firstWhere((e) {
-                                    return e.laslno == selectedLeave.laslno;
-                                  })
-                                  : null,
-                          onChanged:
-                              (v) =>
-                                  ref
-                                      .read(
-                                        selectedResumptionLeaveTypeProvider
-                                            .notifier,
-                                      )
-                                      .state = v,
-                          items:
-                              leaves
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e.dates ?? 'no type'),
-                                    ),
-                                  )
-                                  .toList(),
-                          hintText: "leave_type".tr(),
-                        );
-                      },
-                      error: (error, _) => ErrorText(error: error.toString()),
-                      loading: () => Loader(),
-                    ),
-                16.heightBox,
-                labelText('approved_no_of_days'.tr()),
-                Text(selectedLeave?.noOfDays ?? '0'),
-                16.heightBox,
-                labelText('leave_type'.tr()),
-                Text(selectedLeave?.leavetype ?? ''),
-                16.heightBox,
-                labelText('resumption_date'.tr()),
-                Text(selectedLeave?.dtNxtWrkDay ?? ''),
-                16.heightBox,
-                labelText('note'.tr()),
-                inputField(
-                  hint: 'enter_your_note'.tr(),
-                  controller: noteController,
-                  minLines: 3,
-                ),
-                16.heightBox,
-                FileUploadButton(),
-                24.heightBox,
-                Text(
-                  'Has the return to work meeting taken place?',
-                  style: TextStyle(fontSize: 14.sp),
-                ),
-                8.heightBox,
-                Row(
-                  children: [
-                    _buildRadio('yes'.tr()),
-                    20.widthBox,
-                    _buildRadio('no'.tr()),
-                  ],
-                ),
-                70.heightBox,
-              ],
-            ),
-          ),
-        ),
-      ),
-      bottomSheet:
-          isLoading
-              ? Loader()
-              : Padding(
-                padding: AppPadding.screenBottomSheetPadding,
-                child: CustomElevatedButton(
-                  onPressed: () {
-                    final user = ref.watch(userContextProvider);
-
-                    if (selectedLeave == null) {
-                      showSnackBar(
-                        context: context,
-                        content: 'pleaseFillRequiredFields'.tr(),
-                        color: AppTheme.errorColor,
-                      );
-                      return;
-                    }
-
-                    final submitModel = SubmitResumptionModel(
-                      reslno: isEditMode ? widget.resumptionId ?? 0 : 0,
-                      suconn: user.companyConnection ?? '',
-                      emcode: user.empCode,
-                      micode: '0',
-                      selectedValue: selectedLeave.lsslno ?? '',
-                      selectedText: selectedLeave.dates ?? '',
-                      resDate:
-                          selectedLeave.dtNxtWrkDay?.replaceAll('/', '-') ?? '',
-                      note: noteController.text,
-                      mediafile: '',
-                      mediaExtension: '',
-                      selectedMeetingValue:
-                          selectedMeetingStatus == 'Yes' ? 'Y' : 'N',
-                      laslno: selectedLeave.laslno ?? '',
-                      lvtype: selectedLeave.lvtype ?? '',
-                      baseDirectory: '',
-                    );
-
-                    ref
-                        .read(resumptionControllerProvider.notifier)
-                        .submitResumptionLeave(
-                          resumptionModel: submitModel,
-                          context: context,
-                          isEditMode: isEditMode,
-                        );
-                  },
-                  child: Text(
-                    isEditMode ? 'update'.tr() : submitText.tr(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-    );
-  }
-
-  Widget _buildRadio(String value) {
-    return Row(
-      children: [
-        Radio<String>(
-          value: value,
-          groupValue: selectedMeetingStatus,
-          onChanged: (val) {
-            setState(() {
-              selectedMeetingStatus = val;
-            });
-          },
-        ),
-        Text(value),
-      ],
-    );
-  }
-}
-*/

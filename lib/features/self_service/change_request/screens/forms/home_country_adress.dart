@@ -47,12 +47,28 @@ class _HomeCountryAddressFormState
   bool _isInitialized = false;
   String? countryCode, comment;
 
+  void addListener(TextEditingController controller, String fieldName) {
+    controller.addListener(() {
+      updateField(ref, fieldName, controller.text);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     Future.microtask(
       () => ref.read(changeRequestDetailsListProvider.notifier).state = [],
     );
+
+    // attach listeners once
+    addListener(addressLine1Ctrl, "House No.");
+    addListener(streetNameCtrl, "Street.");
+    addListener(cityCtrl, "Town/City");
+    addListener(stateCtrl, "State");
+    addListener(countryCtrl, "Country");
+    addListener(postBoxCtrl, "Post box");
+    addListener(phoneNumberCtrl, "Phone No.");
+    addListener(mobileCtrl, "Mobile");
   }
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
@@ -64,6 +80,9 @@ class _HomeCountryAddressFormState
     stateCtrl.text = getValueFromDetails(details, "State") ?? '';
     countryCtrl.text = getValueFromDetails(details, "Country") ?? '';
     postBoxCtrl.text = getValueFromDetails(details, "Post box") ?? '';
+    phoneNumberCtrl.text = getValueFromDetails(details, "Phone No.") ?? '';
+    mobileCtrl.text = getValueFromDetails(details, "Mobile") ?? '';
+
     setState(() => countryCode = getValueFromDetails(details, "Country"));
 
     _isInitialized = true;
@@ -239,6 +258,8 @@ class _HomeCountryAddressFormState
     stateCtrl.dispose();
     countryCtrl.dispose();
     postBoxCtrl.dispose();
+    phoneNumberCtrl.dispose();
+    mobileCtrl.dispose();
     super.dispose();
   }
 

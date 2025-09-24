@@ -113,7 +113,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                             subTitle: loan.approvedAmount.toString() ?? '—',
                           ),
 
-                          titleHeaderText("comment".tr()),
+                          if (loan.approverNote.isNotEmpty)
+                            titleHeaderText("comment".tr()),
                           Text(loan.approverNote),
                           titleHeaderText("attachments".tr()),
                           AttachmentWidget(
@@ -147,7 +148,6 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                               },
                             ),
                             10.heightBox,
-
                             inputField(
                               hint: 'Enter approve/reject comment',
                               controller: commentController,

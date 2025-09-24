@@ -13,6 +13,7 @@ import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/theme/app_theme.dart';
 import 'package:zeta_ess/features/auth/controller/auth_controller.dart';
 import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
+import 'package:zeta_ess/features/auth/screens/createPin_screen.dart';
 import 'package:zeta_ess/services/secure_stroage_service.dart';
 
 import '../../../core/common/widgets/customElevatedButton_widget.dart';
@@ -21,6 +22,7 @@ import '../../../core/services/NavigationService.dart';
 import '../../../core/theme/common_theme.dart';
 import '../../../core/utils.dart';
 import '../../../models/company_model.dart';
+import '../repository/auth_repository.dart';
 import 'forgetPassword_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -135,8 +137,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               children: [
                                 Text('Server connection lost'.tr()),
                                 ElevatedButton(
-                                  onPressed:
-                                      () => ref.invalidate(companyListProvider),
+                                  onPressed: () async {
+                                    ref.invalidate(companyListProvider);
+                                    final url = await SecureStorageService.read(
+                                      key: StorageKeys.baseUrl,
+                                    );
+                                    final res = await ref
+                                        .read(authRepositoryProvider)
+                                        .activateUrl(url: url ?? '');
+                                    res.fold(
+                                      (failure) {
+                                        NavigationService.navigateRemoveUntil(
+                                          context: context,
+                                          screen: ActivationUrlScreen(),
+                                        );
+                                        showSnackBar(
+                                          context: context,
+                                          content:
+                                              'Server error - redirecting to activation screen',
+                                          color: AppTheme.errorColor,
+                                        );
+                                      },
+                                      (activateResponse) {
+                                        if (activateResponse["data"] !=
+                                            "Authorized") {
+                                          showSnackBar(
+                                            context: context,
+                                            content: 'Not Authorized',
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
                                   child: Text('Retry'),
                                 ),
                               ],

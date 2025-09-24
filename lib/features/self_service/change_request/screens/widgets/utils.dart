@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../models/change_request_model.dart';
 
 /// Get a detail value by its `chtype`

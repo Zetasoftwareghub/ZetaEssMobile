@@ -35,15 +35,15 @@ class ApproveLoanController extends Notifier<bool> {
     return result.fold(
       (failure) => showSnackBar(context: context, content: failure.errMsg),
       (res) {
+        if (res == 'Loan approved successfully' ||
+            res == 'Loan rejected successfully') {
+          Navigator.pop(context);
+        }
         ref.invalidate(approveLoanListProvider);
         showSnackBar(
           context: context,
           content: res ?? 'Request processed successfully',
         );
-        if (res == 'Loan approved successfully' ||
-            res == 'Loan rejected successfully') {
-          Navigator.pop(context);
-        }
       },
     );
   }

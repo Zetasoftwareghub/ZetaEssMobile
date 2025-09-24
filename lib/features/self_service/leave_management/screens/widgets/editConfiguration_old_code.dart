@@ -18,6 +18,7 @@ import '../../../../../core/providers/userContext_provider.dart';
 import '../../controller/old_hrms_configuration_stuffs.dart';
 import '../../models/leave_model.dart';
 import '../../repository/leave_repository.dart';
+import '../helper/sandwich_helper.dart';
 
 class LeaveConfigurationEdit extends ConsumerStatefulWidget {
   String? dateFrom;
@@ -153,391 +154,516 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
       print('e.toString()');
     }
   }
-
+//TODO old code -check this correctly !
+  // void setSandwich() async {
+  //   List<LeaveConfigurationEditData> d = leaveConfigData;
+  //   List<LeaveConfigurationEditData> dSubLst = [];
+  //
+  //   var responseJson = await ref
+  //       .read(leaveRepositoryProvider)
+  //       .getEditLeaveDetails(
+  //         userContext: ref.watch(userContextProvider),
+  //         leaveId: int.parse(widget.lssNo),
+  //         // leaveId: int.parse(widget.leaveCode ?? '0'),
+  //       );
+  //   print(responseJson);
+  //   print('responseJson');
+  //
+  //   //p[o-=
+  //   if (responseJson.isEmpty) {
+  //     return;
+  //   }
+  //
+  //   for (var item in responseJson["subLst"]) {
+  //     dSubLst.add(LeaveConfigurationEditData.fromJson(item));
+  //   }
+  //
+  //   print(dSubLst);
+  //   print('dSubLst22 == - -');
+  //   var includeOff = dSubLst[0].includeOff ?? "N";
+  //   var includeHoliday = dSubLst[0].includeHolliday ?? "N";
+  //   var glapho = dSubLst[0].glapho ?? "N";
+  //   var ltaphl = dSubLst[0].ltaphl ?? "N";
+  //
+  //   var trailInclude = false;
+  //   var precInclued = false;
+  //
+  //   if (d.first.dayType == 3 || d.first.dayType == 4) {
+  //     DateTime dt = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
+  //     dt = dt.add(const Duration(days: -1));
+  //     bool result = true;
+  //     while (result) {
+  //       var responseJsonTra = await getLeaveDetailsByDate(
+  //         dt.toString(),
+  //         widget.leaveCode.toString(),
+  //       ).timeout(
+  //         const Duration(seconds: 60),
+  //         onTimeout: () {
+  //           Navigator.push(
+  //             context,
+  //             CupertinoPageRoute(builder: (context) => const NoServer()),
+  //           );
+  //         },
+  //       );
+  //       List<LeaveConfigDate> dTra = [];
+  //       for (var i in responseJsonTra) {
+  //         for (var item in i["subLst"]) {
+  //           dTra.add(LeaveConfigDate.fromJson(item));
+  //         }
+  //       }
+  //       if (dTra.isNotEmpty) {
+  //         if (dTra.first.dayType == 1) {
+  //           result = false;
+  //           if (dTra.first.halfDayType == "1" &&
+  //               d.first.date != d.last.date &&
+  //               d.last.dayType == 1) //gaseer
+  //           {
+  //             trailInclude = true;
+  //           }
+  //           if (dTra.first.cLsflag == "F") {
+  //             trailInclude = true;
+  //
+  //             // if (dTra.first.cLsstat == "Y") {
+  //           } else {
+  //             if (dTra.first.halfDayType == "2") {
+  //               trailInclude = true;
+  //             }
+  //           }
+  //         }
+  //       } else {
+  //         result = false;
+  //       }
+  //       dt = dt.add(const Duration(days: -1));
+  //     }
+  //   }
+  //   if (d.last.dayType == 3 || d.last.dayType == 4) {
+  //     DateTime dt = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+  //     dt = dt.add(const Duration(days: 1));
+  //     bool result = true;
+  //     while (result) {
+  //       var responseJsonPre = await getLeaveDetailsByDate(
+  //         dt.toString(),
+  //         widget.leaveCode.toString(),
+  //       ).timeout(
+  //         const Duration(seconds: 60),
+  //         onTimeout: () {
+  //           Navigator.push(
+  //             context,
+  //             CupertinoPageRoute(builder: (context) => const NoServer()),
+  //           );
+  //         },
+  //       );
+  //       List<LeaveConfigDate> dPre = [];
+  //       for (var i in responseJsonPre) {
+  //         for (var item in i["subLst"]) {
+  //           dPre.add(LeaveConfigDate.fromJson(item));
+  //         }
+  //       }
+  //       if (dPre.isNotEmpty) {
+  //         result = false;
+  //
+  //         if (dPre.first.dayType == 1) {
+  //           if (dPre.first.halfDayType == "2" &&
+  //               d.first.date != d.last.date &&
+  //               d.first.dayType == 1) //gaseer
+  //           {
+  //             precInclued = true;
+  //           }
+  //           if (dPre.first.cLsflag == "F") {
+  //             precInclued = true;
+  //             // if (dPre.first.cLsstat == "Y") {
+  //           } else {
+  //             if (dPre.first.halfDayType == "1") {
+  //               precInclued = true;
+  //             }
+  //           }
+  //         }
+  //       } else {
+  //         result = false;
+  //       }
+  //       dt = dt.add(const Duration(days: 1));
+  //     }
+  //   }
+  //
+  //   DateTime fromDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
+  //   DateTime toDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+  //
+  //   DateTime startDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
+  //   DateTime endDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+  //
+  //   while (startDate.isBefore(endDate) || startDate.isAtSameMomentAs(endDate)) {
+  //     var startDateStr = DateFormat('dd/MM/yyyy').format(startDate);
+  //     var itemLst = d.where((element) => element.date == startDateStr);
+  //     if (itemLst.isNotEmpty) {
+  //       var item = itemLst.first;
+  //       if (item.dayType == 3 || item.dayType == 4) {
+  //         if (ltaphl == "N") {
+  //           if (item.dayType == 3) {
+  //             if (includeOff == "N") {
+  //               d
+  //                   .firstWhere((element) => element.date == startDateStr)
+  //                   .dayFlag = '';
+  //             } else {
+  //               d
+  //                   .firstWhere((element) => element.date == startDateStr)
+  //                   .dayFlag = 'F';
+  //             }
+  //           } else if (item.dayType == 4) {
+  //             if (includeHoliday == "N") {
+  //               d
+  //                   .firstWhere((element) => element.date == startDateStr)
+  //                   .dayFlag = '';
+  //             } else {
+  //               d
+  //                   .firstWhere((element) => element.date == startDateStr)
+  //                   .dayFlag = 'F';
+  //             }
+  //           }
+  //         } else {
+  //           if (glapho == "N") //None
+  //           {
+  //             if (item.dayType == 3) {
+  //               if (includeOff == "N") {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = 'F';
+  //               }
+  //             } else if (item.dayType == 4) {
+  //               if (includeHoliday == "N") {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = 'F';
+  //               }
+  //             }
+  //           } else {
+  //             bool prec = false;
+  //             bool trail = false;
+  //
+  //             if (d.first.dayType == 3 || d.first.dayType == 4) {
+  //               if (trailInclude) {
+  //                 trail = true;
+  //               }
+  //             }
+  //
+  //             if (d.last.dayType == 3 || d.last.dayType == 4) {
+  //               if (precInclued) {
+  //                 prec = true;
+  //               }
+  //             }
+  //
+  //             DateTime selDate = DateFormat(
+  //               'dd/MM/yyyy',
+  //             ).parse(item.date ?? '');
+  //
+  //             while (selDate.isAfter(fromDate) ||
+  //                 selDate.isAtSameMomentAs(fromDate)) {
+  //               var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
+  //               var itemLstPre = d.where(
+  //                 (element) => element.date == selDateStr,
+  //               );
+  //               if (itemLstPre.isNotEmpty) {
+  //                 var itemPre = itemLstPre.first;
+  //                 if (itemPre.dayType == 1) {
+  //                   if (d.first.date != d.last.date &&
+  //                       d.last.dayType == 1 &&
+  //                       itemPre.halfType == '1') {
+  //                     trail = true;
+  //                   }
+  //                   if (itemPre.dayFlag == "F" || itemPre.halfType == '2') {
+  //                     trail = true;
+  //                   }
+  //                   break;
+  //                 }
+  //               }
+  //               selDate = selDate.add(const Duration(days: -1));
+  //             }
+  //
+  //             selDate = DateFormat('dd/MM/yyyy').parse(item.date ?? '');
+  //             while (selDate.isBefore(toDate) ||
+  //                 selDate.isAtSameMomentAs(toDate)) {
+  //               var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
+  //               var itemLstTra = d.where(
+  //                 (element) => element.date == selDateStr,
+  //               );
+  //               if (itemLstTra.isNotEmpty) {
+  //                 var itemTra = itemLstTra.first;
+  //                 if (itemTra.dayType == 1) {
+  //                   if (itemTra.halfType == '2' &&
+  //                       d.first.date != d.last.date &&
+  //                       d.first.dayType == 1) {
+  //                     prec = true;
+  //                   }
+  //                   if (itemTra.dayFlag == "F" || itemTra.halfType == '1') {
+  //                     prec = true;
+  //                   }
+  //                   break;
+  //                 }
+  //               }
+  //               selDate = selDate.add(const Duration(days: 1));
+  //             }
+  //
+  //             if (glapho == "S") //Preceding & Trailing
+  //             {
+  //               if (prec == true && trail == true) {
+  //                 if (item.dayType == 3) {
+  //                   if (includeOff == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 } else if (item.dayType == 4) {
+  //                   if (includeHoliday == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 }
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               }
+  //             } else if (glapho == "Y") //Preceding or Trailing
+  //             {
+  //               if (prec == true || trail == true) {
+  //                 if (item.dayType == 3) {
+  //                   if (includeOff == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 } else if (item.dayType == 4) {
+  //                   if (includeHoliday == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 }
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               }
+  //             } else if (glapho == "P") //Preceding
+  //             {
+  //               if (prec == true) {
+  //                 if (item.dayType == 3) {
+  //                   if (includeOff == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 } else if (item.dayType == 4) {
+  //                   if (includeHoliday == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 }
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               }
+  //             } else if (glapho == "T") //Trailing
+  //             {
+  //               if (trail == true) {
+  //                 if (item.dayType == 3) {
+  //                   if (includeOff == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 } else if (item.dayType == 4) {
+  //                   if (includeHoliday == "N") {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = '';
+  //                   } else {
+  //                     d
+  //                         .firstWhere((element) => element.date == startDateStr)
+  //                         .dayFlag = 'F';
+  //                   }
+  //                 }
+  //               } else {
+  //                 d
+  //                     .firstWhere((element) => element.date == startDateStr)
+  //                     .dayFlag = '';
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //     startDate = startDate.add(const Duration(days: 1));
+  //   }
+  //
+  //   setState(() {
+  //     leaveConfigData = d;
+  //   });
+  //
+  //   leaveController.setDataEdit(d);
+  // }
   void setSandwich() async {
-    List<LeaveConfigurationEditData> d = leaveConfigData;
-    List<LeaveConfigurationEditData> dSubLst = [];
+    if (!mounted) return;
 
-    var responseJson = await ref
-        .read(leaveRepositoryProvider)
-        .getEditLeaveDetails(
-          userContext: ref.watch(userContextProvider),
-          leaveId: int.parse(widget.lssNo),
-          // leaveId: int.parse(widget.leaveCode ?? '0'),
-        );
-    print(responseJson);
-    print('responseJson');
+    // Convert LeaveConfigurationEditData to LeaveConfigurationData
+    List<LeaveConfigurationData> d =
+        leaveConfigData
+            .map(
+              (editData) => LeaveConfigurationData(
+                date: editData.date,
+                dayType: editData.dayType ?? 0,
+                dayFlag: editData.dayFlag ?? '',
+                halfType: editData.halfType ?? '',
+                // Add other necessary mappings
+              ),
+            )
+            .toList();
 
-    //p[o-=
-    if (responseJson.isEmpty) {
-      return;
-    }
+    if (d.isEmpty) return;
 
-    for (var item in responseJson["subLst"]) {
-      dSubLst.add(LeaveConfigurationEditData.fromJson(item));
-    }
+    // Get leave configuration using the helper
+    final userContext = ref.read(userContextProvider);
+    final responseJson = await LeaveApiHelper.executeWithTimeout(
+      () => getLeaveConfigurations(
+        widget.dateFrom.toString(),
+        widget.dateTo.toString(),
+        widget.leaveCode.toString(),
+        userContext,
+      ),
+      'getLeaveConfigurations',
+      context,
+    );
 
-    print(dSubLst);
-    print('dSubLst22 == - -');
-    var includeOff = dSubLst[0].includeOff ?? "N";
-    var includeHoliday = dSubLst[0].includeHolliday ?? "N";
-    var glapho = dSubLst[0].glapho ?? "N";
-    var ltaphl = dSubLst[0].ltaphl ?? "N";
+    final leaveConfig = LeaveApiHelper.extractLeaveConfig(responseJson);
+    if (leaveConfig == null) return;
 
+    // Extract configuration values with defaults
+    var includeOff = leaveConfig.includeOff ?? LeaveConstants.no;
+    var includeHoliday = leaveConfig.includeHolliday ?? LeaveConstants.no;
+    var glapho = leaveConfig.glapho ?? LeaveConstants.no;
+    var ltaphl = leaveConfig.ltaphl ?? LeaveConstants.no;
+
+    // Check preceding and trailing conditions
     var trailInclude = false;
     var precInclued = false;
 
-    if (d.first.dayType == 3 || d.first.dayType == 4) {
-      DateTime dt = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-      dt = dt.add(const Duration(days: -1));
-      bool result = true;
-      while (result) {
-        var responseJsonTra = await getLeaveDetailsByDate(
-          dt.toString(),
-          widget.leaveCode.toString(),
-        ).timeout(
-          const Duration(seconds: 60),
-          onTimeout: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const NoServer()),
-            );
-          },
-        );
-        List<LeaveConfigDate> dTra = [];
-        for (var i in responseJsonTra) {
-          for (var item in i["subLst"]) {
-            dTra.add(LeaveConfigDate.fromJson(item));
-          }
-        }
-        if (dTra.isNotEmpty) {
-          if (dTra.first.dayType == 1) {
-            result = false;
-            if (dTra.first.halfDayType == "1" &&
-                d.first.date != d.last.date &&
-                d.last.dayType == 1) //gaseer
-            {
-              trailInclude = true;
-            }
-            if (dTra.first.cLsflag == "F") {
-              trailInclude = true;
-
-              // if (dTra.first.cLsstat == "Y") {
-            } else {
-              if (dTra.first.halfDayType == "2") {
-                trailInclude = true;
-              }
-            }
-          }
-        } else {
-          result = false;
-        }
-        dt = dt.add(const Duration(days: -1));
-      }
-    }
-    if (d.last.dayType == 3 || d.last.dayType == 4) {
-      DateTime dt = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
-      dt = dt.add(const Duration(days: 1));
-      bool result = true;
-      while (result) {
-        var responseJsonPre = await getLeaveDetailsByDate(
-          dt.toString(),
-          widget.leaveCode.toString(),
-        ).timeout(
-          const Duration(seconds: 60),
-          onTimeout: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const NoServer()),
-            );
-          },
-        );
-        List<LeaveConfigDate> dPre = [];
-        for (var i in responseJsonPre) {
-          for (var item in i["subLst"]) {
-            dPre.add(LeaveConfigDate.fromJson(item));
-          }
-        }
-        if (dPre.isNotEmpty) {
-          result = false;
-
-          if (dPre.first.dayType == 1) {
-            if (dPre.first.halfDayType == "2" &&
-                d.first.date != d.last.date &&
-                d.first.dayType == 1) //gaseer
-            {
-              precInclued = true;
-            }
-            if (dPre.first.cLsflag == "F") {
-              precInclued = true;
-              // if (dPre.first.cLsstat == "Y") {
-            } else {
-              if (dPre.first.halfDayType == "1") {
-                precInclued = true;
-              }
-            }
-          }
-        } else {
-          result = false;
-        }
-        dt = dt.add(const Duration(days: 1));
-      }
+    if (d.first.dayType == LeaveConstants.weekOff ||
+        d.first.dayType == LeaveConstants.holiday) {
+      trailInclude = await LeaveConditionChecker.checkPrecedingTrailing(
+        d,
+        widget.leaveCode.toString(),
+        true,
+        context,
+        ref,
+      );
     }
 
-    DateTime fromDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-    DateTime toDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+    if (d.last.dayType == LeaveConstants.weekOff ||
+        d.last.dayType == LeaveConstants.holiday) {
+      precInclued = await LeaveConditionChecker.checkPrecedingTrailing(
+        d,
+        widget.leaveCode.toString(),
+        false,
+        context,
+        ref,
+      );
+    }
 
-    DateTime startDate = DateFormat('dd/MM/yyyy').parse(d.first.date ?? '');
-    DateTime endDate = DateFormat('dd/MM/yyyy').parse(d.last.date ?? '');
+    // Parse date range
+    DateTime fromDate = DateFormat(
+      LeaveConstants.dateFormat,
+    ).parse(d.first.date ?? '');
+    DateTime toDate = DateFormat(
+      LeaveConstants.dateFormat,
+    ).parse(d.last.date ?? '');
 
+    DateTime startDate = fromDate;
+    DateTime endDate = toDate;
+
+    // Process each day in the range
     while (startDate.isBefore(endDate) || startDate.isAtSameMomentAs(endDate)) {
-      var startDateStr = DateFormat('dd/MM/yyyy').format(startDate);
+      var startDateStr = DateFormat(
+        LeaveConstants.dateFormat,
+      ).format(startDate);
       var itemLst = d.where((element) => element.date == startDateStr);
+
       if (itemLst.isNotEmpty) {
         var item = itemLst.first;
-        if (item.dayType == 3 || item.dayType == 4) {
-          if (ltaphl == "N") {
-            if (item.dayType == 3) {
-              if (includeOff == "N") {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = '';
-              } else {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = 'F';
-              }
-            } else if (item.dayType == 4) {
-              if (includeHoliday == "N") {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = '';
-              } else {
-                d
-                    .firstWhere((element) => element.date == startDateStr)
-                    .dayFlag = 'F';
-              }
-            }
-          } else {
-            if (glapho == "N") //None
-            {
-              if (item.dayType == 3) {
-                if (includeOff == "N") {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = 'F';
-                }
-              } else if (item.dayType == 4) {
-                if (includeHoliday == "N") {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = 'F';
-                }
-              }
-            } else {
-              bool prec = false;
-              bool trail = false;
-
-              if (d.first.dayType == 3 || d.first.dayType == 4) {
-                if (trailInclude) {
-                  trail = true;
-                }
-              }
-
-              if (d.last.dayType == 3 || d.last.dayType == 4) {
-                if (precInclued) {
-                  prec = true;
-                }
-              }
-
-              DateTime selDate = DateFormat(
-                'dd/MM/yyyy',
-              ).parse(item.date ?? '');
-
-              while (selDate.isAfter(fromDate) ||
-                  selDate.isAtSameMomentAs(fromDate)) {
-                var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
-                var itemLstPre = d.where(
-                  (element) => element.date == selDateStr,
-                );
-                if (itemLstPre.isNotEmpty) {
-                  var itemPre = itemLstPre.first;
-                  if (itemPre.dayType == 1) {
-                    if (d.first.date != d.last.date &&
-                        d.last.dayType == 1 &&
-                        itemPre.halfType == '1') {
-                      trail = true;
-                    }
-                    if (itemPre.dayFlag == "F" || itemPre.halfType == '2') {
-                      trail = true;
-                    }
-                    break;
-                  }
-                }
-                selDate = selDate.add(const Duration(days: -1));
-              }
-
-              selDate = DateFormat('dd/MM/yyyy').parse(item.date ?? '');
-              while (selDate.isBefore(toDate) ||
-                  selDate.isAtSameMomentAs(toDate)) {
-                var selDateStr = DateFormat('dd/MM/yyyy').format(selDate);
-                var itemLstTra = d.where(
-                  (element) => element.date == selDateStr,
-                );
-                if (itemLstTra.isNotEmpty) {
-                  var itemTra = itemLstTra.first;
-                  if (itemTra.dayType == 1) {
-                    if (itemTra.halfType == '2' &&
-                        d.first.date != d.last.date &&
-                        d.first.dayType == 1) {
-                      prec = true;
-                    }
-                    if (itemTra.dayFlag == "F" || itemTra.halfType == '1') {
-                      prec = true;
-                    }
-                    break;
-                  }
-                }
-                selDate = selDate.add(const Duration(days: 1));
-              }
-
-              if (glapho == "S") //Preceding & Trailing
-              {
-                if (prec == true && trail == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "Y") //Preceding or Trailing
-              {
-                if (prec == true || trail == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "P") //Preceding
-              {
-                if (prec == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              } else if (glapho == "T") //Trailing
-              {
-                if (trail == true) {
-                  if (item.dayType == 3) {
-                    if (includeOff == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  } else if (item.dayType == 4) {
-                    if (includeHoliday == "N") {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = '';
-                    } else {
-                      d
-                          .firstWhere((element) => element.date == startDateStr)
-                          .dayFlag = 'F';
-                    }
-                  }
-                } else {
-                  d
-                      .firstWhere((element) => element.date == startDateStr)
-                      .dayFlag = '';
-                }
-              }
-            }
-          }
-        }
+        await LeaveFlagProcessor.processDayConfiguration(
+          d,
+          item,
+          startDateStr,
+          includeOff,
+          includeHoliday,
+          glapho,
+          ltaphl,
+          fromDate,
+          toDate,
+          GapLeaveConditions(preceding: precInclued, trailing: trailInclude),
+        );
       }
+
       startDate = startDate.add(const Duration(days: 1));
     }
 
-    setState(() {
-      leaveConfigData = d;
-    });
+    // Convert back to LeaveConfigurationEditData and update UI
+    if (mounted) {
+      List<LeaveConfigurationEditData> updatedEditData = [];
+      for (int i = 0; i < leaveConfigData.length; i++) {
+        var editItem = leaveConfigData[i];
+        var processedItem = d.firstWhere(
+          (element) => element.date == editItem.date,
+          orElse: () => LeaveConfigurationData(dayType: 1), // Provide default
+        );
 
-    leaveController.setDataEdit(d);
+        // Update the edit item with processed values
+        editItem.dayFlag = processedItem.dayFlag;
+        updatedEditData.add(editItem);
+      }
+
+      setState(() {
+        leaveConfigData = updatedEditData;
+      });
+      leaveController.setDataEdit(updatedEditData);
+    }
   }
 
   void _getConfigurations() async {
@@ -1199,68 +1325,60 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10.r),
                     ),
-                    child:
-                        widget.fromAppTab == true
-                            ? Text(
-                              i.ludate ?? '',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: HexColor("#000000"),
-                              ),
-                            )
-                            : DropdownButtonFormField(
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                              decoration: InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    width: 1.w,
-                                    color: HexColor('#0887A1'),
-                                  ),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    width: 1.w,
-                                    color: HexColor('#0887A1'),
-                                  ),
-                                ),
-                              ),
-                              hint: Text(
-                                "-- Select --",
+                    child: DropdownButtonFormField(
+                      isExpanded: true,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1.w,
+                            color: HexColor('#0887A1'),
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1.w,
+                            color: HexColor('#0887A1'),
+                          ),
+                        ),
+                      ),
+                      hint: Text(
+                        "-- Select --",
+                        style: AppTextStyles.smallFont(),
+                      ),
+
+                      items:
+                          leaveConfigDataCanLst.map((item) {
+                            return DropdownMenuItem(
+                              value: item.iLsslno,
+                              child: Text(
+                                item.dLsdate.toString(),
                                 style: AppTextStyles.smallFont(),
                               ),
+                            );
+                          }).toList(),
+                      value:
+                          (i.luslno == null || i.luslno == 0)
+                              ? null
+                              : i.luslno.toString(),
 
-                              items:
-                                  leaveConfigDataCanLst.map((item) {
-                                    return DropdownMenuItem(
-                                      value: item.iLsslno,
-                                      child: Text(
-                                        item.dLsdate.toString(),
-                                        style: AppTextStyles.smallFont(),
-                                      ),
-                                    );
-                                  }).toList(),
-                              value:
-                                  (i.luslno == null || i.luslno == 0)
-                                      ? null
-                                      : i.luslno.toString(),
-
-                              //     widget.isLieuDay &&
-                              //                 widget.selectedLeaveType ==
-                              //                     null ||
-                              //             (widget.selectedSameValues ?? false)
-                              //         ? (i.luslno ?? "").toString()
-                              //         : null, TODO check and do thiscorre ctlttt
-                              onChanged: (value) {
-                                setState(() {
-                                  i.lieuday = value;
-                                });
-                                // setState(() {
-                                //   selectedValue = value.toString();
-                                // });
-                                // _findLeaveDays();
-                              },
-                              //itemHeight: 40.h,
-                            ),
+                      //     widget.isLieuDay &&
+                      //                 widget.selectedLeaveType ==
+                      //                     null ||
+                      //             (widget.selectedSameValues ?? false)
+                      //         ? (i.luslno ?? "").toString()
+                      //         : null, TODO check and do thiscorre ctlttt
+                      onChanged: (value) {
+                        setState(() {
+                          i.lieuday = value;
+                        });
+                        // setState(() {
+                        //   selectedValue = value.toString();
+                        // });
+                        // _findLeaveDays();
+                      },
+                      //itemHeight: 40.h,
+                    ),
                   )
                   // : Text("")
                   : widget.dCanLst.isNotEmpty

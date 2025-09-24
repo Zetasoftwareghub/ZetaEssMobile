@@ -237,16 +237,19 @@ class LeaveRepository {
     required String leaveCode,
   }) {
     return handleApiCall(() async {
+      final data = {
+        'sucode': userContext.companyCode,
+        'suconn': userContext.companyConnection,
+        'dtfrm': dateFrom,
+        'dtto': dateTo,
+        'leavcode': leaveCode,
+        'emcode': userContext.empCode,
+      };
+      print(data);
+      print('calculate total leave');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getTotalLeaveDays,
-        data: {
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-          'dtfrm': dateFrom,
-          'dtto': dateTo,
-          'leavcode': leaveCode,
-          'emcode': userContext.empCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
 

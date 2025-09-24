@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
+import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
 import 'package:zeta_ess/core/common/widgets/customElevatedButton_widget.dart';
 import 'package:zeta_ess/core/providers/userContext_provider.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
@@ -17,6 +19,184 @@ import '../../../../core/common/customDateTime_pickers/month_and_year_picker.dar
 import '../models/salary_certificate_detail_model.dart';
 
 class SubmitSalaryCertificateScreen extends ConsumerStatefulWidget {
+  final String? certificateId;
+  const SubmitSalaryCertificateScreen({super.key, this.certificateId});
+
+  @override
+  ConsumerState<SubmitSalaryCertificateScreen> createState() =>
+      _SubmitSalaryCertificateScreenState();
+}
+
+class _SubmitSalaryCertificateScreenState
+    extends ConsumerState<SubmitSalaryCertificateScreen> {
+  final purposeController = TextEditingController();
+  final addressNameController = TextEditingController();
+  final remarkController = TextEditingController();
+  final dateFromController = TextEditingController();
+  final dateToController = TextEditingController();
+
+  bool isEditMode = false;
+  bool hasPrefilled = false;
+  String? submittedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    isEditMode = widget.certificateId != null;
+  }
+
+  void prefillIfEdit(SalaryCertificateDetailsModel model) {
+    if (!isEditMode || hasPrefilled) return;
+
+    dateFromController.text = convertMonthYearToMMYYYY(model.fromMonth);
+    dateToController.text = convertMonthYearToMMYYYY(model.toMonth);
+    purposeController.text = model.purpose ?? '';
+    remarkController.text = model.remarks ?? '';
+    addressNameController.text = model.accountName ?? '';
+
+    hasPrefilled = true;
+    setState(() => submittedDate = model.submissionDate);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncValue =
+        isEditMode
+            ? ref.watch(
+              salaryCertificateDetailsProvider(
+                int.parse(widget.certificateId ?? '0'),
+              ),
+            )
+            : null;
+
+    return isEditMode
+        ? asyncValue!.when(
+          data: (details) {
+            if (!hasPrefilled) {
+              Future.microtask(() => prefillIfEdit(details));
+            }
+            return _buildForm();
+          },
+          loading: () => Scaffold(body: Loader()),
+          error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
+        )
+        : _buildForm();
+  }
+
+  Widget _buildForm() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          isEditMode
+              ? '${'Edit'.tr()} ${'salary_certificate'.tr()}'
+              : '${submitText.tr()} ${'salary_certificate'.tr()}',
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: AppPadding.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            labelText(
+              submittedDate == null
+                  ? "${"submitting_date".tr()} ${formatDate(DateTime.now())}"
+                  : 'Submitted Date $submittedDate'.tr(),
+            ),
+            10.heightBox,
+            Row(
+              children: [
+                Expanded(
+                  child: MonthYearPickerField(
+                    controller: dateFromController,
+                    label: '${'date_from'.tr()} *',
+                  ),
+                ),
+                10.widthBox,
+                Expanded(
+                  child: MonthYearPickerField(
+                    controller: dateToController,
+                    label: '${'date_to'.tr()} *',
+                  ),
+                ),
+              ],
+            ),
+            labelText("${'purpose'.tr()} *"),
+            inputField(
+              hint: "enter".tr(),
+              minLines: 3,
+              controller: purposeController,
+            ),
+            labelText("remarks".tr()),
+            inputField(
+              hint: "enter".tr(),
+              minLines: 3,
+              controller: remarkController,
+            ),
+            labelText("address_name".tr()),
+            inputField(
+              hint: "enter".tr(),
+              minLines: 3,
+              controller: addressNameController,
+            ),
+            90.heightBox,
+          ],
+        ),
+      ),
+      bottomSheet: SafeArea(
+        child: Padding(
+          padding: AppPadding.screenBottomSheetPadding,
+          child: CustomElevatedButton(
+            onPressed: _submitForm,
+            child: Text(
+              isEditMode ? 'update'.tr() : submitText.tr(),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _submitForm() {
+    final user = ref.read(userContextProvider);
+
+    if (dateToController.text.isEmpty || purposeController.text.isEmpty) {
+      showCustomAlertBox(
+        context,
+        title: "pleaseFillRequiredFields".tr(),
+        type: AlertType.error,
+      );
+      return;
+    }
+
+    final submitModel = SubmitSalaryCertificateModel(
+      suconn: user.companyConnection,
+      sucode: user.companyCode,
+      emcode: int.parse(user.empCode),
+      username: user.empName,
+      iSrid: isEditMode ? int.parse(widget.certificateId ?? '0') : 0,
+      frommonth: dateFromController.text,
+      tomonth: dateToController.text,
+      purpose: purposeController.text,
+      reqdate: formatDate(DateTime.now()),
+      rmrks: remarkController.text,
+      addressname: addressNameController.text,
+      url: '',
+      cocode: 0,
+      baseDirectory: user.userBaseUrl ?? '',
+    );
+
+    ref
+        .read(salaryCertificateControllerProvider.notifier)
+        .submitSalaryCertificate(submitModel: submitModel, context: context);
+  }
+}
+
+/*
+OLD code without loading !
+
+class SubmitSalaryCertificateScreen extends ConsumerStatefulWidget {
+
   final String? certificateId;
   const SubmitSalaryCertificateScreen({super.key, this.certificateId});
 
@@ -54,9 +234,7 @@ class _SubmitSalaryCertificateScreenState
     addressNameController.text = model.accountName ?? '';
 
     hasPrefilled = true;
-    setState(() {
-      submittedDate = model.submissionDate;
-    });
+    setState(() => submittedDate = model.submissionDate);
   }
 
   @override
@@ -189,3 +367,4 @@ class _SubmitSalaryCertificateScreenState
     );
   }
 }
+*/

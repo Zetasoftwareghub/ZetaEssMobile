@@ -51,13 +51,27 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     Future.microtask(
       () => ref.read(changeRequestDetailsListProvider.notifier).state = [],
     );
+    void addListener(TextEditingController c, String field) {
+      c.addListener(() {
+        updateField(ref, field, c.text);
+      });
+    }
+
+    addListener(addressLine1Controller, "House No.");
+    addListener(streetNameController, "Street.");
+    addListener(cityController, "Town/City");
+    addListener(stateController, "State");
+    addListener(countryController, "Country");
+    addListener(postBoxController, "Post box");
+    addListener(phoneNumberController, "Phone No.");
+    addListener(mobileNumberController, "Mobile");
+    addListener(personalEmailController, "Personal Email id");
+    addListener(officialEmailController, "Official Email id.");
   }
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
-    printFullJson(getValueFromDetails(details, "Post box"));
-    print('12312312change');
     addressLine1Controller.text =
         getValueFromDetails(details, "House No.") ?? '';
     streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
@@ -68,9 +82,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     phoneNumberController.text =
         getValueFromDetails(details, "Phone No.") ?? '';
     mobileNumberController.text = getValueFromDetails(details, "Mobile") ?? '';
-    personalEmailController.text =
-        getValueFromDetails(details, "Personal Email id") ?? '';
     officialEmailController.text =
+        getValueFromDetails(details, "Personal Email id") ?? '';
+    personalEmailController.text =
         getValueFromDetails(details, "Official Email id.") ?? '';
     setState(() => countryCode = getValueFromDetails(details, "Country"));
     _isInitialized = true;
@@ -184,11 +198,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: addressLine1Controller,
           onChanged: (val) => updateField(ref, "House No.", val),
         ),
-
         labelText("Street Name"),
         inputField(
           readOnly: readOnly,
-
           hint: 'Street',
           controller: streetNameController,
           onChanged: (val) => updateField(ref, "Street.", val),

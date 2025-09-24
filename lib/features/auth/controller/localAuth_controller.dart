@@ -5,6 +5,7 @@ import 'package:zeta_ess/core/api_constants/keys/storage_keys.dart';
 import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/features/auth/screens/activationUrl_screen.dart';
+import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 import 'package:zeta_ess/services/secure_stroage_service.dart';
 
 import '../../../core/common/alert_dialog/alertBox_function.dart';
@@ -12,6 +13,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils.dart';
 import '../../common/screens/main_screen.dart';
 import '../repository/auth_repository.dart';
+import 'auth_controller.dart';
 
 final localAuthProvider = NotifierProvider<LocalAuthNotifier, LocalAuthState>(
   () => LocalAuthNotifier(),
@@ -102,20 +104,22 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
       options: const AuthenticationOptions(biometricOnly: true),
     );
     if (authenticated) {
-      NavigationService.navigateRemoveUntil(
-        context: context,
-        screen: MainScreen(),
-      );
-      showSnackBar(
-        context: context,
-        content: "Welcome to user dashboard",
-        color: AppTheme.successColor,
-      );
-
       await SecureStorageService.write(
         key: StorageKeys.biometricKey,
         value: 'true',
       );
+      final user = ref.read(userDataProvider);
+
+      if (user != null) {
+        ref
+            .read(authControllerProvider.notifier)
+            .loginUser(
+              userName: user.userName,
+              password: user.password,
+              context: context,
+              fromPinScreen: true,
+            );
+      }
       state = state.copyWith(isAuthenticated: true);
     }
 
@@ -132,21 +136,21 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
 
     res.fold(
       (failure) {
-        showSnackBar(
-          context: context,
-          content: 'Server error - redirecting to url screen',
-          color: AppTheme.errorColor,
-        );
         NavigationService.navigateRemoveUntil(
           context: context,
-          screen: ActivationUrlScreen(),
+          screen: LoginScreen(),
+        );
+        showSnackBar(
+          context: context,
+          content: 'Server error - redirecting to Login screen',
+          color: AppTheme.errorColor,
         );
       },
       (activateResponse) {
         if (activateResponse["data"] != "Authorized") {
           NavigationService.navigateRemoveUntil(
             context: context,
-            screen: ActivationUrlScreen(),
+            screen: LoginScreen(),
           );
         } else {
           isAuthorized = true;

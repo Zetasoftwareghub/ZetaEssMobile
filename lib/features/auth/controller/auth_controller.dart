@@ -19,6 +19,7 @@ import '../../../core/providers/storage_repository_provider.dart';
 import '../../../core/services/NavigationService.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils.dart';
+import '../../common/screens/main_screen.dart';
 import '../repository/auth_repository.dart';
 
 final authControllerProvider = NotifierProvider<AuthController, bool>(
@@ -140,6 +141,7 @@ class AuthController extends Notifier<bool> {
     required String userName,
     required String password,
     required BuildContext context,
+    bool fromPinScreen = false,
   }) async {
     state = true;
     final res = await ref
@@ -153,27 +155,42 @@ class AuthController extends Notifier<bool> {
         );
     state = false;
     return res.fold(
-      (l) =>
-          l.errMsg != '-1' &&
-                  l.errMsg != '-2' &&
-                  l.errMsg != '-3' &&
-                  l.errMsg != '-4'
-              ? showSnackBar(
-                context: context,
-                content: l.errMsg,
-                color: AppTheme.errorColor,
-              )
-              : null,
+      (l) async {
+        if (l.errMsg != '-1' && l.errMsg != '-2' && l.errMsg != '-3') {
+          showSnackBar(
+            context: context,
+            content:
+                l.errMsg == '-4'
+                    ? 'Your license has expired. Please contact your administrator'
+                    : l.errMsg,
+            color: AppTheme.errorColor,
+          );
+        }
+
+        if (fromPinScreen) {
+          await SecureStorageService.clearAll();
+          Future.delayed(const Duration(milliseconds: 700), () {
+            NavigationService.navigateRemoveUntil(
+              context: context,
+              screen: LoginScreen(),
+            );
+          });
+        }
+      },
       (userData) async {
         // TODO get the JWT token to local storage !
-        ref.read(userDataProvider.notifier).state = userData;
+        ref.read(userDataProvider.notifier).state = userData.copyWith(
+          password: password,
+          userName: userName,
+        );
 
         NavigationService.navigateRemoveUntil(
           context: context,
-          screen: const CreatePinScreen(),
+          screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
         );
-
-        final userModel = jsonEncode(userData.toJson());
+        final userModel = jsonEncode(
+          userData.copyWith(password: password, userName: userName).toJson(),
+        );
         await SecureStorageService.write(
           key: StorageKeys.userModel,
           value: userModel,
@@ -210,7 +227,9 @@ class AuthController extends Notifier<bool> {
           context: context,
           screen: const CreatePinScreen(),
         );
-        final userModel = jsonEncode(userData.toJson());
+        final userModel = jsonEncode(
+          userData.toJson(),
+        ); //todo ssologin dont have pass
         await SecureStorageService.write(
           key: StorageKeys.userModel,
           value: userModel,

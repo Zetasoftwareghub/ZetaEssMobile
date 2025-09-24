@@ -100,8 +100,9 @@ class LoanListView extends ConsumerWidget {
           child: CustomTileListingWidget(
             listRights: rightsModel,
             text1: convertRawDateToString(loan.submittedDate),
-            text2: loan.loanStatus ?? '',
-            subText2: "Amount:  ${loan.loanAmount}",
+            text2: ' ${loan.loanType}',
+            subText2:
+                "Status :${loan.loanStatus ?? ''}, Amount:  ${loan.loanAmount}",
             onView:
                 () => NavigationService.navigateToScreen(
                   context: context,

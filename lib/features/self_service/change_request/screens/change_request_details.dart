@@ -43,8 +43,8 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
               children: [
                 labelText('Request Date'),
                 labelText(changeRequest.chrqdt ?? ""),
-                12.heightBox,
 
+                12.heightBox,
                 // Details Section
                 if (changeRequest.chrqtp == "B")
                   _buildBankDetails(changeRequest)
@@ -72,7 +72,10 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                   )
                 else
                   _buildDynamicDetails(changeRequest.detail),
-
+                12.heightBox,
+                if (changeRequest.comment?.isNotEmpty ?? false)
+                  titleHeaderText('Comment'),
+                labelText(changeRequest.comment ?? ""),
                 80.heightBox,
               ],
             ),

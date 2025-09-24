@@ -125,10 +125,6 @@ class _CancelLeaveDetailsScreenState
                   builder: (context, ref, child) {
                     return ApproveRejectButtons(
                       onApprove: () {
-                        print(leaveModel?.employeeCode);
-                        print(
-                          "leaveModel?.employeeCode check approveee empcode says saru",
-                        );
                         if (leaveModel != null) {
                           ref
                               .read(approveRejectCancelLeaveProvider.notifier)

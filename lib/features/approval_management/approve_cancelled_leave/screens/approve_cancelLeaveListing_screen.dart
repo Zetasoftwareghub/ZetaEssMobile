@@ -78,16 +78,17 @@ class LeaveListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final leave = leaveList[index];
         return InkWell(
-          onTap:
-              () => NavigationService.navigateToScreen(
-                context: context,
-                screen: CancelLeaveDetailsScreen(
-                  showCommentField: showCommentField ?? false,
-                  clslno: leave.clslno,
-                  laslno: leave.laslno,
-                  lsslno: leave.lsslno,
-                ),
+          onTap: () {
+            NavigationService.navigateToScreen(
+              context: context,
+              screen: CancelLeaveDetailsScreen(
+                showCommentField: showCommentField ?? false,
+                clslno: leave.clslno,
+                laslno: leave.laslno,
+                lsslno: leave.lsslno,
               ),
+            );
+          },
           child: CustomTileListingWidget(
             text2: leave.employeeName,
             subText2: "Date : ${leave.leaveDateFrom}  To  ${leave.leaveDateTo}",

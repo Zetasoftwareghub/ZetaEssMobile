@@ -40,12 +40,21 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
 
   bool _isInitialized = false;
 
+  void addListener(TextEditingController controller, String fieldName) {
+    controller.addListener(() {
+      updateField(ref, fieldName, controller.text);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     Future.microtask(
       () => ref.read(changeRequestDetailsListProvider.notifier).state = [],
     );
+
+    addListener(passportNumberController, "Number");
+    addListener(placeOfIssueController, "Place of Issue");
   }
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
@@ -243,8 +252,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                               // ref.read(passportHolderValueProvider.notifier).state = value;
                             },
                   ),
-                  if ((widget.isLineManager) &&
-                      (comment?.isNotEmpty ?? false))
+                  if ((widget.isLineManager) && (comment?.isNotEmpty ?? false))
                     Column(
                       children: [
                         titleHeaderText("Comment"),
