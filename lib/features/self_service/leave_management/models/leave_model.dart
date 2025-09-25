@@ -72,7 +72,6 @@ class LeaveModel {
       editLeaveFrom: json['dLsrdtf'].toString(),
       editLeaveTo: json['dLsrdtt'].toString(),
       submitted: json['dLsdate'].toString(),
-
       editReason: json?['lsnote']?.toString(),
       editContactValue: json?['lscont']?.toString(),
       editAttachmentUrl: json?['leaveName']?.toString(),

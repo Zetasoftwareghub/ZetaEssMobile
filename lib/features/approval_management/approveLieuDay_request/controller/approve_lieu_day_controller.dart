@@ -54,15 +54,16 @@ class ApproveLieuController extends Notifier<bool> {
       (failure) => showSnackBar(context: context, content: failure.errMsg),
       (res) {
         ref.invalidate(approveLieuDayListProvider);
-        showSnackBar(
-          context: context,
-          content: res ?? 'Request processed successfully',
-        );
+
         if (res == 'Lieu Day approved Successfully' ||
             res == 'Lieu Day rejected Successfully') {
           //TODO check if this is correct !
           Navigator.pop(context);
         }
+        showSnackBar(
+          context: context,
+          content: res ?? 'Request processed successfully',
+        );
       },
     );
   }

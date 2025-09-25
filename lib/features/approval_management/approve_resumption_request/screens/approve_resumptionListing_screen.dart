@@ -85,7 +85,7 @@ class ResumptionListView extends StatelessWidget {
               () => NavigationService.navigateToScreen(
                 context: context,
                 screen: ResumptionDetailsScreen(
-                  isLineManager: isLineManger,
+                  isLineManager: isLineManger ?? false,
                   resumptionId: item.reslno ?? 0,
                 ),
               ),

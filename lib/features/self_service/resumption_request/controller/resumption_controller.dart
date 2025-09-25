@@ -15,6 +15,8 @@ import '../../../../core/utils.dart';
 final resumptionControllerProvider =
     NotifierProvider<ResumptionController, bool>(() => ResumptionController());
 
+final isResumptionSubmittedProvider = StateProvider<bool>((ref) => false);
+
 class ResumptionController extends Notifier<bool> {
   @override
   bool build() {
@@ -40,24 +42,24 @@ class ResumptionController extends Notifier<bool> {
         showSnackBar(context: context, content: 'Error occurred : ${l.errMsg}');
       },
       (response) {
-        print(isFromLeaveSubmit);
-        print('isFromLeaveSubmit');
         ref.invalidate(resumptionListProvider);
         if (response?.toLowerCase() == 'saved successfully' ||
             response?.toLowerCase() == 'updated successfully') {
           ref.read(fileUploadProvider.notifier).clearFile();
+
           if (isFromLeaveSubmit) {
+            ref.read(isResumptionSubmittedProvider.notifier).state = true;
+          } else {
             Navigator.pop(context);
+            showCustomAlertBox(
+              context,
+              title:
+                  isFromLeaveSubmit
+                      ? 'Resumption and Leave Submitted' //TODO check this correctly and give for testing !
+                      : 'resumption_request'.tr() + 'submitted'.tr(),
+              type: AlertType.success,
+            );
           }
-          Navigator.pop(context);
-          showCustomAlertBox(
-            context,
-            title:
-                isFromLeaveSubmit
-                    ? 'Resumption and Leave Submitted' //TODO check this correctly and give for testing !
-                    : 'resumption_request'.tr() + 'submitted'.tr(),
-            type: AlertType.success,
-          );
         } else {
           showCustomAlertBox(context, title: response.toString());
         }

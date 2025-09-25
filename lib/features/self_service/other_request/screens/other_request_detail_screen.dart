@@ -130,11 +130,11 @@ class _OtherRequestDetailScreenState
         },
         (message) {
           ref.invalidate(approveOtherRequestListProvider);
+          Navigator.pop(context);
           showSnackBar(
             context: context,
             content: message ?? _strings['successMessage']!,
           );
-          Navigator.pop(context);
         },
       );
     } catch (e) {

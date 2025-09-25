@@ -271,8 +271,9 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
       leaveConfigData = tmp;
     });
     leaveController.setData(tmp);
-    setSandwich();
     Navigator.pop(context);
+
+    setSandwich();
   }
 
   void _halfDay(LeaveConfigurationData t) {

@@ -16,20 +16,23 @@ import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
 import '../../../../core/common/error_text.dart';
 import '../../../../core/common/widgets/attachment_viewer.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/common/widgets/customElevatedButton_widget.dart';
 import '../../../../core/services/validator_services.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/leave_providers.dart';
 
 class LeaveDetailsScreen extends StatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final bool? showCancelLeave;
   final String leaveId;
+
   const LeaveDetailsScreen({
     super.key,
-    this.isLineManager,
+    this.isLineManager = false,
     required this.leaveId,
     this.showCancelLeave = false,
+    this.isSelf = false,
   });
 
   @override
@@ -116,22 +119,19 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
                               style: TextStyle(fontSize: 14.sp),
                             ),
                             10.heightBox,
-                            // if (!(widget.isLineManager ?? false)) ...[
-                            titleHeaderText('comment'),
-                            Text(
-                              leave.appRejComment?.isNotEmpty == true
-                                  ? leave.appRejComment!
-                                  : leave.lmComment?.isNotEmpty == true
-                                  ? leave.lmComment!
-                                  : leave.prevComment?.isNotEmpty == true
-                                  ? leave.prevComment!
-                                  : leave.cancelComment?.isNotEmpty == true
-                                  ? leave.cancelComment!
-                                  : 'No comments',
-                              style: TextStyle(fontSize: 14.sp),
+
+                            CommentSection(
+                              isApproveTab: widget.isLineManager,
+                              isLineManagerSelfTab:
+                                  !widget.isLineManager || !widget.isSelf,
+                              isSelf: widget.isSelf,
+                              lmComment: leave.lmComment,
+                              prevComment: leave.prevComment,
+                              finalComment: leave.appRejComment,
                             ),
+
                             10.heightBox,
-                            if (widget.isLineManager ?? false)
+                            if (widget.isLineManager)
                               inputField(
                                 hint: 'Approve/Reject Comment'.tr(),
                                 minLines: 3,

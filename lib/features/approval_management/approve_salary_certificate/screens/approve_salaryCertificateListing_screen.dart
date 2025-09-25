@@ -83,13 +83,14 @@ class SalaryCertificateListView extends StatelessWidget {
               () => NavigationService.navigateToScreen(
                 context: context,
                 screen: SalaryCertificateDetailsScreen(
-                  isLineManager: isLineManger,
+                  isLineManager: isLineManger ?? false,
                   id: item.id,
                 ),
               ),
           child: CustomTileListingWidget(
             text2: item.name ?? 'No name',
-            subText2: "Date: ${item.dateFrom}  To: ${item.dateTo}",
+            subText2:
+                "Status: ${item.status}, Date: ${item.dateFrom}  To: ${item.dateTo}",
           ),
         );
       },

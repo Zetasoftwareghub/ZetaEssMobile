@@ -83,7 +83,7 @@ class LieuDayListView extends StatelessWidget {
               () => NavigationService.navigateToScreen(
                 context: context,
                 screen: LieuDayDetailScreen(
-                  isLineManager: isLineManager,
+                  isLineManager: isLineManager ?? false,
                   lieuDayId: item.lieuDayId?.toString() ?? '',
                 ),
               ),

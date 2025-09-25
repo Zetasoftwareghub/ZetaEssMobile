@@ -525,7 +525,7 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
           );
         },
         loading: () => Loader(),
-        error: (e, _) => _buildErrorState(),
+        error: (e, _) => _buildEmptyState(),
       ),
     );
   }
@@ -643,69 +643,5 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
         ],
       ),
     );
-  }
-
-  Widget _buildErrorState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFEF2F2),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Icon(
-              Icons.error_outline_rounded,
-              size: 48,
-              color: Color(0xFFEF4444),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Unable to load holidays',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1E293B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Please check your connection and try again',
-            style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) return '';
-
-    try {
-      final cleanDate = dateString.replaceAll("00:00:00", "").trim();
-      final date = DateTime.parse(cleanDate);
-      final months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ];
-
-      return '${months[date.month - 1]} ${date.day}, ${date.year}';
-    } catch (e) {
-      return dateString.replaceAll("00:00:00", "").trim();
-    }
   }
 }

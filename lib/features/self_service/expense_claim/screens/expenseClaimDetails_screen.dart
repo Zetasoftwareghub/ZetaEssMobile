@@ -132,7 +132,9 @@ class _ExpenseClaimDetailsScreenState
                                         ValidatorServices.validateApproveAmount(
                                           context: context,
                                           controller: approveAmountController,
-                                          requestedAmount: claimDetail.amount,
+                                          requestedAmount:
+                                              claimDetail.approveAmount ??
+                                              claimDetail.amount,
                                         );
                                       },
 

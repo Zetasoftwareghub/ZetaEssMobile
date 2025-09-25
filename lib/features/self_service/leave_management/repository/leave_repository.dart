@@ -87,8 +87,6 @@ class LeaveRepository {
         'escode': int.parse(userContext.esCode),
         'emcode': int.parse(userContext.empCode),
       };
-      print(data);
-      print('edit leave');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getSelfLeaveDetails,
         data: data,
@@ -309,8 +307,7 @@ class LeaveRepository {
     );
 
     return handleApiCall(() async {
-      print('leave submit');
-      final response = await dio.post(
+       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.submitLeave,
         data: request.toJson(
           userContext.companyConnection ?? "",

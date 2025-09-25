@@ -36,15 +36,15 @@ class ApproveChangeRequestController extends Notifier<bool> {
       (failure) => showSnackBar(context: context, content: failure.errMsg),
       (res) {
         ref.invalidate(approveChangeRequestListProvider);
-        showSnackBar(
-          context: context,
-          content: res ?? 'Request processed successfully',
-        );
-        print(res == 'ChangeRequest approved successfully');
+
         if (res == 'Change request approved successfully' ||
             res == 'Change request rejected successfully') {
           Navigator.pop(context);
         }
+        showSnackBar(
+          context: context,
+          content: res ?? 'Request processed successfully',
+        );
       },
     );
   }

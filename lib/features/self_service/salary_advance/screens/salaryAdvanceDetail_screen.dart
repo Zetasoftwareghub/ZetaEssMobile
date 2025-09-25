@@ -10,17 +10,19 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/salary_advance/models/salary_advance_details.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/services/validator_services.dart';
 import '../controller/salary_advance_controller.dart';
 import '../providers/salaryAdvance_provider.dart';
 
 class SalaryAdvanceDetailScreen extends ConsumerStatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final bool showApproveAmount;
   final String? advanceId;
   const SalaryAdvanceDetailScreen({
     super.key,
-    this.isLineManager,
+    this.isLineManager = false,
+    this.isSelf = false,
     this.advanceId,
     this.showApproveAmount = false,
   });
@@ -106,6 +108,15 @@ class _SalaryAdvanceDetailScreenState
                                     : advance.appRejComment,
                               ),
 
+                              // CommentSection(
+                              //   isApproveTab: widget.isLineManager,
+                              //   isLineManagerSelfTab:
+                              //       !widget.isLineManager || !widget.isSelf,
+                              //   isSelf: widget.isSelf,
+                              //   lmComment: advance.lmComment,
+                              //   prevComment: advance.prevComment,
+                              //   finalComment: advance.appRejComment,
+                              // ),
                               if (widget.isLineManager ?? false) ...[
                                 inputField(
                                   hint: 'Approve amount'.tr(),

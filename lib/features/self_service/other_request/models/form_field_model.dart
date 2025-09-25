@@ -99,3 +99,21 @@ class FormResponseModel {
     );
   }
 }
+
+class FileUploadData {
+  final String rqtscd;
+  final String rtenvl;
+  final String rtcont;
+  final String rtflnm;
+  final String? rtflpth;
+  final String? rtescd;
+
+  FileUploadData({
+    required this.rqtscd,
+    required this.rtenvl,
+    required this.rtcont,
+    required this.rtflnm,
+    this.rtflpth,
+    this.rtescd,
+  });
+}

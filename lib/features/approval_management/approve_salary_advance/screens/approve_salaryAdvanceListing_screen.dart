@@ -89,7 +89,7 @@ class SalaryAdvanceListView extends StatelessWidget {
               () => NavigationService.navigateToScreen(
                 context: context,
                 screen: SalaryAdvanceDetailScreen(
-                  isLineManager: isLineManger,
+                  isLineManager: isLineManger ?? false,
                   advanceId: salary.id,
                   showApproveAmount: showApproveAmount,
                 ),

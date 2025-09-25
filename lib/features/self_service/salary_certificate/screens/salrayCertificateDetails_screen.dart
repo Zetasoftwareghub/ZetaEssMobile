@@ -12,14 +12,20 @@ import 'package:zeta_ess/features/self_service/salary_certificate/models/salary_
 import '../../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../controller/salary_certificate_controller.dart';
 import '../providers/salary_certificate_notifiers.dart';
 
 class SalaryCertificateDetailsScreen extends ConsumerStatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final String? id;
 
-  SalaryCertificateDetailsScreen({super.key, this.isLineManager, this.id});
+  SalaryCertificateDetailsScreen({
+    super.key,
+    this.isLineManager = false,
+    this.isSelf = false,
+    this.id,
+  });
 
   @override
   ConsumerState<SalaryCertificateDetailsScreen> createState() =>
@@ -106,25 +112,15 @@ class _SalaryCertificateDetailsScreenState
                               subTitle: details.accountName ?? "-",
                             ),
 
-                            if ((details
-                                        .approvalOrRejectionComment
-                                        ?.isNotEmpty ??
-                                    false) ||
-                                (details.lineManagerComment?.isNotEmpty ??
-                                    false)) ...[
-                              titleHeaderText("comment".tr()),
-                              Text(
-                                details
-                                            .approvalOrRejectionComment
-                                            ?.isNotEmpty ==
-                                        true
-                                    ? details.approvalOrRejectionComment!
-                                    : details.lineManagerComment?.isNotEmpty ==
-                                        true
-                                    ? details.lineManagerComment!
-                                    : details.previousComment ?? '',
-                              ),
-                            ],
+                            CommentSection(
+                              isApproveTab: widget.isLineManager,
+                              isLineManagerSelfTab:
+                                  !widget.isLineManager || !widget.isSelf,
+                              isSelf: widget.isSelf,
+                              lmComment: details.lineManagerComment,
+                              prevComment: details.previousComment,
+                              finalComment: details.approvalOrRejectionComment,
+                            ),
 
                             10.heightBox,
                             if (widget.isLineManager ?? false)
@@ -161,8 +157,7 @@ class _SalaryCertificateDetailsScreenState
                     }
                   },
                   onReject: () {
-                    
-                                 /*  onReject: () {   
+                    /*  onReject: () {
                         ValidatorServices.validateCommentAndShowAlert(
                           context: context,
                           controller: commentController,

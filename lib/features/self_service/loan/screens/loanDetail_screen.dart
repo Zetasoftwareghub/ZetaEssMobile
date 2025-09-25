@@ -13,6 +13,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/approval_management/approve_loan/models/approve_loan_model.dart';
 import 'package:zeta_ess/features/self_service/loan/models/loan_list_model.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/services/validator_services.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../approval_management/approve_loan/controller/approve_loan_controller.dart';
@@ -20,14 +21,15 @@ import '../providers/loan_providers.dart';
 import 'loanDetail_screen.dart';
 
 class LoanDetailScreen extends ConsumerStatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final String loanId;
   final LoanListModel? loanListModel;
   final String? requestEmpName;
 
   const LoanDetailScreen({
     super.key,
-    this.isLineManager,
+    this.isLineManager = false,
+    this.isSelf = false,
     required this.loanId,
     this.loanListModel,
     this.requestEmpName,
@@ -108,14 +110,24 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                               title: "Approved Date".tr(),
                               subTitle: loan.approvedDate,
                             ),
-                          detailInfoRow(
-                            title: "Approved amount".tr(),
-                            subTitle: loan.approvedAmount.toString() ?? '—',
-                          ),
+                          if (widget.loanListModel == null)
+                            detailInfoRow(
+                              title: "Approved amount".tr(),
+                              subTitle: loan.approvedAmount.toString() ?? '—',
+                            ),
 
-                          if (loan.approverNote.isNotEmpty)
-                            titleHeaderText("comment".tr()),
-                          Text(loan.approverNote),
+                          // if (loan.approverNote.isNotEmpty)
+                          //   titleHeaderText("comment".tr()),
+                          // Text(loan.approverNote),
+                          CommentSection(
+                            isApproveTab: widget.isLineManager,
+                            isLineManagerSelfTab:
+                                !widget.isLineManager || !widget.isSelf,
+                            isSelf: widget.isSelf,
+                            lmComment: loan.lmComment,
+                            prevComment: loan.previousComment,
+                            finalComment: loan.approvalRejectionComment,
+                          ),
                           titleHeaderText("attachments".tr()),
                           AttachmentWidget(
                             attachmentUrl:
@@ -143,7 +155,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                                 ValidatorServices.validateApproveAmount(
                                   context: context,
                                   controller: approveAmountController,
-                                  requestedAmount: loan.loanAmount.toString(),
+                                  requestedAmount:
+                                      loan.approvedAmount.toString(),
                                 );
                               },
                             ),

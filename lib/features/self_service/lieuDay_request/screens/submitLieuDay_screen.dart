@@ -281,7 +281,8 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
     }
 
     final fileData = ref.read(fileUploadProvider).value;
-
+    print(fileData?.extension);
+    print('fileData.extension');
     final request = SubmitLieuDayRequest(
       rqldcode: isEditMode ? widget.lieuDayId ?? '0' : '0',
       suconn: user.companyConnection,

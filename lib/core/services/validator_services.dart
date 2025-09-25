@@ -21,6 +21,14 @@ class ValidatorServices {
   }) {
     final enteredAmount = double.tryParse(controller.text) ?? 0.0;
     final maxAmount = double.tryParse(requestedAmount) ?? 0.0;
+    if (controller.text == '0') {
+      showCustomAlertBox(
+        context,
+        title: 'Approve amount cannot be zero',
+        type: AlertType.error,
+      );
+      return false;
+    }
 
     if (enteredAmount > maxAmount) {
       showCustomAlertBox(

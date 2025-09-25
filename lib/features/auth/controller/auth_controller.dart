@@ -303,9 +303,10 @@ class AuthController extends Notifier<bool> {
       await _googleSignIn.signOut();
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      // state = false;
-
-      if (googleUser == null) return;
+      if (googleUser == null) {
+        state = false;
+        return;
+      }
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;

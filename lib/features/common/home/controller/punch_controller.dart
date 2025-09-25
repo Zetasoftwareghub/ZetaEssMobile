@@ -23,44 +23,6 @@ class PunchDetailsProvider extends AutoDisposeAsyncNotifier<List<PunchModel>> {
   }
 }
 
-/*
-class SavePunchNotifier extends AsyncNotifier<String> {
-  @override
-  Future<String> build() async => '';
-
-  Future<void> save({
-    required LiveLocation loc,
-    required ipAddress,
-    required String locationTime,
-    required BuildContext context,
-  }) async {
-    state = const AsyncLoading();
-
-    final userContext = ref.read(userContextProvider);
-    final repo = ref.read(homeRepositoryProvider);
-
-    final result = await repo.savePunch(
-      userContext: userContext,
-      loc: loc,
-      ipAddress: ipAddress,
-      locationTime: locationTime,
-    );
-
-    result.fold(
-      (failure) {
-        showCustomAlertBox(context, title: failure.errMsg);
-
-        return state = AsyncError(failure.errMsg, StackTrace.current);
-      },
-      (message) {
-        showCustomAlertBox(context, title: message);
-        return state = AsyncData(message);
-      },
-    );
-  }
-}
-*/
-
 class SavePunchNotifier extends AsyncNotifier<String> {
   @override
   Future<String> build() async => '';

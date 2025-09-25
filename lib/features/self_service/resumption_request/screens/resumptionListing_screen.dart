@@ -97,6 +97,7 @@ class ResumptionListView extends ConsumerWidget {
                   () => NavigationService.navigateToScreen(
                     context: context,
                     screen: ResumptionDetailsScreen(
+                      isSelf:true,
                       resumptionId: resumption.reslno ?? 0,
                     ),
                   ),
@@ -112,6 +113,7 @@ class ResumptionListView extends ConsumerWidget {
                     () => NavigationService.navigateToScreen(
                       context: context,
                       screen: ResumptionDetailsScreen(
+                        isSelf:true,
                         resumptionId: resumption.reslno ?? 0,
                       ),
                     ),

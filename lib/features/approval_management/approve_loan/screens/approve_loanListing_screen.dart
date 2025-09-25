@@ -83,7 +83,7 @@ class LoanListView extends ConsumerWidget {
                 screen: LoanDetailScreen(
                   loanId: loan.loanId,
                   loanListModel: loan,
-                  isLineManager: isLineManger,
+                  isLineManager: isLineManger ?? false,
                 ),
               ),
           child: CustomTileListingWidget(

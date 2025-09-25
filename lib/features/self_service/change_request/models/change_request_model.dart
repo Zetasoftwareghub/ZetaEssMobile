@@ -72,7 +72,6 @@ class ChangeRequestModel {
   Map<String?, dynamic> toJson() => {
     "suconn": suconn,
     "sucode": sucode,
-
     "iChrqcd": chrqcd,
     "chRqTp": chrqtp,
     "emCode": emcode,

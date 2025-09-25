@@ -137,6 +137,7 @@ class LeaveListView extends StatelessWidget {
                     screen: LeaveDetailsScreen(
                       leaveId: leave.leaveId ?? '',
                       showCancelLeave: showCancelLeave,
+                      isSelf: true,
                     ),
                   ),
               child: Consumer(
@@ -152,6 +153,8 @@ class LeaveListView extends StatelessWidget {
                           context: context,
                           screen: LeaveDetailsScreen(
                             leaveId: leave.leaveId ?? '',
+                            isSelf: true,
+                            showCancelLeave: showCancelLeave,
                           ),
                         ),
                     onEdit:

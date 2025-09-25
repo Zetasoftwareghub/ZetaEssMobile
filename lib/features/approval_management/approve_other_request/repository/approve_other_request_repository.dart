@@ -130,9 +130,7 @@ class ApproveOtherRequestRepository {
         "emp_nam": userContext.empName,
         "emp_mail": userContext.empEminid,
       };
-      print(data);
-      print('otherr requ');
-      final response = await dio.post(
+       final response = await dio.post(
         userContext.baseUrl + ApproveApis.approveRejectOtherRequest,
         data: data,
         options: dioHeader(token: userContext.jwtToken),

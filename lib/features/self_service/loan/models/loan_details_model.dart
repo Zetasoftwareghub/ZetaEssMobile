@@ -21,6 +21,7 @@ class LoanDetailModel {
   final String repaymentStartDate;
   final String? filePath;
   final int requestEmployeeCode;
+final String? previousComment, lmComment, approvalRejectionComment;
 
   LoanDetailModel({
     required this.accCode,
@@ -45,6 +46,9 @@ class LoanDetailModel {
     required this.repaymentStartDate,
     required this.requestEmployeeCode,
     required this.filePath,
+    required this.lmComment,
+    required this.previousComment,
+    required this.approvalRejectionComment,
   });
 
   factory LoanDetailModel.fromJson(Map<String, dynamic> json) {
@@ -71,6 +75,9 @@ class LoanDetailModel {
       repaymentStartDate: json['sLqdsdt'] ?? '',
       requestEmployeeCode: json['rqemcd'],
       filePath: json['lqdctp'],
+      previousComment: json['prevComment'] ?? '',
+      lmComment: json['lmComment'] ?? '',
+      approvalRejectionComment: json['appRejComment'] ?? '',
     );
   }
 

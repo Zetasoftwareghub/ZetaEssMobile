@@ -91,7 +91,7 @@ class LeaveListView extends StatelessWidget {
               () => NavigationService.navigateToScreen(
                 context: context,
                 screen: LeaveDetailsScreen(
-                  isLineManager: isLineManager,
+                  isLineManager: isLineManager ?? false,
                   leaveId: leave.leaveId ?? '0',
                 ),
               ),

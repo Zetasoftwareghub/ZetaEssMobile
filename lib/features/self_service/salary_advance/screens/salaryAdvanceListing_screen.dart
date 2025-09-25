@@ -146,6 +146,7 @@ class SalaryAdvanceListView extends ConsumerWidget {
     NavigationService.navigateToScreen(
       context: context,
       screen: SalaryAdvanceDetailScreen(
+        isSelf: true,
         advanceId: advanceId,
         showApproveAmount: showApproveAmount,
       ),

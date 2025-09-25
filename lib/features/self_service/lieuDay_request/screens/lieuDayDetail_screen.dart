@@ -11,19 +11,21 @@ import 'package:zeta_ess/core/utils.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/services/validator_services.dart';
 import '../../../approval_management/approveLieuDay_request/controller/approve_lieu_day_controller.dart';
 import '../controller/lieuDay_notifier.dart';
 
 class LieuDayDetailScreen extends ConsumerStatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final String lieuDayId;
 
   const LieuDayDetailScreen({
     super.key,
     required this.lieuDayId,
-    this.isLineManager,
+    this.isLineManager = false,
+    this.isSelf = false,
   });
 
   @override
@@ -116,10 +118,19 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                               title: 'remark'.tr(),
                               subTitle: lieuDay.remark,
                             ),
-                            if (lieuDay.previousComment.isNotEmpty) ...[
-                              titleHeaderText('Comment'),
-                              Text(lieuDay.previousComment),
-                            ],
+                            // if (lieuDay.previousComment.isNotEmpty) ...[
+                            //   titleHeaderText('Comment'),
+                            //   Text(lieuDay.previousComment),
+                            // ],
+                            CommentSection(
+                              isApproveTab: widget.isLineManager,
+                              isLineManagerSelfTab:
+                                  !widget.isLineManager || !widget.isSelf,
+                              isSelf: widget.isSelf,
+                              lmComment: lieuDay.lineManagerComment,
+                              prevComment: lieuDay.previousComment,
+                              finalComment: lieuDay.approvalRejectionComment,
+                            ),
                             10.heightBox,
                             if (widget.isLineManager ?? false)
                               inputField(
@@ -154,8 +165,8 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                           context: context,
                         );
                   },
-                             onReject: () {   
-                                 /*  onReject: () {   
+                  onReject: () {
+                    /*  onReject: () {
                         ValidatorServices.validateCommentAndShowAlert(
                           context: context,
                           controller: commentController,

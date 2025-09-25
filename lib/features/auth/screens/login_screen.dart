@@ -147,14 +147,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         .activateUrl(url: url ?? '');
                                     res.fold(
                                       (failure) {
-                                        NavigationService.navigateRemoveUntil(
-                                          context: context,
-                                          screen: ActivationUrlScreen(),
-                                        );
                                         showSnackBar(
                                           context: context,
                                           content:
-                                              'Server error - redirecting to activation screen',
+                                              'Unable to connect to the server. Please try again later',
                                           color: AppTheme.errorColor,
                                         );
                                       },

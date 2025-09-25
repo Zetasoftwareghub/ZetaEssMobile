@@ -97,11 +97,7 @@ class SalaryCertificateListView extends ConsumerWidget {
       itemBuilder: (context, index) {
         final certificate = certificateList[index];
         return InkWell(
-          onTap:
-              () => NavigationService.navigateToScreen(
-                context: context,
-                screen: SalaryCertificateDetailsScreen(id: certificate.id),
-              ),
+          onTap: () => navigateToDetail(certificate.id ?? '', context),
           child: CustomTileListingWidget(
             text2: certificate.purpose ?? 'Empty',
             subText2:
@@ -121,11 +117,7 @@ class SalaryCertificateListView extends ConsumerWidget {
                     certificateId: certificate.id,
                   ),
                 ),
-            onView:
-                () => NavigationService.navigateToScreen(
-                  context: context,
-                  screen: SalaryCertificateDetailsScreen(id: certificate.id),
-                ),
+            onView: () => navigateToDetail(certificate.id ?? '', context),
           ),
         );
       },
@@ -135,7 +127,7 @@ class SalaryCertificateListView extends ConsumerWidget {
   void navigateToDetail(String id, BuildContext context) {
     NavigationService.navigateToScreen(
       context: context,
-      screen: SalaryCertificateDetailsScreen(id: id),
+      screen: SalaryCertificateDetailsScreen(id: id, isSelf: true),
     );
   }
 }

@@ -95,6 +95,7 @@ class LoanListView extends ConsumerWidget {
                 screen: LoanDetailScreen(
                   loanId: loan.loanId,
                   loanListModel: loan,
+                  isSelf: true,
                 ),
               ),
           child: CustomTileListingWidget(
@@ -107,6 +108,8 @@ class LoanListView extends ConsumerWidget {
                 () => NavigationService.navigateToScreen(
                   context: context,
                   screen: LoanDetailScreen(
+                    isSelf: true,
+
                     loanId: loan.loanId,
                     loanListModel: loan,
                   ),

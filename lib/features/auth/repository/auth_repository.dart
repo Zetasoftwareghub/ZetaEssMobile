@@ -62,16 +62,16 @@ class AuthRepository {
         'suconn': userContext.companyConnection,
         'baseUrl': userContext.userBaseUrl,
       };
-      print(payloadData);
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.loginInApi}',
         data: payloadData,
       );
       final data = response.data;
-      print(data);
-      print('data123');
       // Defensive: ensure 'data' is a List and has at least one item
       final escodes = data['data'];
+      if (escodes is String) {
+        return left(Failure(errMsg: escodes));
+      }
       if (escodes is List && escodes.isNotEmpty) {
         final errorCode = escodes[0]['escode']?.toString();
 

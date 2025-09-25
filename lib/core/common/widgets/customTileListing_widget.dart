@@ -91,7 +91,7 @@ class CustomTileListingWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 4.heightBox,

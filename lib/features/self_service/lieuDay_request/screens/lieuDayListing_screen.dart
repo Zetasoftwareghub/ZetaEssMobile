@@ -99,7 +99,10 @@ class LieuDayListView extends ConsumerWidget {
           onTap:
               () => NavigationService.navigateToScreen(
                 context: context,
-                screen: LieuDayDetailScreen(lieuDayId: item.rqldcode ?? '0'),
+                screen: LieuDayDetailScreen(
+                  lieuDayId: item.rqldcode ?? '0',
+                  isSelf: true,
+                ),
               ),
           child: CustomTileListingWidget(
             text1: item.ludate ?? '',
@@ -122,7 +125,10 @@ class LieuDayListView extends ConsumerWidget {
             onView:
                 () => NavigationService.navigateToScreen(
                   context: context,
-                  screen: LieuDayDetailScreen(lieuDayId: item.rqldcode ?? '0'),
+                  screen: LieuDayDetailScreen(
+                    lieuDayId: item.rqldcode ?? '0',
+                    isSelf: true,
+                  ),
                 ),
           ),
         );

@@ -128,8 +128,6 @@ class SalaryAdvanceController extends Notifier<bool> {
       (res) {
         ref.invalidate(approveSalaryAdvanceListProvider);
 
-        print(res);
-
         // Translate response
         String responseMsg;
         switch (res) {
@@ -166,12 +164,12 @@ class SalaryAdvanceController extends Notifier<bool> {
         }
 
         // Show response message
-        showSnackBar(context: context, content: responseMsg);
 
         // Navigate back only if success
         if (res == "1" || res == "True") {
           Navigator.pop(context);
         }
+        showSnackBar(context: context, content: responseMsg);
       },
     );
   }
@@ -246,11 +244,11 @@ class SalaryAdvanceController extends Notifier<bool> {
             responseMsg = "Something went wrong, please try again later!";
         }
 
-        showSnackBar(context: context, content: responseMsg);
-
         if (res == "1" || res == "True") {
           Navigator.pop(context);
         }
+
+        showSnackBar(context: context, content: responseMsg);
       },
     );
   }

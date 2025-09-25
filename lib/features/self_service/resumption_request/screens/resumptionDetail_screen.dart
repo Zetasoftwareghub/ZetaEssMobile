@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/common/alert_dialog/alertBox_function.dart';
@@ -11,6 +12,7 @@ import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
 import '../../../../core/common/widgets/attachment_viewer.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/services/validator_services.dart';
 import '../../../../core/theme/common_theme.dart';
@@ -19,11 +21,12 @@ import '../models/resumption_details_model.dart';
 import '../providers/resumption_provider.dart';
 
 class ResumptionDetailsScreen extends ConsumerStatefulWidget {
-  final bool? isLineManager;
+  final bool isLineManager, isSelf;
   final int resumptionId;
   const ResumptionDetailsScreen({
     super.key,
-    this.isLineManager,
+    this.isLineManager = false,
+    this.isSelf = false,
     required this.resumptionId,
   });
 
@@ -50,7 +53,6 @@ class _ResumptionDetailsScreenState
 
           child: resumptionAsync.when(
             data: (resumption) {
-              print(widget.resumptionId);
               resumptionModel = resumption;
               return SingleChildScrollView(
                 child: Column(
@@ -130,17 +132,29 @@ class _ResumptionDetailsScreenState
                       title: 'date_of_joining'.tr(),
                       subTitle: resumption.emdojn,
                     ),
-                    titleHeaderText('comment'.tr()),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (resumption.prevComment?.trim().isNotEmpty ?? false)
-                          Text(resumption.prevComment!),
-                        if ((resumption.appRejComment?.trim().isNotEmpty ??
-                                false) &&
-                            (resumption.prevComment?.isEmpty ?? false))
-                          Text(resumption.appRejComment!),
-                      ],
+                    // titleHeaderText('comment'.tr()),
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     if (resumption.lmComment?.isNotEmpty ?? false)
+                    //       Text(
+                    //         '${resumption.emname} comment : ${resumption.lmComment}',
+                    //       ),
+                    //     if (resumption.prevComment?.trim().isNotEmpty ?? false)
+                    //       Text('Previous Comment : ${resumption.prevComment}'),
+                    //     if ((resumption.appRejComment?.trim().isNotEmpty ??
+                    //         false))
+                    //       Text(resumption.appRejComment!),
+                    //   ],
+                    // ),
+                    CommentSection(
+                      isApproveTab: widget.isLineManager,
+                      isLineManagerSelfTab:
+                          !widget.isLineManager || !widget.isSelf,
+                      isSelf: widget.isSelf,
+                      lmComment: resumption.lmComment,
+                      prevComment: resumption.prevComment,
+                      finalComment: resumption.appRejComment,
                     ),
 
                     10.heightBox,

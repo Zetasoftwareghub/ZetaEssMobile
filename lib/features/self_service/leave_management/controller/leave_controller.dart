@@ -261,56 +261,77 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
 
     if (first == null) return null;
 
+    if (submitResumptionModel != null) {
+      await ref
+          .read(resumptionControllerProvider.notifier)
+          .submitResumptionLeave(
+            submitResumptionModel: submitResumptionModel,
+            context: context,
+            isFromLeaveSubmit: true,
+          );
+    }
+
     // Step 2: Final Leave Submission
-    final finalResult = await repo.submitLeave(leaveSubmitModel, userContext);
+    if (ref.read(isResumptionSubmittedProvider) ||
+        submitResumptionModel == null) {
+      final finalResult = await repo.submitLeave(leaveSubmitModel, userContext);
 
-    return finalResult.fold(
-      (l) {
-        NavigationService.navigateToScreen(
-          context: context,
-          screen: const NoServer(),
-        );
-        state = AsyncError(l, StackTrace.current);
+      return finalResult.fold(
+        (l) {
+          NavigationService.navigateToScreen(
+            context: context,
+            screen: const NoServer(),
+          );
+          state = AsyncError(l, StackTrace.current);
 
-        return null;
-      },
-      (response) {
-        if (response != null) {
-          if (response == "Leave Submitted Successfully" ||
-              response == 'Leave Updated Successfully') {
-            //TODO this is to submit the resumption request if data changes
-            if (submitResumptionModel != null) {
-              ref
-                  .read(resumptionControllerProvider.notifier)
-                  .submitResumptionLeave(
-                    submitResumptionModel: submitResumptionModel,
-                    context: context,
-                    isFromLeaveSubmit: true,
-                  );
+          return null;
+        },
+        (response) {
+          if (response != null) {
+            if (response == "Leave Submitted Successfully" ||
+                response == 'Leave Updated Successfully') {
+              //TODO this is to submit the resumption request if data changes
+              if (submitResumptionModel != null) {
+                showCustomAlertBox(
+                  context,
+                  title: 'Resumption and Leave Submitted',
+
+                  type: AlertType.success,
+                );
+                // ref
+                //     .read(resumptionControllerProvider.notifier)
+                //     .submitResumptionLeave(
+                //       submitResumptionModel: submitResumptionModel,
+                //       context: context,
+                //       isFromLeaveSubmit: true,
+                //     );
+              } else {
+                Navigator.pop(context);
+                showCustomAlertBox(
+                  context,
+                  title: response,
+                  type: AlertType.success,
+                  onPrimaryPressed: () => Navigator.pop(context),
+                );
+                leaveController.setData([]);
+                ref.read(fileUploadProvider.notifier).clearFile();
+              }
             } else {
-              Navigator.pop(context);
               showCustomAlertBox(
                 context,
-                title: response,
-                type: AlertType.success,
-                onPrimaryPressed: () => Navigator.pop(context),
+                title: response.toString(),
+                type: AlertType.warning,
               );
-              leaveController.setData([]);
-              ref.read(fileUploadProvider.notifier).clearFile();
             }
-          } else {
-            showCustomAlertBox(
-              context,
-              title: response.toString(),
-              type: AlertType.warning,
-            );
+            ref.invalidate(submittedLeaveListProvider);
           }
-          ref.invalidate(submittedLeaveListProvider);
-        }
-        state = AsyncData(response);
+          state = AsyncData(response);
 
-        return response;
-      },
-    );
+          return response;
+        },
+      );
+    } else {
+      return null;
+    }
   }
 }
