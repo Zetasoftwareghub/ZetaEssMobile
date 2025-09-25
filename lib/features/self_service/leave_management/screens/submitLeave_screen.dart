@@ -442,6 +442,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                         leaveId: widget.leaveId ?? '0',
                         baseDirectory:
                             ref.watch(userContextProvider).userBaseUrl ?? '',
+                        fileDelete: fileData?.isCleared ?? false,
                       );
 
                       final response = await leaveNotifier.submitLeave(

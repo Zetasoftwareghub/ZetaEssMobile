@@ -13,6 +13,7 @@ class LeaveSubmissionRequest {
   final String allowance;
   final String leaveId;
   final String baseDirectory;
+  final bool fileDelete;
 
   LeaveSubmissionRequest({
     required this.leaveCode,
@@ -28,6 +29,7 @@ class LeaveSubmissionRequest {
     required this.allowance,
     required this.leaveId,
     required this.baseDirectory,
+    this.fileDelete = false,
   });
 
   Map<String, dynamic> toJson(
@@ -64,6 +66,7 @@ class LeaveSubmissionRequest {
       "allowance_type": allowance,
       // 'baseDirectory': baseDirectory,
       'baseDirectory': baseDirectory,
+      'fileDelete': fileDelete,
     };
   }
 }

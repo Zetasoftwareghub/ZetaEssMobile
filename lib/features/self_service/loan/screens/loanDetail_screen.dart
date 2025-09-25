@@ -21,7 +21,7 @@ import '../providers/loan_providers.dart';
 import 'loanDetail_screen.dart';
 
 class LoanDetailScreen extends ConsumerStatefulWidget {
-  final bool isLineManager, isSelf;
+  final bool isLineManager, isSelf, isApproveTab;
   final String loanId;
   final LoanListModel? loanListModel;
   final String? requestEmpName;
@@ -30,6 +30,7 @@ class LoanDetailScreen extends ConsumerStatefulWidget {
     super.key,
     this.isLineManager = false,
     this.isSelf = false,
+    this.isApproveTab = false,
     required this.loanId,
     this.loanListModel,
     this.requestEmpName,
@@ -110,7 +111,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                               title: "Approved Date".tr(),
                               subTitle: loan.approvedDate,
                             ),
-                          if (widget.loanListModel == null)
+                          if (widget.isApproveTab ||
+                              (!widget.isLineManager || !widget.isSelf))
                             detailInfoRow(
                               title: "Approved amount".tr(),
                               subTitle: loan.approvedAmount.toString() ?? '—',
