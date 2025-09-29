@@ -483,7 +483,8 @@ class _SubmitEditOtherRequestState
                       if (hasFile)
                         IconButton(
                           onPressed: () => _removeFile(fieldKey, state),
-                          icon: Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(Icons.delete),
+                          color: Colors.red,
                           tooltip: 'Remove file',
                         ),
                     ],

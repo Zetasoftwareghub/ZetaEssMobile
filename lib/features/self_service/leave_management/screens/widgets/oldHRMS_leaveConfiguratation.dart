@@ -749,7 +749,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                             _halfDay(i);
                           },
                           child: Text(
-                            i.halfType == "1" ? 'First Half' : 'Second Half',
+                            i.halfType == "1" ? 'FH' : 'SH',
                             style: AppTextStyles.smallFont(),
                           ),
                         )
@@ -780,6 +780,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                       borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: DropdownButtonFormField(
+                      isExpanded: true,
                       icon: const Icon(Icons.keyboard_arrow_down),
                       decoration: InputDecoration(
                         enabledBorder: UnderlineInputBorder(

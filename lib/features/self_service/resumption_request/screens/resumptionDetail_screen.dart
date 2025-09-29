@@ -85,12 +85,10 @@ class _ResumptionDetailsScreenState
 
                     detailInfoRow(
                       title: 'note'.tr(),
-                      belowValue: resumption.renote,
+                      subTitle: resumption.renote,
                     ),
-
                     // -- section
                     titleHeaderText('attachments'),
-
                     AttachmentWidget(
                       attachmentUrl:
                           resumption.attachmentUrl == null ||

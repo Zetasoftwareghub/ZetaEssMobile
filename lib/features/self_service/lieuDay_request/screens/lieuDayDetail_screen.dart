@@ -72,10 +72,7 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                             ),
                             detailInfoRow(
                               title: 'remarks'.tr(),
-                              subTitle:
-                                  lieuDay.remark.isNotEmpty
-                                      ? lieuDay.remark
-                                      : '-',
+                              subTitle: lieuDay.remark,
                             ),
                             titleHeaderText('attachments'.tr()),
 
@@ -114,10 +111,7 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                               title: 'date_of_joining'.tr(),
                               subTitle: lieuDay.dateOfJoining,
                             ),
-                            detailInfoRow(
-                              title: 'remark'.tr(),
-                              subTitle: lieuDay.remark,
-                            ),
+
                             // if (lieuDay.previousComment.isNotEmpty) ...[
                             //   titleHeaderText('Comment'),
                             //   Text(lieuDay.previousComment),

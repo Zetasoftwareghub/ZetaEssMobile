@@ -152,7 +152,6 @@ class AttendanceRegularizationController
     final details = state.punchingDetails;
     int totalIn = 0;
     int totalOut = 0;
-    print(details);
     List<String> archkdat = [];
     List<String> arckdate = [];
     List<String> arcktime = [];

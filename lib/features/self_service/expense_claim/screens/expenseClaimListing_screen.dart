@@ -51,9 +51,11 @@ class _ExpenseClaimListingScreenState
                       ExpenseClaimListView(
                         items: data.submitted.expenseClaimList,
                         listRights: data.submitted.listRights,
-                        isSubmittedTab: true,
                       ),
-                      ExpenseClaimListView(items: data.approved),
+                      ExpenseClaimListView(
+                        items: data.approved,
+                        isApprovedTab: true,
+                      ),
                       ExpenseClaimListView(items: data.rejected),
                     ],
                   );
@@ -81,12 +83,12 @@ class _ExpenseClaimListingScreenState
 class ExpenseClaimListView extends StatelessWidget {
   final List<ExpenseClaimModel> items;
   final ListRightsModel? listRights;
-  final bool isSubmittedTab;
+  final bool isApprovedTab;
   const ExpenseClaimListView({
     super.key,
     required this.items,
     this.listRights,
-    this.isSubmittedTab = false,
+    this.isApprovedTab = false,
   });
 
   @override
@@ -106,9 +108,7 @@ class ExpenseClaimListView extends StatelessWidget {
             builder: (context, ref, child) {
               return CustomTileListingWidget(
                 text1: claim.monthyear,
-                subText1:
-                    "requested_date"
-                        .tr(), //TODO make this as the submitted date ---- NO DATE FROM API
+                subText1: "requested_date".tr(),
                 text2: claim.expenseClaimName,
                 subText2:
                     "Status: ${claim.employeeName}, Amount: ${claim.approveAmount != null && claim.approveAmount != '0' ? claim.approveAmount : claim.amount}",
@@ -142,7 +142,7 @@ class ExpenseClaimListView extends StatelessWidget {
       context: context,
       screen: ExpenseClaimDetailsScreen(
         expenseClaimId: claim.expenseClaimId,
-        isSubmittedTab: isSubmittedTab,
+        isApprovedTab: isApprovedTab,
       ),
     );
   }

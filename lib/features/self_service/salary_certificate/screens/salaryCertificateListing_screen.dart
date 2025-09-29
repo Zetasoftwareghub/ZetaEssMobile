@@ -101,7 +101,7 @@ class SalaryCertificateListView extends ConsumerWidget {
           child: CustomTileListingWidget(
             text2: certificate.purpose ?? 'Empty',
             subText2:
-                "Date From: ${certificate.fromMonth}  To: ${certificate.toMonth}",
+                "Status: ${certificate.status}, Date From: ${certificate.fromMonth}  To: ${certificate.toMonth}",
             listRights: listRightsModel,
             onDelete:
                 () => ref

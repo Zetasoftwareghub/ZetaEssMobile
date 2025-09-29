@@ -1,3 +1,5 @@
+import 'package:zeta_ess/features/self_service/change_request/models/change_request_model.dart';
+
 class ApproveChangeRequestModel {
   final String? suconn;
   final int chRqCd;
@@ -8,6 +10,7 @@ class ApproveChangeRequestModel {
   final String emCode;
   final String? chtype;
   final String? aprFlag;
+  final ChangeRequestModel? changeRequest;
 
   ApproveChangeRequestModel({
     required this.suconn,
@@ -19,6 +22,7 @@ class ApproveChangeRequestModel {
     required this.emCode,
     required this.chtype,
     required this.aprFlag,
+    this.changeRequest,
   });
 
   factory ApproveChangeRequestModel.fromJson(Map<String?, dynamic> json) {
@@ -46,6 +50,7 @@ class ApproveChangeRequestModel {
       'emCode': emCode,
       'chtype': chtype,
       'aprFlag': aprFlag,
+      'changeRequest': changeRequest,
     };
   }
 }

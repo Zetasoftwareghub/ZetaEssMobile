@@ -114,8 +114,6 @@ class ResumptionRepository {
     required SubmitResumptionModel resumptionModel,
   }) async {
     return handleApiCall(() async {
-      print(resumptionModel.toJson());
-      print("resumptionModel.toJson()");
       final response = await dio.post(
         userContext.baseUrl + ResumptionApis.submitResumptionLeave,
         data: resumptionModel.toJson(),

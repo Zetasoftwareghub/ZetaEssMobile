@@ -260,8 +260,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                           )
                                           .ltlieu ==
                                       'Y',
-                                  showSubmit: "",
-                                  fromAppTab: false,
+
                                   selectedLeaveType: leaveTypeList?.firstWhere(
                                     (element) =>
                                         element.leaveTypeId ==
@@ -275,12 +274,10 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                             selectedLeaveType,
                                       ) ==
                                       initialLeaveType,
-                                  // selectedLeaveType == initialLeaveType,
                                   data: leaveConfigData,
                                   dataSub: leaveConfigDataSub,
                                   dataCan: leaveConfigDataCan,
                                   lssNo: widget.leaveId ?? '0',
-                                  dCanLst: [], //NOt needed
                                 ),
                           ),
                         ).then((v) {
@@ -452,10 +449,10 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                       );
 
                       if (response == null) {
-                        showCustomAlertBox(
-                          context,
-                          title: 'Could not submit leave',
-                          type: AlertType.error,
+                        showSnackBar(
+                          context: context,
+                          content: 'Could not submit leave',
+                          color: AppTheme.errorColor,
                         );
 
                         return;

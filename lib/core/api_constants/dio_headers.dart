@@ -12,6 +12,7 @@ Options dioHeader({required String? token}) {
   return Options(
     sendTimeout: const Duration(seconds: 60),
     receiveTimeout: const Duration(seconds: 60),
+
     headers: {
       "authorization": "Bearer $token",
       "Content-Type": "application/json",

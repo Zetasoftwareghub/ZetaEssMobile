@@ -68,8 +68,6 @@ class ZetaApp extends StatelessWidget {
                 theme: AppTheme.lightTheme,
                 debugShowCheckedModeBanner: false,
                 home: SplashScreen(),
-                //TODO this is not working WHY? home: ConnectivityListener(child: SplashScreen()),No internet causes crash	Guard all network-dependent logic
-                //TODO  Geolocator fails silently and breaks UI	Ensure connectivity before calling geolocator
               ),
         ),
       ),

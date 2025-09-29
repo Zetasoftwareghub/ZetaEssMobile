@@ -20,12 +20,12 @@ import '../providers/expense_claim_providers.dart';
 class ExpenseClaimDetailsScreen extends ConsumerStatefulWidget {
   final int? expenseClaimId;
   final bool? isLineManager;
-  final bool isSubmittedTab;
+  final bool isApprovedTab;
 
   const ExpenseClaimDetailsScreen({
     super.key,
     this.isLineManager,
-    this.isSubmittedTab = false,
+    this.isApprovedTab = false,
     required this.expenseClaimId,
   });
 
@@ -95,7 +95,7 @@ class _ExpenseClaimDetailsScreenState
                               title: 'requested_amount',
                               subTitle: claimDetail.amount,
                             ),
-                            if (!widget.isSubmittedTab)
+                            if (widget.isApprovedTab)
                               detailInfoRow(
                                 title: 'approved_amount',
                                 subTitle: claimDetail.approveAmount,

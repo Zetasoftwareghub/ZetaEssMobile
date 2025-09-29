@@ -1,3 +1,4 @@
+import '../../../../core/utils.dart';
 import '../../../../models/listRights_model.dart';
 
 class SalaryCertificateListModel {
@@ -5,12 +6,14 @@ class SalaryCertificateListModel {
   String? toMonth;
   String? purpose;
   String? id;
+  String? status;
 
   SalaryCertificateListModel({
     this.fromMonth,
     this.toMonth,
     this.purpose,
     this.id,
+    this.status,
   });
 
   factory SalaryCertificateListModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +22,7 @@ class SalaryCertificateListModel {
       toMonth: json['lsnote'].toString(),
       purpose: json['lvpcarname'].toString(),
       id: json['dLsrdtf'].toString(),
+      status: json['rqEmname'].toString(),
     );
   }
 }
@@ -36,7 +40,6 @@ class SubmittedSalaryCertificateResponse {
     Map<String, dynamic> json,
   ) {
     final subList = (json['data']['subLst'] ?? []) as List<dynamic>;
-
     return SubmittedSalaryCertificateResponse(
       salaryCertificateList:
           subList.map((e) => SalaryCertificateListModel.fromJson(e)).toList(),

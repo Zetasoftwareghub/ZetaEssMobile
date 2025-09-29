@@ -13,6 +13,7 @@ class SubmitLieuDayRequest {
   final String mediaExtension;
   final String mediaName;
   final String baseDirectory;
+  final bool? fileDelete;
 
   SubmitLieuDayRequest({
     required this.rqldcode,
@@ -29,6 +30,7 @@ class SubmitLieuDayRequest {
     required this.mediaExtension,
     required this.mediaName,
     required this.baseDirectory,
+    this.fileDelete,
   });
 
   factory SubmitLieuDayRequest.fromJson(Map<String, dynamic> json) {
@@ -66,6 +68,7 @@ class SubmitLieuDayRequest {
       'mediaExtension': mediaExtension,
       'mediaName': mediaName,
       'baseDirectory': baseDirectory,
+      'fileDelete': fileDelete ?? false,
     };
   }
 }

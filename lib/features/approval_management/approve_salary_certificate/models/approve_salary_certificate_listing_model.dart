@@ -3,14 +3,12 @@ class ApproveSalaryCertificateListingModel {
   String? dateTo;
   String? name;
   String? id;
-  String? status;
 
   ApproveSalaryCertificateListingModel({
     this.dateFrom,
     this.dateTo,
     this.id,
     this.name,
-    this.status,
   });
 
   factory ApproveSalaryCertificateListingModel.fromJson(
@@ -20,7 +18,6 @@ class ApproveSalaryCertificateListingModel {
       dateFrom: json["lsnote"].toString(),
       dateTo: json["lvpcarname"].toString(),
       name: json["empName"].toString(),
-      status: json["RqEmname "].toString(),
       id: json["dLsrdtf"].toString(),
     );
   }

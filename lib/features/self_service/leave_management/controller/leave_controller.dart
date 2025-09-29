@@ -295,7 +295,6 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
                 showCustomAlertBox(
                   context,
                   title: 'Resumption and Leave Submitted',
-
                   type: AlertType.success,
                 );
                 // ref
@@ -331,6 +330,7 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
         },
       );
     } else {
+      state = AsyncData(null);
       return null;
     }
   }

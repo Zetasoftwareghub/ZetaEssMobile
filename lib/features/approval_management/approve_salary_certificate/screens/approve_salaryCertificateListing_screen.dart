@@ -89,8 +89,7 @@ class SalaryCertificateListView extends StatelessWidget {
               ),
           child: CustomTileListingWidget(
             text2: item.name ?? 'No name',
-            subText2:
-                "Status: ${item.status}, Date: ${item.dateFrom}  To: ${item.dateTo}",
+            subText2: "Date: ${item.dateFrom}  To: ${item.dateTo}",
           ),
         );
       },

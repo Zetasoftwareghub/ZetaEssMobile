@@ -163,66 +163,26 @@ class _EditChangeRequestScreenState
                 ? widget.isSubmittedTab
                     ? SafeArea(
                       child: ApproveRejectButtons(
-                        onApprove: () {
-                          final userContext = ref.watch(userContextProvider);
-                          final approveChangeRequestModel =
-                              ApproveChangeRequestModel(
-                                suconn: userContext.companyConnection,
-                                sucode: userContext.companyCode,
-
-                                chRqCd: widget.chrqcd ?? 0,
-                                chApBy: userContext.empName,
-                                bcSlNo:
-                                    '0', //THis is getting from current bank details-!
-                                chapnt: commentController.text,
-                                emCode: userContext.empCode,
-                                chtype: widget.chrqst, //TODO check with api
-                                aprFlag: 'A',
-                              );
-                          ref
-                              .read(
-                                approveChangeRequestControllerProvider.notifier,
-                              )
-                              .approveRejectChangeRequest(
-                                approveChangeRequestModel:
-                                    approveChangeRequestModel,
-                                context: context,
-                              );
-                        },
-                        onReject: () {
-                          final userContext = ref.watch(userContextProvider);
-
-                          final approveChangeRequestModel =
-                              ApproveChangeRequestModel(
-                                suconn: userContext.companyConnection,
-                                sucode: userContext.companyCode,
-
-                                chRqCd: widget.chrqcd ?? 0,
-                                chApBy: userContext.empName,
-                                bcSlNo: '0',
-                                chapnt: commentController.text,
-                                emCode: userContext.empCode,
-                                chtype: widget.chrqst, //TODO check with api
-                                aprFlag: 'R',
-                              );
-
-                          ref
-                              .read(
-                                approveChangeRequestControllerProvider.notifier,
-                              )
-                              .approveRejectChangeRequest(
-                                approveChangeRequestModel:
-                                    approveChangeRequestModel,
-                                context: context,
-                              );
-                        },
+                        onApprove:
+                            () => _handleApproveReject(
+                              ref: ref,
+                              context: context,
+                              commentController: commentController,
+                              aprFlag: 'A',
+                            ),
+                        onReject:
+                            () => _handleApproveReject(
+                              ref: ref,
+                              context: context,
+                              commentController: commentController,
+                              aprFlag: 'R',
+                            ),
                       ),
                     )
                     : const SizedBox.shrink()
                 : CustomElevatedButton(
                   child: Text(updateText.tr()),
                   onPressed: () {
-                    print('aaa');
                     final requestDetailsList = ref.watch(
                       changeRequestDetailsListProvider,
                     );
@@ -231,7 +191,6 @@ class _EditChangeRequestScreenState
                     final saveModel = ChangeRequestModel(
                       suconn: user.companyConnection ?? '',
                       sucode: user.companyCode,
-
                       chrqcd: widget.chrqcd,
                       chrqtp: widget.chrqst,
                       emcode: int.parse(user.empCode),
@@ -254,5 +213,50 @@ class _EditChangeRequestScreenState
                 ),
       ),
     );
+  }
+
+  void _handleApproveReject({
+    required WidgetRef ref,
+    required BuildContext context,
+    required TextEditingController commentController,
+    required String aprFlag,
+  }) {
+    final user = ref.watch(userContextProvider);
+    final requestDetailsList = ref.watch(changeRequestDetailsListProvider);
+
+    final saveModel = ChangeRequestModel(
+      suconn: user.companyConnection ?? '',
+      sucode: user.companyCode,
+      chrqcd: widget.chrqcd,
+      chrqtp: widget.chrqst,
+      emcode: int.parse(user.empCode),
+      chrqdt: convertDateToYYmmDD(DateTime.now()),
+      bacode: ref.watch(bankCodeProvider) ?? 0,
+      bcacno: ref.watch(bankAccNoProvider),
+      bcacnm: ref.watch(bankAccNameProvider),
+      chrqst: widget.chrqst,
+      detail: requestDetailsList,
+      chrqtpText: "",
+    );
+
+    final approveChangeRequestModel = ApproveChangeRequestModel(
+      suconn: user.companyConnection,
+      sucode: user.companyCode,
+      chRqCd: widget.chrqcd ?? 0,
+      chApBy: user.empName,
+      bcSlNo: '0',
+      chapnt: commentController.text,
+      emCode: user.empCode,
+      chtype: widget.chrqst,
+      aprFlag: aprFlag,
+      changeRequest: saveModel,
+    );
+
+    ref
+        .read(approveChangeRequestControllerProvider.notifier)
+        .approveRejectChangeRequest(
+          approveChangeRequestModel: approveChangeRequestModel,
+          context: context,
+        );
   }
 }

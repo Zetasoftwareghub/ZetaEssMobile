@@ -21,7 +21,7 @@ class LoanDetailModel {
   final String repaymentStartDate;
   final String? filePath;
   final int requestEmployeeCode;
-final String? previousComment, lmComment, approvalRejectionComment;
+  final String? previousComment, lmComment, approvalRejectionComment;
 
   LoanDetailModel({
     required this.accCode,
@@ -57,7 +57,7 @@ final String? previousComment, lmComment, approvalRejectionComment;
       loanSerialNo: json['iLqslno'],
       submittedDate: json['sLqdate'] ?? '',
       approvedDate: json['sLqapdt'] ?? '',
-      employeeCode: json['iEmcode'],
+      employeeCode: json['eminid '],
       LoanTypeCode: json['iLocode'],
       fromCode: json['iLqfmcd'],
       hrCode: json['iLqhrcd'],
@@ -79,31 +79,5 @@ final String? previousComment, lmComment, approvalRejectionComment;
       lmComment: json['lmComment'] ?? '',
       approvalRejectionComment: json['appRejComment'] ?? '',
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'iAccode': accCode,
-      'iLqslno': loanSerialNo,
-      'sLqdate': submittedDate,
-      'sLqapdt': approvedDate,
-      'iEmcode': employeeCode,
-      'iLocode': LoanTypeCode,
-      'iLqfmcd': fromCode,
-      'iLqhrcd': hrCode,
-      'lLqamnt': loanAmount,
-      'lLqappv': approvedAmount,
-      'sLqnote': note,
-      'sLqfmap': fmap,
-      'sLqstat': status,
-      'iLqapfg': approvalFlag,
-      'iAprlid': approverId,
-      'lqadap': adap,
-      'lqapnt': approverNote,
-      'lnapid': napId,
-      'iLqrpmn': approvedMonths,
-      'sLqdsdt': repaymentStartDate,
-      'rqemcd': requestEmployeeCode,
-    };
   }
 }
