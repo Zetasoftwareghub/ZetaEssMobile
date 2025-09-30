@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:zeta_ess/core/utils.dart';
 
@@ -22,7 +23,7 @@ class ApproveRejectButtons extends StatelessWidget {
           Flexible(
             child: CustomElevatedButton(
               onPressed: onApprove,
-              child: Text("Approve"),
+              child: Text("approve".tr()),
             ),
           ),
           12.widthBox,
@@ -30,7 +31,7 @@ class ApproveRejectButtons extends StatelessWidget {
             child: CustomElevatedButton(
               onPressed: onReject,
               backgroundColor: Colors.red,
-              child: Text("Reject"),
+              child: Text("reject".tr()),
             ),
           ),
         ],

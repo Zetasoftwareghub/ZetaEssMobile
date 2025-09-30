@@ -88,8 +88,9 @@ class LoanListView extends ConsumerWidget {
               ),
           child: CustomTileListingWidget(
             text1: convertRawDateToString(loan.submittedDate),
-            text2: 'Name: ${loan.requestEmpname}\nType: ${loan.loanType}',
-            subText2: "Amount:  ${loan.loanAmount}",
+            text2:
+                '${'Name'.tr()}: ${loan.requestEmpname}\n${'Type'.tr()}: ${loan.loanType}',
+            subText2: "${'Amount'.tr()}:  ${loan.loanAmount}",
           ),
         );
       },

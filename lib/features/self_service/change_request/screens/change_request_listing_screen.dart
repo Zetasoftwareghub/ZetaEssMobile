@@ -105,7 +105,9 @@ class ChangeRequestListView extends ConsumerWidget {
             text1: convertRawDateToString(request.date),
             text2: request.requestType,
             subText2:
-                request.status.isEmpty ? "" : "Status : ${request.status}",
+                request.status.isEmpty
+                    ? ""
+                    : "${'Status'.tr()} : ${request.status}",
             onEdit: () {
               NavigationService.navigateToScreen(
                 // screen: EditChangeRequestScreen(requestModel: request),

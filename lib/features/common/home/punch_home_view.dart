@@ -119,7 +119,7 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                 SizedBox(
                   width: 200.w,
                   child: Text(
-                    errorMsg.replaceAll('Exception:', '').trim(),
+                    errorMsg.replaceAll('Exception:', '').trim().tr(),
                     style: AppTextStyles.smallFont(color: AppTheme.errorColor),
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -247,8 +248,8 @@ class _AttendanceRegularisationDatePickState
       context: context,
       builder:
           (context) => CupertinoAlertDialog(
-            title: const Text('Alert'),
-            content: Text(message, style: const TextStyle(fontSize: 14)),
+            title: Text('alert'.tr()),
+            content: Text(message.tr(), style: const TextStyle(fontSize: 14)),
             actions: [
               CupertinoDialogAction(
                 isDestructiveAction: true,
@@ -312,7 +313,7 @@ class _AttendanceRegularisationDatePickState
 
             // Title
             Text(
-              'Alternate ID Missing',
+              'Alternate ID Missing'.tr(),
               style: AppTextStyles.largeFont(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w600,
@@ -362,7 +363,7 @@ class _AttendanceRegularisationDatePickState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Select Date Range',
+          'select_date_range'.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -404,6 +405,7 @@ class _AttendanceRegularisationDatePickState
         ],
       ),
       child: TableCalendar<AttendanceEvent>(
+        locale: context.locale.toString(),
         calendarStyle: AppTheme.commonTableCalenderStyle,
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
@@ -422,6 +424,7 @@ class _AttendanceRegularisationDatePickState
         calendarFormat: _calendarFormat,
         rangeSelectionMode: _rangeSelectionMode,
         eventLoader: _getEventsForDay,
+
         startingDayOfWeek: StartingDayOfWeek.monday,
         selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
         rangeStartDay: _rangeStart,

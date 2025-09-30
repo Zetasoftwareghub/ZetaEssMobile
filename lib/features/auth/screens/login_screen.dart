@@ -165,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       },
                                     );
                                   },
-                                  child: Text('Retry'),
+                                  child: Text('retry'.tr()),
                                 ),
                               ],
                             ),
@@ -193,6 +193,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ] else ...[
                     CustomElevatedButton(
                       onPressed: () {
+                        if (isLoading) return;
                         if (_formKey.currentState!.validate() &&
                             ref.watch(userCompanyProvider) != null) {
                           ref

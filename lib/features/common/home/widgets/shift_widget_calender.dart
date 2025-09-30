@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,9 +20,9 @@ class _ShiftWidgetState extends ConsumerState<ShiftWidget> {
       padding: EdgeInsets.only(top: 16.h),
       child: TextField(
         controller: TextEditingController(text: shiftValue),
-        decoration: const InputDecoration(
+        decoration:   InputDecoration(
           border: OutlineInputBorder(),
-          labelText: "Shift",
+          labelText: "Shift".tr(),
         ),
       ),
     );

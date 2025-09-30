@@ -90,9 +90,6 @@ class _CustomLocationRetryButtonState
   }
 }
 
-// Alternative approach: Global App State Listener
-// Add this to your main app or a high-level widget
-
 class AppLifecycleLocationListener extends ConsumerStatefulWidget {
   final Widget child;
 

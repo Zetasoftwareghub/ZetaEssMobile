@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path/path.dart' as path;
@@ -52,7 +53,7 @@ class AttachmentWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Attachment',
+                  'Attachment'.tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
@@ -78,7 +79,7 @@ class AttachmentWidget extends StatelessWidget {
               isImage ? Icons.visibility : Icons.open_in_new,
               size: 16.sp,
             ),
-            label: Text('View', style: TextStyle(fontSize: 12.sp)),
+            label: Text('View'.tr(), style: TextStyle(fontSize: 12.sp)),
             style: ElevatedButton.styleFrom(
               backgroundColor: _getFileColor(extension),
               foregroundColor: Colors.white,
@@ -115,7 +116,7 @@ class AttachmentWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'No Attachment',
+                'No Attachment'.tr(),
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -182,7 +183,7 @@ class AttachmentWidget extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
-                            'Image Attachment',
+                            'Image Attachment'.tr(),
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
@@ -252,7 +253,7 @@ class AttachmentWidget extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     Text(
-                                      'Could not load image',
+                                      'Could not load image'.tr(),
                                       style: TextStyle(
                                         color: Colors.red.shade600,
                                         fontSize: 14.sp,
@@ -281,7 +282,7 @@ class AttachmentWidget extends StatelessWidget {
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Could not open file')));
+      ).showSnackBar(SnackBar(content: Text('Could not open file'.tr())));
     }
   }
 

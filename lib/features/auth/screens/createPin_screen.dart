@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
@@ -33,6 +34,19 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
   final connectivityService = ConnectivityService();
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Re-apply status bar style whenever dependencies change
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -58,6 +72,12 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
         ref
             .read(localAuthProvider.notifier)
             .authenticateWithBiometrics(context);
+        SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+        );
       }
     });
   }
@@ -88,7 +108,12 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
   Widget build(BuildContext context) {
     final authState = ref.watch(localAuthProvider);
     final user = ref.watch(userDataProvider);
-
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
     return Scaffold(
       body: SafeArea(
         child: Padding(

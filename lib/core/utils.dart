@@ -30,8 +30,8 @@ extension SpaceExtensions on num {
   double get responsiveWidth => w;
 }
 
-final listTabs = ["submitted".tr(), "approved".tr(), "rejected".tr()];
-final approvalListTabs = ["Pending".tr(), "approved".tr(), "rejected".tr()];
+final listTabs = ["submitted", "approved", "rejected"];
+final approvalListTabs = ["Pending", "approved", "rejected"];
 
 final now = DateTime.now();
 final greeting =

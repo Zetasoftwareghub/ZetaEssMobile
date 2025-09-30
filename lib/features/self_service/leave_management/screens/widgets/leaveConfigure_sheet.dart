@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -56,7 +57,7 @@ class _LeaveConfigBottomSheetState extends State<LeaveConfigBottomSheet> {
                       width: 130.w,
                       child: Center(
                         child: Text(
-                          "Date",
+                          "date".tr(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -65,7 +66,7 @@ class _LeaveConfigBottomSheetState extends State<LeaveConfigBottomSheet> {
                       width: columnWidth,
                       child: Center(
                         child: Text(
-                          "Full Day",
+                          "Full Day".tr(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -74,7 +75,7 @@ class _LeaveConfigBottomSheetState extends State<LeaveConfigBottomSheet> {
                       width: columnWidth,
                       child: Center(
                         child: Text(
-                          "Half Day",
+                          "Half Day".tr(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -125,7 +126,7 @@ class _LeaveConfigBottomSheetState extends State<LeaveConfigBottomSheet> {
               }),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Configure'),
+                child: Text('Configure'.tr()),
               ),
             ],
           ),

@@ -33,7 +33,7 @@ class _SuggestionFeedbackScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Suggestion & Feedback")),
+      appBar: AppBar(title: Text("Suggestion & Feedback".tr())),
       body: SafeArea(
         child: Padding(
           padding: AppPadding.screenPadding,
@@ -41,15 +41,15 @@ class _SuggestionFeedbackScreenState
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Send suggestions and feedback to HR",
+                "Send suggestions and feedback to HR".tr(),
                 style: AppTextStyles.largeFont(),
               ),
-              labelText("Type"),
+              labelText("Type".tr()),
               CustomDropdown(
-                hintText: "Select Type",
+                hintText: "Select Type".tr(),
                 items: [
-                  DropdownMenuItem(value: "S", child: Text("Suggestion")),
-                  DropdownMenuItem(value: "F", child: Text("Feedback")),
+                  DropdownMenuItem(value: "S", child: Text("Suggestion".tr())),
+                  DropdownMenuItem(value: "F", child: Text("Feedback".tr())),
                 ],
                 onChanged: (v) => dropDownValue = v,
               ),
@@ -117,7 +117,7 @@ class _SuggestionFeedbackScreenState
                           context: context,
                         );
                   },
-                  child: Text('Submit'.tr()),
+                  child: Text('submit'.tr()),
                 ),
               ),
     );

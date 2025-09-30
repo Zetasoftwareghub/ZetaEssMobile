@@ -91,7 +91,7 @@ class ResumptionListView extends StatelessWidget {
               ),
           child: CustomTileListingWidget(
             text2: item.empname ?? 'No name',
-            subText2: "Date : ${item.redate}",
+            subText2: "${'Date'.tr()} : ${item.redate}",
           ),
         );
       },

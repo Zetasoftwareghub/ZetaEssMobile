@@ -271,7 +271,7 @@ class _AttendanceRegularisationScreenState
           ),
           const SizedBox(width: 12),
           Text(
-            'Punch Details',
+            'Punch Details'.tr(),
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -414,7 +414,7 @@ class _AttendanceRegularisationScreenState
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    'Entry ${index + 1}',
+                    '${'Entry'.tr()} ${index + 1}',
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
@@ -582,8 +582,6 @@ class _AttendanceRegularisationScreenState
   ) {
     return InkWell(
       onTap: () async {
-        print(item.date);
-        print(item.date.runtimeType);
         final parsedDate =
             item.date != null &&
                     (item.date?.isNotEmpty ?? false) &&
@@ -619,7 +617,7 @@ class _AttendanceRegularisationScreenState
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                item.date ?? 'Select Date',
+                item.date ?? 'Select Date'.tr(),
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
@@ -696,7 +694,7 @@ class _AttendanceRegularisationScreenState
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                item.time ?? 'Select Time',
+                item.time ?? 'select_time'.tr(),
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
@@ -1011,29 +1009,12 @@ class _AttendanceRegularisationScreenState
                         Expanded(
                           child: TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('Cancel'),
+                            child: Text('Cancel'.tr()),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton(
-                            // onPressed: () async {
-                            //   if (_formKey.currentState!.validate()) {
-                            //     Navigator.pop(context);
-                            //     final result = await controller.buildAndSubmit(
-                            //       _remarkController.text,
-                            //       context,
-                            //     );
-                            //
-                            //     if (result != null) {
-                            //       showCustomAlertBox(
-                            //         context,
-                            //         title: result,
-                            //         type: AlertType.warning,
-                            //       );
-                            //     }
-                            //   }
-                            // },
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 final result = await controller.buildAndSubmit(
@@ -1086,7 +1067,7 @@ class _AttendanceRegularisationScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         action: SnackBarAction(
-          label: 'Okay',
+          label: 'OK'.tr(),
           textColor: Colors.white,
           onPressed: () {},
         ),

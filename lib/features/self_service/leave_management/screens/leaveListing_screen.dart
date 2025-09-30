@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
+import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/leave_management/controller/leave_controller.dart';
 import 'package:zeta_ess/features/self_service/leave_management/providers/leave_providers.dart';
 import 'package:zeta_ess/features/self_service/leave_management/screens/submitLeave_screen.dart';
@@ -39,7 +40,6 @@ class _LeaveListingScreenState extends ConsumerState<LeaveListingScreen> {
               indicatorColor: Colors.blue,
               tabs: tabs.map((tab) => Tab(text: tab.tr())).toList(),
             ),
-
             Expanded(
               child: TabBarView(
                 children: [
@@ -146,7 +146,8 @@ class LeaveListView extends StatelessWidget {
                     text1: leave.leaveDays,
                     subText1: "leaves".tr(),
                     text2: leave.leaveType ?? 'No Name',
-                    subText2: "Date : ${leave.leaveFrom}  To  ${leave.leaveTo}",
+                    subText2:
+                        "${'Date'.tr()} : ${leave.leaveFrom}  ${'To'.tr()}: ${leave.leaveTo}",
                     listRights: listRights,
                     onView:
                         () => NavigationService.navigateToScreen(

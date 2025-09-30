@@ -95,10 +95,10 @@ class SalaryAdvanceListView extends StatelessWidget {
                 ),
               ),
           child: CustomTileListingWidget(
-            text1: '  Month  ',
+            text1: '  ${'Month'.tr()}  ',
             subText1: salary.dateFrom,
-            text2: 'Name: ${salary.name ?? 'no name'}',
-            subText2: "Amount : ${salary.amount}",
+            text2: '${'Name'.tr()}: ${salary.name ?? 'no name'}',
+            subText2: "${'Amount'.tr()} : ${salary.amount}",
           ),
         );
       },

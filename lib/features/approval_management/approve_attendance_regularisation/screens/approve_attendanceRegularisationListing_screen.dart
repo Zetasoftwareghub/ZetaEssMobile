@@ -112,7 +112,7 @@ class AttendanceRegulariseListView extends StatelessWidget {
             text1: item.empId.toString(),
             subText1: "ID",
             text2: item.employeeName ?? 'no name',
-            subText2: "Date : ${item.regularisationDate}",
+            subText2: "${'Date'.tr()} : ${item.regularisationDate}",
           ),
         );
       },

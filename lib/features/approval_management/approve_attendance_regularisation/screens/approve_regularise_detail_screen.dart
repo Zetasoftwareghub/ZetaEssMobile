@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,7 +96,7 @@ class _AttendanceRegularizationApproveState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
+                  label.tr(),
                   style: TextStyle(
                     color: const Color(0xFF8B8B8B),
                     fontSize: 12.sp,
@@ -104,7 +105,7 @@ class _AttendanceRegularizationApproveState
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  value,
+                  value.tr(),
                   style: TextStyle(
                     color: const Color(0xFF2A2A2A),
                     fontSize: 15.sp,
@@ -143,7 +144,7 @@ class _AttendanceRegularizationApproveState
           Icon(icon, color: Colors.white, size: 22.w),
           SizedBox(width: 12.w),
           Text(
-            title,
+            title.tr(),
             style: TextStyle(
               fontSize: 16.sp,
               color: Colors.white,
@@ -440,7 +441,7 @@ class _AttendanceRegularizationApproveState
       builder:
           (BuildContext context) => CupertinoAlertDialog(
             title: Text(
-              "Success",
+              "Success".tr(),
               style: TextStyle(
                 color: const Color(0xFF0BA4DB),
                 fontWeight: FontWeight.w600,
@@ -456,8 +457,8 @@ class _AttendanceRegularizationApproveState
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  "OK",
+                child: Text(
+                  "OK".tr(),
                   style: TextStyle(
                     color: Color(0xFF0BA4DB),
                     fontWeight: FontWeight.w600,
@@ -472,7 +473,7 @@ class _AttendanceRegularizationApproveState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Attendance Approval")),
+      appBar: AppBar(title: Text("Attendance Approval".tr())),
       body: Stack(
         children: [
           if (_isLoading) Loader(),
@@ -491,7 +492,7 @@ class _AttendanceRegularizationApproveState
                           children: [
                             // Employee Details Section
                             buildSectionHeader(
-                              "Employee Details",
+                              "employee_details",
                               Icons.person_outline,
                             ),
 
@@ -501,12 +502,12 @@ class _AttendanceRegularizationApproveState
                               Icons.badge_outlined,
                             ),
                             buildDetailCard(
-                              "Employee Name",
+                              "employee_name",
                               sdetails?.empName ?? '',
                               Icons.person_outline,
                             ),
                             buildDetailCard(
-                              "Attendance Date",
+                              "attendance_date",
                               sdetails?.dLsdate ?? '',
                               Icons.calendar_today_outlined,
                             ),
@@ -613,7 +614,7 @@ class _AttendanceRegularizationApproveState
                                     fontWeight: FontWeight.w500,
                                   ),
                                   decoration: InputDecoration(
-                                    hintText: "Enter your comment here...",
+                                    hintText: "Enter your comment here".tr(),
                                     hintStyle: TextStyle(
                                       color: const Color(0xFFCCCCCC),
                                       fontSize: 14.sp,
@@ -668,7 +669,7 @@ class _AttendanceRegularizationApproveState
                         if (noteController.text.isEmpty) {
                           showCustomAlertBox(
                             context,
-                            title: 'Please give reject comment',
+                            title: 'Please give reject comment'.tr(),
                             type: AlertType.error,
                           );
 

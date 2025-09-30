@@ -20,8 +20,7 @@ class DownloadsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text('downloads'.tr())),
       body: downloadsAsync.when(
-        loading:
-            () => CustomScreenLoader(loadingText: 'Loading your downloads...'),
+        loading: () => CustomScreenLoader(loadingText: 'loading_menus'),
         error:
             (err, stack) => Center(
               child: Container(
@@ -48,7 +47,7 @@ class DownloadsScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Oops! Something went wrong',
+                      'Oops! Something went wrong'.tr(),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -57,7 +56,7 @@ class DownloadsScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'Unable to load your downloads',
+                      'Unable to load your downloads'.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14.sp,
@@ -109,7 +108,7 @@ class DownloadsScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 24.h),
                     Text(
-                      'No downloads yet',
+                      'No downloads yet'.tr(),
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w700,
@@ -118,7 +117,8 @@ class DownloadsScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 12.h),
                     Text(
-                      'Your downloaded files will appear here\nonce you start downloading',
+                      'Your downloaded files will appear here\nonce you start downloading'
+                          .tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16.sp,

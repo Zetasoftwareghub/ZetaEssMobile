@@ -51,11 +51,16 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
 
-    ref.read(newMaritalStatusProvider.notifier).state =
+    final value =
         getValueFromDetails(changeRequest.detail, "Marital Status") ?? '';
 
+    updateField(ref, "Marital Status", value);
+
+    ref.read(newMaritalStatusProvider.notifier).state = value;
+
     _isInitialized = true;
-    setState(() => comment = changeRequest.comment);
+
+    setState(() => comment = changeRequest.comment ?? '');
   }
 
   @override

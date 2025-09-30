@@ -113,7 +113,7 @@ class LoanListView extends ConsumerWidget {
             text1: convertRawDateToString(loan.submittedDate),
             text2: ' ${loan.loanType}',
             subText2:
-                "Status :${loan.loanStatus ?? ''}, Amount:  ${loan.loanAmount}",
+                "${'Status'.tr()} :${loan.loanStatus ?? ''}, ${'Amount'.tr()}:  ${loan.loanAmount}",
             onView:
                 () => NavigationService.navigateToScreen(
                   context: context,

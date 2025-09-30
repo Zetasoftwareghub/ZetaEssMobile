@@ -108,7 +108,7 @@ class LieuDayListView extends ConsumerWidget {
             text1: item.ludate ?? '',
 
             text2: item.lulvtp ?? "Unknown",
-            subText2: approveTab ? "Status: ${item.apstat}" : "",
+            subText2: approveTab ? "${'Status'.tr()}: ${item.apstat}" : "",
             listRights: rightsModel,
             onDelete:
                 () => ref

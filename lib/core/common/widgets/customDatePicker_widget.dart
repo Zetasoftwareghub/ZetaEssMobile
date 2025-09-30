@@ -79,7 +79,7 @@ class _CustomDateFieldState extends State<CustomDateField> {
       readOnly: true,
       onTap: () => _pickDate(context),
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: widget.hintText.tr(),
         suffixIcon: const Icon(Icons.calendar_today_outlined),
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         border: OutlineInputBorder(
@@ -201,89 +201,3 @@ class _CustomDateRangePickerFieldState
     );
   }
 }
-
-//TODO old code
-// class CustomDateRangePickerField extends StatefulWidget {
-//   final String hintText;
-//   final void Function(String fromDate, String toDate)? onDateRangeSelected;
-//
-//   const CustomDateRangePickerField({
-//     super.key,
-//     this.hintText = 'select_date_range',
-//     this.onDateRangeSelected,
-//   });
-//
-//   @override
-//   State<CustomDateRangePickerField> createState() =>
-//       _CustomDateRangePickerFieldState();
-// }
-//
-// class _CustomDateRangePickerFieldState
-//     extends State<CustomDateRangePickerField> {
-//   DateTimeRange? _selectedRange;
-//
-//   String get _formattedRange {
-//     if (_selectedRange == null) return '';
-//     final formatter = DateFormat('dd/MM/yyyy');
-//     return '${formatter.format(_selectedRange!.start)} - ${formatter.format(_selectedRange!.end)}';
-//   }
-//
-//   Future<void> _pickDateRange(BuildContext context) async {
-//     final now = DateTime.now();
-//     final picked = await showDateRangePicker(
-//       barrierColor: AppTheme.primaryColor,
-//       useRootNavigator: true,
-//
-//       context: context,
-//       firstDate: DateTime(2020),
-//       lastDate: DateTime(2030),
-//       initialDateRange:
-//           _selectedRange ??
-//           DateTimeRange(start: now, end: now.add(const Duration(days: 7))),
-//     );
-//
-//     if (picked != null) {
-//       final formatter = DateFormat('d/M/yyyy');
-//       final fromDate = formatter.format(picked.start);
-//       final toDate = formatter.format(picked.end);
-//
-//       setState(() {
-//         _selectedRange = picked;
-//       });
-//       widget.onDateRangeSelected?.call(fromDate, toDate);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Row(
-//           children: [
-//             labelText("date_from", isRequired: true),
-//             70.widthBox,
-//             labelText("date_to", isRequired: true),
-//           ],
-//         ),
-//         TextField(
-//           readOnly: true,
-//           onTap: () => _pickDateRange(context),
-//           controller: TextEditingController(text: _formattedRange),
-//           decoration: InputDecoration(
-//             hintText: widget.hintText.tr(),
-//             suffixIcon: const Icon(Icons.date_range),
-//             contentPadding: EdgeInsets.symmetric(
-//               horizontal: 16.w,
-//               vertical: 14.h,
-//             ),
-//             border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(12.r),
-//               borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

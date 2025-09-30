@@ -138,7 +138,7 @@ class _SubmitResumptionScreenState
                 FileUploadButton(),
                 SizedBox(height: 24.h),
                 Text(
-                  'Has return to work meeting taken place?',
+                  'Has return to work meeting taken place?'.tr(),
                   style: TextStyle(fontSize: 14.sp),
                 ),
 

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
@@ -13,14 +14,12 @@ class CustomCountryDropDown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print(value);
-    print("value");
     return ref
         .watch(countryListProvider)
         .when(
           data: (countryList) {
             return CustomDropdown(
-              hintText: "Select country",
+              hintText: "Select Country".tr(),
               value:
                   value == '0'
                       ? null

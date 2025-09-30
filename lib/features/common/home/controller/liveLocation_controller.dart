@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -75,7 +76,8 @@ class LiveLocationController extends StateNotifier<AsyncValue<LiveLocation>> {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw LocationServiceDisabledException(
-        'Location services are disabled. Please enable them in device settings.',
+        'Location services are disabled. Please enable them in device settings.'
+            .tr(),
       );
     }
   }

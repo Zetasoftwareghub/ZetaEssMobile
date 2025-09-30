@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/utils.dart';
@@ -14,7 +15,6 @@ final approveRegulariseControllerProvider =
 class AttendanceRegulariseController extends Notifier<bool> {
   @override
   bool build() {
-    // TODO: implement build
     return false;
   }
 
@@ -72,11 +72,11 @@ class AttendanceRegulariseController extends Notifier<bool> {
                 "Attendance regularization request rejected successfully";
           } else {
             resultMessage =
-                "Could not reject attendance regularization request!";
+                "Could not reject attendance regularization request";
           }
         }
 
-        showSnackBar(context: context, content: resultMessage);
+        showSnackBar(context: context, content: resultMessage.tr());
       },
     );
   }

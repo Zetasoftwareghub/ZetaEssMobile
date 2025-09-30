@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 enum AlertType { success, warning, error, info }
+
+bool isPopping = false;
 
 void showCustomAlertBox(
   BuildContext context, {
@@ -83,7 +86,7 @@ void showCustomAlertBox(
   showGeneralDialog(
     context: context,
     barrierDismissible: barrierDismissible,
-    barrierLabel: 'Dismiss',
+    barrierLabel: 'Dismiss'.tr(),
     barrierColor: Colors.black.withOpacity(0.4),
     transitionDuration: animationDuration,
     pageBuilder: (context, animation1, animation2) => const SizedBox.shrink(),
@@ -154,7 +157,17 @@ void showCustomAlertBox(
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(
-                                    onTap: () => Navigator.of(context).pop(),
+                                    onTap: () {
+                                      if (isPopping) return;
+                                      isPopping = true;
+                                      Navigator.of(context).pop();
+                                      Future.delayed(
+                                        const Duration(milliseconds: 500),
+                                        () {
+                                          isPopping = false;
+                                        },
+                                      );
+                                    },
                                     child: Container(
                                       padding: const EdgeInsets.all(4),
                                       decoration: BoxDecoration(
@@ -207,7 +220,7 @@ void showCustomAlertBox(
                                     child: Opacity(
                                       opacity: value,
                                       child: Text(
-                                        title,
+                                        title.tr(),
                                         style: TextStyle(
                                           color: Colors.grey.shade800,
                                           fontSize: titleFontSize,
@@ -240,7 +253,7 @@ void showCustomAlertBox(
                                       child: Opacity(
                                         opacity: value,
                                         child: Text(
-                                          content,
+                                          content.tr(),
                                           style: TextStyle(
                                             color: Colors.grey.shade600,
                                             fontSize: contentFontSize,
@@ -309,14 +322,20 @@ Widget _buildActionButtons(
 ) {
   final hasSecondary = secondaryButtonText != null;
   final hasPrimary = primaryButtonText != null;
-
   if (!hasSecondary && !hasPrimary) {
     // Default single OK button
     return SizedBox(
       width: double.infinity,
       height: 40,
       child: ElevatedButton(
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+          if (isPopping) return;
+          isPopping = true;
+          Navigator.of(context).pop();
+          Future.delayed(const Duration(milliseconds: 500), () {
+            isPopping = false;
+          });
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: alertColor,
           foregroundColor: Colors.white,
@@ -324,7 +343,7 @@ Widget _buildActionButtons(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
-          'OK',
+          'OK'.tr(),
           style: TextStyle(
             fontSize: buttonFontSize,
             fontWeight: FontWeight.w500,
@@ -345,7 +364,15 @@ Widget _buildActionButtons(
                 height: 40,
                 child: OutlinedButton(
                   onPressed:
-                      onSecondaryPressed ?? () => Navigator.of(context).pop(),
+                      onSecondaryPressed ??
+                      () {
+                        if (isPopping) return;
+                        isPopping = true;
+                        Navigator.of(context).pop();
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          isPopping = false;
+                        });
+                      },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.grey.shade600,
                     side: BorderSide(color: Colors.grey.shade300),
@@ -370,7 +397,15 @@ Widget _buildActionButtons(
                 height: 40,
                 child: ElevatedButton(
                   onPressed:
-                      onPrimaryPressed ?? () => Navigator.of(context).pop(),
+                      onPrimaryPressed ??
+                      () {
+                        if (isPopping) return;
+                        isPopping = true;
+                        Navigator.of(context).pop();
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          isPopping = false;
+                        });
+                      },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: alertColor,
                     foregroundColor: Colors.white,
@@ -380,7 +415,7 @@ Widget _buildActionButtons(
                     ),
                   ),
                   child: Text(
-                    primaryButtonText,
+                    primaryButtonText.tr(),
                     style: TextStyle(
                       fontSize: buttonFontSize,
                       fontWeight: FontWeight.w500,
@@ -397,7 +432,16 @@ Widget _buildActionButtons(
           width: double.infinity,
           height: 40,
           child: ElevatedButton(
-            onPressed: onPrimaryPressed ?? () => Navigator.of(context).pop(),
+            onPressed:
+                onPrimaryPressed ??
+                () {
+                  if (isPopping) return;
+                  isPopping = true;
+                  Navigator.of(context).pop();
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    isPopping = false;
+                  });
+                },
             style: ElevatedButton.styleFrom(
               backgroundColor: alertColor,
               foregroundColor: Colors.white,
@@ -407,7 +451,7 @@ Widget _buildActionButtons(
               ),
             ),
             child: Text(
-              primaryButtonText,
+              primaryButtonText.tr(),
               style: TextStyle(
                 fontSize: buttonFontSize,
                 fontWeight: FontWeight.w500,
@@ -421,7 +465,16 @@ Widget _buildActionButtons(
           width: double.infinity,
           height: 40,
           child: OutlinedButton(
-            onPressed: onSecondaryPressed ?? () => Navigator.of(context).pop(),
+            onPressed:
+                onSecondaryPressed ??
+                () {
+                  if (isPopping) return;
+                  isPopping = true;
+                  Navigator.of(context).pop();
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    isPopping = false;
+                  });
+                },
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.grey.shade600,
               side: BorderSide(color: Colors.grey.shade300),

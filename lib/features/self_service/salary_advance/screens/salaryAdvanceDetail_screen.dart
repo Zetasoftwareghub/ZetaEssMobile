@@ -82,7 +82,7 @@ class _SalaryAdvanceDetailScreenState
                                 subTitle: advance.dateFrom,
                               ),
                               detailInfoRow(
-                                title: 'Payment mode'.tr(),
+                                title: 'payment_mode'.tr(),
                                 subTitle:
                                     advance.iRqmode == '1'
                                         ? 'With Payroll'

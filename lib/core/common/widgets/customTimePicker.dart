@@ -97,7 +97,7 @@ class CustomFromToTimePicker extends StatelessWidget {
         if (fromTime != null && !_isToTimeValid(fromTime!, formatted)) {
           showSnackBar(
             context: context,
-            content: "To time must be after From time",
+            content: "To time must be after From time".tr(),
             color: AppTheme.errorColor,
           );
           return;

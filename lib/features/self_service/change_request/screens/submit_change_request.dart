@@ -90,11 +90,11 @@ class _SubmitChangeRequestScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  labelText("Requested Date", isRequired: true),
+                  labelText("Requested Date".tr(), isRequired: true),
                   labelText(formatDate(DateTime.now())),
                   // const CustomDateField(hintText: "Select Date"),
                   SizedBox(height: 16.h),
-                  labelText("Request Type", isRequired: true),
+                  labelText("Request Type".tr(), isRequired: true),
 
                   Column(
                     children: [
@@ -132,8 +132,8 @@ class _SubmitChangeRequestScreenState
                               Expanded(
                                 child: Text(
                                   selectedType != RequestType.none
-                                      ? requestTypes[selectedType]!
-                                      : "Select Request Type",
+                                      ? requestTypes[selectedType]!.tr()
+                                      : "Select Request Type".tr(),
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     color:
@@ -312,7 +312,8 @@ class _SubmitChangeRequestScreenState
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        requestTypes[selectedType] ?? "Request Details",
+                        requestTypes[selectedType]?.tr() ??
+                            "Request Details".tr(),
                         style: AppTextStyles.mediumFont(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

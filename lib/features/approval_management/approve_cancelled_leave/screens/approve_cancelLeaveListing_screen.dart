@@ -91,7 +91,8 @@ class LeaveListView extends StatelessWidget {
           },
           child: CustomTileListingWidget(
             text2: leave.employeeName,
-            subText2: "Date : ${leave.leaveDateFrom}  To  ${leave.leaveDateTo}",
+            subText2:
+                "${'Date'.tr()} : ${leave.leaveDateFrom}  ${'To'.tr()}  ${leave.leaveDateTo}",
           ),
         );
       },

@@ -89,7 +89,7 @@ class LieuDayListView extends StatelessWidget {
               ),
           child: CustomTileListingWidget(
             text2: item.employeeName ?? 'No name',
-            subText2: "Date : ${item.lieuDayDate ?? ''}",
+            subText2: "${'Date'.tr()} : ${item.lieuDayDate ?? ''}",
           ),
         );
       },

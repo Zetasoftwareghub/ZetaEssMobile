@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -324,7 +325,7 @@ class RegulariseCalendarDataDisplay extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No attendance data available',
+              'No attendance data available'.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Colors.grey.shade600,
@@ -339,7 +340,7 @@ class RegulariseCalendarDataDisplay extends StatelessWidget {
 
   Widget _buildAttendanceSummarySection() {
     return _buildSection(
-      title: 'Attendance Summary',
+      title: 'Attendance Summary'.tr(),
       icon: CupertinoIcons.chart_bar_circle_fill,
       iconColor: const Color(0xFF457B9D),
       child: _buildSummaryCards(),
@@ -488,7 +489,7 @@ class RegulariseCalendarDataDisplay extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  item.name,
+                  item.name.toLowerCase().tr(),
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
@@ -548,7 +549,7 @@ class RegulariseCalendarDataDisplay extends StatelessWidget {
               SizedBox(width: 12.w),
               Expanded(
                 child: Text(
-                  title,
+                  title.tr(),
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,

@@ -40,7 +40,6 @@ class ApproveCancelLeaveListResponse {
 
   factory ApproveCancelLeaveListResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] ?? {};
-    //Test sarath
     return ApproveCancelLeaveListResponse(
       submitted:
           (data['subLst'] as List<dynamic>? ?? [])

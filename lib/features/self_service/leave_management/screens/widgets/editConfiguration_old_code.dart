@@ -16,7 +16,8 @@ import '../../../../../core/common/no_server_screen.dart';
 import '../../../../../core/providers/userContext_provider.dart';
 import '../../controller/old_hrms_configuration_stuffs.dart';
 import '../../models/leave_model.dart';
-import '../../repository/leave_repository.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
+
 import '../helper/sandwich_helper.dart';
 
 class LeaveConfigurationEdit extends ConsumerStatefulWidget {
@@ -355,7 +356,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                 child: Column(
                   children: [
                     Text(
-                      'Select Half DayType',
+                      local.tr('Select Half DayType'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600,
@@ -382,7 +383,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                                 ),
                                 minimumSize: const Size(100, 40), //////// HERE
                               ),
-                              child: Text('firstHalfFH'),
+                              child: Text('firstHalf FH'),
                             ),
                             SizedBox(width: 20.w),
                             ElevatedButton(
@@ -409,7 +410,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                 ),
               ),
               TextButton(
-                child: Text('close'),
+                child: Text(local.tr('Close')),
                 onPressed: () => Navigator.pop(context),
               ),
             ],

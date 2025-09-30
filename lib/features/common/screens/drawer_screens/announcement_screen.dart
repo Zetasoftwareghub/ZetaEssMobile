@@ -157,9 +157,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                   },
                 ),
             loading:
-                () => const CustomScreenLoader(
-                  loadingText: 'Loading Announcements...',
-                ),
+                () => const CustomScreenLoader(loadingText: 'loading_menus'),
             error: (err, stack) => ErrorText(error: err.toString()),
           ),
         ),

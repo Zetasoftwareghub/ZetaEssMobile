@@ -157,7 +157,7 @@ class QuickActionsWidget extends StatelessWidget {
         height: 110.h,
         child: CustomShowcaseWidget(
           showcaseKey: showcaseKey,
-          title: "Quick Actions",
+          title: "quick_actions".tr(),
           description: "Here you will get quick access to features.",
           child: ListView.builder(
             scrollDirection: Axis.horizontal,

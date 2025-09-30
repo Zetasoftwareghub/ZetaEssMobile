@@ -119,7 +119,7 @@ class OtherRequestListView extends StatelessWidget {
                 '${'Submitted On'.tr()}\n${otherRequest.date?.split(' ')[0] ?? ''}',
             // text2: otherRequest.name ?? "Unknown",
             text2: otherRequest.name ?? 'No name',
-            subText2: otherRequest.requestName ?? 'requwtttt',
+            subText2: otherRequest.requestName ?? 'Request',
           ),
         );
       },

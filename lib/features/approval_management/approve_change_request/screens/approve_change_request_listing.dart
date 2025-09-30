@@ -95,7 +95,7 @@ class ChangeRequestListView extends StatelessWidget {
           child: CustomTileListingWidget(
             text1: convertRawDateToString(request.requestDate.toString()),
             text2: request.requestName,
-            subText2: "Employee : ${request.employeeName}",
+            subText2: "${'employee'.tr()} : ${request.employeeName}",
           ),
         );
       },

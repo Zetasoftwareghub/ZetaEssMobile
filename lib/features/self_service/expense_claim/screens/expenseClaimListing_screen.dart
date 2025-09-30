@@ -111,7 +111,7 @@ class ExpenseClaimListView extends StatelessWidget {
                 subText1: "requested_date".tr(),
                 text2: claim.expenseClaimName,
                 subText2:
-                    "Status: ${claim.employeeName}, Amount: ${claim.approveAmount != null && claim.approveAmount != '0' ? claim.approveAmount : claim.amount}",
+                    "${'Status'.tr()}: ${claim.employeeName}, ${'Amount'.tr()}: ${claim.approveAmount != null && claim.approveAmount != '0' ? claim.approveAmount : claim.amount}",
                 listRights: listRights,
                 onView: () => navigateToDetail(claim, context),
 

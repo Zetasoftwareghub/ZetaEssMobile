@@ -82,6 +82,41 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
+
+    // Helper function to set controller text and update the provider
+    void setController(TextEditingController controller, String field) {
+      final value = getValueFromDetails(details, field) ?? '';
+      controller.text = value;
+      updateField(ref, field, value); // ⚡ sync with provider
+    }
+
+    // Contact 1
+    setController(nameCtrl1, "Contact 1");
+    setController(relationCtrl1, "Relation 1");
+    setController(phoneCtrl1, "Phone No. 1");
+    setController(emailCtrl1, "Email Id 1");
+
+    // Contact 2
+    setController(nameCtrl2, "Contact 2");
+    setController(relationCtrl2, "Relation 2");
+    setController(phoneCtrl2, "Phone No. 2");
+    setController(emailCtrl2, "Email Id 2");
+
+    // Contact 3
+    setController(nameCtrl3, "Contact 3");
+    setController(relationCtrl3, "Relation 3");
+    setController(phoneCtrl3, "Phone No 3");
+    setController(emailCtrl3, "Email Id 3");
+
+    _isInitialized = true;
+    setState(() => comment = changeRequest.comment);
+  }
+
+  /*
+
+  void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
+    if (_isInitialized) return;
+    final details = changeRequest.detail;
     nameCtrl1.text = getValueFromDetails(details, "Contact 1") ?? '';
     relationCtrl1.text = getValueFromDetails(details, "Relation 1") ?? '';
     phoneCtrl1.text = getValueFromDetails(details, "Phone No. 1") ?? '';
@@ -99,6 +134,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     _isInitialized = true;
     setState(() => comment = changeRequest.comment);
   }
+*/
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +199,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
                 (comment?.isNotEmpty ?? false))
               Column(
                 children: [
-                  titleHeaderText("Comment"),
+                  titleHeaderText("comment"),
                   labelText(comment ?? ''),
                 ],
               ),

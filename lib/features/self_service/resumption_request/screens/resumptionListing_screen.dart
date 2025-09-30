@@ -103,7 +103,7 @@ class ResumptionListView extends ConsumerWidget {
                   ),
               child: CustomTileListingWidget(
                 text2: resumption.emname ?? 'no name',
-                subText2: "Date : ${resumption.lsrdtt?.split(' ')[0]}",
+                subText2: "${'Date'.tr()} : ${resumption.lsrdtt?.split(' ')[0]}",
                 listRights: ListRightsModel(
                   canCreate: listRightsModel?.canCreate,
                   canDelete: listRightsModel?.canDelete,

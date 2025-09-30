@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../common/alert_dialog/alertBox_function.dart';
 
@@ -8,7 +9,11 @@ class ValidatorServices {
     String alertMessage = 'Please give reject comment',
   }) {
     if (controller.text.trim().isEmpty) {
-      showCustomAlertBox(context, title: alertMessage, type: AlertType.error);
+      showCustomAlertBox(
+        context,
+        title: alertMessage.tr(),
+        type: AlertType.error,
+      );
       return true;
     }
     return false;
@@ -24,7 +29,7 @@ class ValidatorServices {
     if (controller.text == '0') {
       showCustomAlertBox(
         context,
-        title: 'Approve amount cannot be zero',
+        title: 'Approve amount cannot be zero'.tr(),
         type: AlertType.error,
       );
       return false;
@@ -33,7 +38,7 @@ class ValidatorServices {
     if (enteredAmount > maxAmount) {
       showCustomAlertBox(
         context,
-        title: 'Approve amount cannot be greater than requested amount',
+        title: 'Approve amount cannot be greater than requested amount'.tr(),
         type: AlertType.error,
       );
       return false; // ❌ Invalid

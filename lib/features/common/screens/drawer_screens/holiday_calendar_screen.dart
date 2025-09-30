@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/loader.dart';
@@ -5,211 +6,6 @@ import 'package:zeta_ess/core/utils.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../controller/holiday_notifier.dart';
-/*
-
-class HolidayCalendar extends ConsumerStatefulWidget {
-  const HolidayCalendar({super.key});
-
-  @override
-  ConsumerState<HolidayCalendar> createState() => _HolidayCalendarState();
-}
-
-class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
-  String? selectedRegion;
-  late int year;
-
-  @override
-  void initState() {
-    super.initState();
-    year = DateTime.now().year;
-  }
-
-  void _loadHolidayList() {
-    if (selectedRegion != null) {
-      ref
-          .read(holidayCalendarProvider.notifier)
-          .getCalendar(year: year.toString(), region: selectedRegion!);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final regionsAsync = ref.watch(holidayRegionProvider);
-    final holidaysAsync = ref.watch(holidayCalendarProvider);
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFD5F2FA),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFFD5F2FA),
-        elevation: 0,
-        title: const Text(
-          'Holiday Calendar',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF09A5D9),
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF0E6D9B),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Column(
-        children: [
-          _buildYearSelector(),
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: regionsAsync.when(
-              data: (regions) {
-                return DropdownButtonFormField<String>(
-                  value: selectedRegion,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 12,
-                    ),
-                  ),
-                  hint: const Text('Select Region'),
-                  items:
-                      regions.map((e) {
-                        return DropdownMenuItem<String>(
-                          value: e.value,
-                          child: Text(e.name ?? 'No name'),
-                        );
-                      }).toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      selectedRegion = val;
-                    });
-                    _loadHolidayList();
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text("Error: $e"),
-            ),
-          ),
-          Expanded(
-            child: holidaysAsync.when(
-              data: (holidayList) {
-                if (holidayList.isEmpty || selectedRegion == null) {
-                  return const Center(child: Text('No holidays found'));
-                }
-
-                return ListView.builder(
-                  itemCount: holidayList.length,
-                  itemBuilder: (context, index) {
-                    final item = holidayList[index];
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 7,
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        border: Border.all(color: const Color(0xFF09A5D9)),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.month ?? '',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    item.date?.replaceAll("00:00:00", "") ?? '',
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF78DE96),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(item.holidayReason ?? ''),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text("No holidays found")),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildYearSelector() {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.all(15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: const [BoxShadow(blurRadius: 10, color: Colors.black12)],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _yearArrow(Icons.arrow_back_ios_new_rounded, -1),
-            const SizedBox(width: 30),
-            Text(
-              year.toString(),
-              style: const TextStyle(
-                color: Color(0xFF0B6E96),
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: 30),
-            _yearArrow(Icons.arrow_forward_ios, 1),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _yearArrow(IconData icon, int change) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          year += change;
-        });
-        _loadHolidayList();
-      },
-      child: Icon(icon, color: const Color(0xFF3E3E3E), size: 20),
-    );
-  }
-}
-*/
 
 class HolidayCalendar extends ConsumerStatefulWidget {
   const HolidayCalendar({super.key});
@@ -244,7 +40,7 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
     final holidaysAsync = ref.watch(holidayCalendarProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Holiday Calendar')),
+      appBar: AppBar(title: Text('Holiday Calendar'.tr())),
       body: Column(
         children: [
           _buildFilters(regionsAsync),
@@ -271,8 +67,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Filters',
+          Text(
+            'Filters'.tr(),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -287,8 +83,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Region',
+                  Text(
+                    'Region'.tr(),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -326,8 +122,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
                         size: 20,
                       ),
                     ),
-                    hint: const Text(
-                      'Select your region',
+                    hint: Text(
+                      'Select your region'.tr(),
                       style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
                     ),
                     items:
@@ -377,7 +173,7 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "Error loading regions",
+                        "Error loading regions".tr(),
                         style: TextStyle(color: Colors.red[700], fontSize: 14),
                       ),
                     ],
@@ -393,8 +189,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Year',
+        Text(
+          'Year'.tr(),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -480,8 +276,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
                   children: [
-                    const Text(
-                      'Holidays',
+                    Text(
+                      'Holidays'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -624,8 +420,8 @@ class _HolidayCalendarState extends ConsumerState<HolidayCalendar> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'No holidays found',
+          Text(
+            'No holidays found'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,

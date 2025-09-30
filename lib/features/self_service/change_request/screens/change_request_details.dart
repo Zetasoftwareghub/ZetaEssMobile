@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -64,7 +65,7 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                                     ),
                                   )
                                   .toList(),
-                          hintText: 'Marital Status',
+                          hintText: 'Marital Status'.tr(),
                           value: changeRequest.detail.first.chvalu,
                         ),
                       ),
@@ -74,7 +75,7 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                   _buildDynamicDetails(changeRequest.detail),
                 12.heightBox,
                 if (changeRequest.comment?.isNotEmpty ?? false)
-                  titleHeaderText('Comment'),
+                  titleHeaderText('comment'.tr()),
                 labelText(changeRequest.comment ?? ""),
                 80.heightBox,
               ],

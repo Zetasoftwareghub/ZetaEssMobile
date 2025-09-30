@@ -34,8 +34,6 @@ class StorageRepositoryProvider extends Notifier<String?> {
 
     if (userJson != null && userJson.isNotEmpty) {
       final userMap = jsonDecode(userJson);
-      print(userMap);
-      print('userMap');
       final user = UserModel.fromJson(userMap);
       ref.read(userDataProvider.notifier).state = user;
     }

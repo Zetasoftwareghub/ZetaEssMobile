@@ -89,10 +89,10 @@ class ExpenseClaimListView extends StatelessWidget {
             );
           },
           child: CustomTileListingWidget(
-            text1: '  Month  ',
+            text1: '  ${'Month'.tr()}  ',
             subText1: item.monthYear ?? '',
             text2: '${'Name'.tr()}: ${item.emname ?? 'no name'}',
-            subText2: "Amount: ${item.amount}",
+            subText2: "${'Amount'.tr()}: ${item.amount}",
           ),
         );
       },

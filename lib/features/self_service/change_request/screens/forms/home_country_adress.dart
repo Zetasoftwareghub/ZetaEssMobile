@@ -71,22 +71,51 @@ class _HomeCountryAddressFormState
     addListener(mobileCtrl, "Mobile");
   }
 
+  //
+  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
+  //   if (_isInitialized) return;
+  //   final details = changeRequest.detail;
+  //   addressLine1Ctrl.text = getValueFromDetails(details, "House No.") ?? '';
+  //   streetNameCtrl.text = getValueFromDetails(details, "Street.") ?? '';
+  //   cityCtrl.text = getValueFromDetails(details, "Town/City") ?? '';
+  //   stateCtrl.text = getValueFromDetails(details, "State") ?? '';
+  //   countryCtrl.text = getValueFromDetails(details, "Country") ?? '';
+  //   postBoxCtrl.text = getValueFromDetails(details, "Post box") ?? '';
+  //   phoneNumberCtrl.text = getValueFromDetails(details, "Phone No.") ?? '';
+  //   mobileCtrl.text = getValueFromDetails(details, "Mobile") ?? '';
+  //
+  //   setState(() => countryCode = getValueFromDetails(details, "Country"));
+  //
+  //   _isInitialized = true;
+  //   setState(() => comment = changeRequest.comment);
+  // }
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
-    addressLine1Ctrl.text = getValueFromDetails(details, "House No.") ?? '';
-    streetNameCtrl.text = getValueFromDetails(details, "Street.") ?? '';
-    cityCtrl.text = getValueFromDetails(details, "Town/City") ?? '';
-    stateCtrl.text = getValueFromDetails(details, "State") ?? '';
-    countryCtrl.text = getValueFromDetails(details, "Country") ?? '';
-    postBoxCtrl.text = getValueFromDetails(details, "Post box") ?? '';
-    phoneNumberCtrl.text = getValueFromDetails(details, "Phone No.") ?? '';
-    mobileCtrl.text = getValueFromDetails(details, "Mobile") ?? '';
 
+    // Helper function to set controller text and update the provider
+    void setController(TextEditingController controller, String field) {
+      final value = getValueFromDetails(details, field) ?? '';
+      controller.text = value;
+      updateField(ref, field, value); // ⚡ sync with provider
+    }
+
+    // Set all address fields
+    setController(addressLine1Ctrl, "House No.");
+    setController(streetNameCtrl, "Street.");
+    setController(cityCtrl, "Town/City");
+    setController(stateCtrl, "State");
+    setController(countryCtrl, "Country");
+    setController(postBoxCtrl, "Post box");
+    setController(phoneNumberCtrl, "Phone No.");
+    setController(mobileCtrl, "Mobile");
+
+    // Update local state
     setState(() => countryCode = getValueFromDetails(details, "Country"));
-
-    _isInitialized = true;
+    updateField(ref, "Country", countryCode ?? '');
     setState(() => comment = changeRequest.comment);
+    updateField(ref, "Comment", comment ?? '');
+    _isInitialized = true;
   }
 
   @override

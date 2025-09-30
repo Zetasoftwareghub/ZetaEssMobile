@@ -341,7 +341,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
-                message,
+                message.tr(),
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
               ),
             ),
@@ -417,7 +417,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                       ),
                     ),
                     Text(
-                      user?.empName ?? 'Employee',
+                      user?.empName.tr() ?? 'Employee',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -568,7 +568,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 child: Text(
-                  'Monthly Overview',
+                  'Monthly Overview'.tr(),
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -1025,7 +1025,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
           elevation: 8,
           icon: Icon(CupertinoIcons.add, color: Colors.white),
           label: Text(
-            'Quick Actions',
+            'quick_actions'.tr(),
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -1049,7 +1049,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Calendar View',
+              'Calendar View'.tr(),
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
@@ -1057,7 +1057,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
               ),
             ),
             Text(
-              'Tap once to view shift, double tap to regularize',
+              'Tap once to view shift, double tap to regularize'.tr(),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
@@ -1370,7 +1370,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
             ],
           ),
         Text(
-          'Pending Requests',
+          'Pending Requests'.tr(),
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
@@ -1464,7 +1464,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  'Quick Actions',
+                  'Quick Actions'.tr(),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
@@ -1477,7 +1477,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                   children: [
                     _buildQuickActionItem(
                       icon: Icons.event_available,
-                      label: 'Leave Balances',
+                      label: 'leave_balances',
                       color: Colors.blue,
                       onTap: () {
                         NavigationService.navigateToScreen(
@@ -1499,7 +1499,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
                     ),
                     _buildQuickActionItem(
                       icon: Icons.download_for_offline,
-                      label: 'Downloads',
+                      label: 'downloads',
                       color: Colors.green,
                       onTap: () {
                         NavigationService.navigateToScreen(
@@ -1542,7 +1542,7 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
             ),
             SizedBox(height: 8.h),
             Text(
-              label,
+              label.tr(),
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,

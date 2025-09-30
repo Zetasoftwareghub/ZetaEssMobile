@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../features/auth/screens/createPin_screen.dart';
 import '../common/alert_dialog/alertBox_function.dart';
@@ -110,12 +111,12 @@ class _ErrorHandlerState extends ConsumerState<ErrorText> {
   Future<void> _showServerErrorPopup() async {
     showCustomAlertBox(
       context,
-      title: "SERVER CONNECTION LOST !",
+      title: "SERVER CONNECTION LOST !".tr(),
       type: AlertType.error,
       barrierDismissible: false,
       showCloseButton: false,
 
-      primaryButtonText: 'Retry',
+      primaryButtonText: 'retry'.tr(),
       onPrimaryPressed: () {
         NavigationService.navigateRemoveUntil(
           context: context,

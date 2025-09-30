@@ -298,7 +298,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Text('Select Half Day Type'),
+                    Text('Select Half Day Type'.tr()),
                     Padding(
                       padding: EdgeInsets.only(top: 30.0.h),
                       child: Center(
@@ -320,7 +320,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                                 ),
                                 minimumSize: const Size(100, 40), //////// HERE
                               ),
-                              child: Text('First Half FH'),
+                              child: Text('First Half FH'.tr()),
                             ),
                             SizedBox(width: 20.w),
                             ElevatedButton(
@@ -337,7 +337,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                                 ),
                                 minimumSize: const Size(100, 40), //////// HERE
                               ),
-                              child: Text('Second Half SH'),
+                              child: Text('Second Half SH'.tr()),
                             ),
                           ],
                         ),
@@ -347,7 +347,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 ),
               ),
               TextButton(
-                child: Text('close'),
+                child: Text('Close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -574,7 +574,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                                                     : false,
                                             child: Expanded(
                                               child: Text(
-                                                'lieu Day',
+                                                'Lieu Day'.tr(),
                                                 style:
                                                     AppTextStyles.mediumFont(),
                                               ),

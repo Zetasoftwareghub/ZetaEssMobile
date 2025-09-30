@@ -239,6 +239,9 @@ class _EditChangeRequestScreenState
       chrqtpText: "",
     );
 
+    printFullJson(saveModel.toJson());
+    print('saveModel.to');
+
     final approveChangeRequestModel = ApproveChangeRequestModel(
       suconn: user.companyConnection,
       sucode: user.companyCode,

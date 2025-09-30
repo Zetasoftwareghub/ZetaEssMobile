@@ -99,7 +99,8 @@ class LeaveListView extends StatelessWidget {
             text1: leave.leaveDays,
             subText1: "leaves".tr(),
             text2: leave.user ?? 'No name',
-            subText2: "Date : ${leave.dateFrom}  To  ${leave.dateTo}",
+            subText2:
+                "${'Date'.tr()} : ${leave.dateFrom}  ${'To'.tr()}:  ${leave.dateTo}",
           ),
         );
       },

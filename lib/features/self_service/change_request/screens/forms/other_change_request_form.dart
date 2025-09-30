@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,14 +39,34 @@ class _OtherChangeRequestFormState
   }
 
   bool _isInitialized = false;
-
+  //
+  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
+  //   if (_isInitialized) return;
+  //
+  //   otherChangeRequestCtrl.text =
+  //       getValueFromDetails(changeRequest.detail, "Other Change Request") ?? '';
+  //
+  //   _isInitialized = true;
+  //   setState(() {
+  //     comment = changeRequest.comment ?? '';
+  //   });
+  // }
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
 
-    otherChangeRequestCtrl.text =
-        getValueFromDetails(changeRequest.detail, "Other Change Request") ?? '';
+    // Helper function to set controller text and update provider
+    void setController(TextEditingController controller, String field) {
+      final value = getValueFromDetails(changeRequest.detail, field) ?? '';
+      controller.text = value;
+      updateField(ref, field, value); // ⚡ sync with provider
+    }
+
+    // Set the "Other Change Request" field
+    setController(otherChangeRequestCtrl, "Other Change Request");
 
     _isInitialized = true;
+
+    // Keep comment in local state for display
     setState(() {
       comment = changeRequest.comment ?? '';
     });
@@ -76,7 +97,7 @@ class _OtherChangeRequestFormState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Other Change Request",
+            "Other Change Request".tr(),
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 12.h),
@@ -90,7 +111,7 @@ class _OtherChangeRequestFormState
           ),
           if ((widget.isLineManager ?? false) && (comment?.isNotEmpty ?? false))
             Column(
-              children: [titleHeaderText("Comment"), labelText(comment ?? '')],
+              children: [titleHeaderText("comment"), labelText(comment ?? '')],
             ),
         ],
       ),

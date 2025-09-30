@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -71,25 +72,60 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
+
     final details = changeRequest.detail;
-    addressLine1Controller.text =
-        getValueFromDetails(details, "House No.") ?? '';
-    streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
-    cityController.text = getValueFromDetails(details, "Town/City") ?? '';
-    stateController.text = getValueFromDetails(details, "State") ?? '';
-    countryController.text = getValueFromDetails(details, "Country") ?? '';
-    postBoxController.text = getValueFromDetails(details, "Post box") ?? '';
-    phoneNumberController.text =
-        getValueFromDetails(details, "Phone No.") ?? '';
-    mobileNumberController.text = getValueFromDetails(details, "Mobile") ?? '';
-    officialEmailController.text =
-        getValueFromDetails(details, "Personal Email id") ?? '';
-    personalEmailController.text =
-        getValueFromDetails(details, "Official Email id.") ?? '';
+
+    // Helper to set controller text and update the provider
+    void setController(TextEditingController controller, String field) {
+      final value = getValueFromDetails(details, field) ?? '';
+      controller.text = value;
+      updateField(ref, field, value); // ⚡ sync with provider
+    }
+
+    // Set all fields
+    setController(addressLine1Controller, "House No.");
+    setController(streetNameController, "Street.");
+    setController(cityController, "Town/City");
+    setController(stateController, "State");
+    setController(countryController, "Country");
+    setController(postBoxController, "Post box");
+    setController(phoneNumberController, "Phone No.");
+    setController(mobileNumberController, "Mobile");
+    setController(personalEmailController, "Personal Email id");
+    setController(officialEmailController, "Official Email id.");
+
+    // After setting countryCode and comment
     setState(() => countryCode = getValueFromDetails(details, "Country"));
-    _isInitialized = true;
+    updateField(ref, "Country", countryCode ?? '');
+
     setState(() => comment = changeRequest.comment);
+    updateField(ref, "Comment", comment ?? '');
   }
+
+  //TODO old code but the backend going logic was not implemented !!!!!!!!!!!!!!!!! IT IS IN ABOVE CODE
+
+  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
+  //   if (_isInitialized) return;
+  //   final details = changeRequest.detail;
+  //
+  //   addressLine1Controller.text =
+  //       getValueFromDetails(details, "House No.") ?? '';
+  //   streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
+  //   cityController.text = getValueFromDetails(details, "Town/City") ?? '';
+  //   stateController.text = getValueFromDetails(details, "State") ?? '';
+  //   countryController.text = getValueFromDetails(details, "Country") ?? '';
+  //   postBoxController.text = getValueFromDetails(details, "Post box") ?? '';
+  //   phoneNumberController.text =
+  //       getValueFromDetails(details, "Phone No.") ?? '';
+  //   mobileNumberController.text = getValueFromDetails(details, "Mobile") ?? '';
+  //   officialEmailController.text =
+  //       getValueFromDetails(details, "Personal Email id") ?? '';
+  //   personalEmailController.text =
+  //       getValueFromDetails(details, "Official Email id.") ?? '';
+  //   setState(() => countryCode = getValueFromDetails(details, "Country"));
+  //   _isInitialized = true;
+  //   setState(() => comment = changeRequest.comment);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +182,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
             // TODO change this (special case with dropdown)
             Row(
               children: [
-                Text("Country", style: TextStyle(color: Colors.black54)),
+                Text("Country".tr(), style: TextStyle(color: Colors.black54)),
                 8.widthBox,
                 Expanded(
                   child: CustomCountryDropDown(data.countryCode ?? 'IND', null),

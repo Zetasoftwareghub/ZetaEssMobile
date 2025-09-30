@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,19 +58,45 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
     addListener(placeOfIssueController, "Place of Issue");
   }
 
+  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
+  //   if (_isInitialized) return;
+  //   final details = changeRequest.detail;
+  //
+  //   passportNumberController.text =
+  //       getValueFromDetails(details, "Number") ?? '';
+  //   placeOfIssueController.text =
+  //       getValueFromDetails(details, "Place of Issue") ?? '';
+  //   setState(() {
+  //     issuedCountryCode = getValueFromDetails(details, "Issued Country");
+  //     nationalityCode = getValueFromDetails(details, "Nationality");
+  //   });
+  //   _isInitialized = true;
+  //   setState(() => comment = changeRequest.comment);
+  // }
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
 
-    passportNumberController.text =
-        getValueFromDetails(details, "Number") ?? '';
-    placeOfIssueController.text =
-        getValueFromDetails(details, "Place of Issue") ?? '';
+    // Helper to set controller text and update the provider
+    void setController(TextEditingController controller, String field) {
+      final value = getValueFromDetails(details, field) ?? '';
+      controller.text = value;
+      updateField(ref, field, value); // ⚡ sync with provider
+    }
+
+    // Set Passport fields
+    setController(passportNumberController, "Number");
+    setController(placeOfIssueController, "Place of Issue");
+
+    // Keep issuedCountryCode and nationalityCode in local state
     setState(() {
       issuedCountryCode = getValueFromDetails(details, "Issued Country");
       nationalityCode = getValueFromDetails(details, "Nationality");
     });
+
     _isInitialized = true;
+
+    // Keep comment in local state for UI
     setState(() => comment = changeRequest.comment);
   }
 
@@ -104,7 +131,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Passport Details",
+                    "Passport Details".tr(),
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,

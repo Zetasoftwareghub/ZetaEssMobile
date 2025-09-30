@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
@@ -141,7 +142,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Change Password')),
+      appBar: AppBar(title: Text('Change Password'.tr())),
       body: SafeArea(
         child: Padding(
           padding: AppPadding.screenPadding,
@@ -151,10 +152,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  titleHeaderText("Change Password"),
+                  titleHeaderText("Change Password".tr()),
                   8.heightBox,
                   Text(
-                    "Enter your current password and choose a new one.",
+                    "Enter your current password and choose a new one.".tr(),
                     style: AppTextStyles.smallFont().copyWith(
                       color: Colors.grey,
                       height: 1.4,
@@ -163,8 +164,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   32.heightBox,
 
                   _buildPasswordField(
-                    label: "Current Password",
-                    hint: "Enter your current password",
+                    label: "Current Password".tr(),
+                    hint: "Enter your current password".tr(),
                     controller: oldController,
                     obscureText: _obscureOldPassword,
                     toggleVisibility: () {
@@ -176,8 +177,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   ),
 
                   _buildPasswordField(
-                    label: "New Password",
-                    hint: "Enter your new password",
+                    label: "New Password".tr(),
+                    hint: "Enter your new password".tr(),
                     controller: newController,
                     obscureText: _obscureNewPassword,
                     toggleVisibility: () {
@@ -189,8 +190,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   ),
 
                   _buildPasswordField(
-                    label: "Confirm New Password",
-                    hint: "Confirm your new password",
+                    label: "Confirm New Password".tr(),
+                    hint: "Confirm your new password".tr(),
                     controller: confirmController,
                     obscureText: _obscureConfirmPassword,
                     toggleVisibility: () {
@@ -242,7 +243,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       const Text('Changing Password...'),
                     ],
                   )
-                  : const Text('Change Password'),
+                  : Text('Change Password'.tr()),
         ),
       ),
     );

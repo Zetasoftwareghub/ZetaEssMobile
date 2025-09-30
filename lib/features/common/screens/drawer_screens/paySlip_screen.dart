@@ -66,7 +66,7 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Select Year",
+                    "Select Year".tr(),
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 14.sp,
@@ -95,7 +95,7 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
                         ),
                         isExpanded: true,
                         hint: Text(
-                          "Select Year",
+                          "Select Year".tr(),
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: Colors.grey[600],
@@ -165,7 +165,7 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
           ),
           SizedBox(height: 16.h),
           Text(
-            "No payslips found",
+            "No payslips found".tr(),
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -174,7 +174,7 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            "No payslips available for the selected year",
+            "No payslips available for the selected year".tr(),
             style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
@@ -194,7 +194,7 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
           ),
           SizedBox(height: 16.h),
           Text(
-            "Loading payslips...",
+            "loading_menus".tr(),
             style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
           ),
         ],
@@ -356,70 +356,3 @@ class _PaySlipsState extends ConsumerState<PayslipScreen> {
     );
   }
 }
-
-/*
-FIGMA CODE UI
-class PayslipScreen extends StatelessWidget {
-  const PayslipScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Payslips")),
-
-      body: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenPadding,
-          child: ListView(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 24.h),
-              labelText("Select Year"),
-              CustomDropdown(hintText: "Select Year"),
-              SizedBox(height: 12.h),
-              labelText("Select Month"),
-              CustomDropdown(hintText: "Select Month"),
-              SizedBox(height: 24.h),
-              _buildPayslipCard(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPayslipCard() {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Ananthu Krishna", style: AppTextStyles.largeFont()),
-          detailInfoRow(
-            title: "Flutter Developer\nAdministration",
-            subTitle: "EMP20230045",
-          ),
-
-          Divider(height: 12.h, color: Colors.grey.shade400),
-          titleHeaderText("April 2024"),
-          SizedBox(height: 8.h),
-          detailInfoRow(title: "Basic Salary", subTitle: "45,000"),
-          detailInfoRow(title: "Allowances", subTitle: "1,200"),
-          detailInfoRow(title: "Deductions", subTitle: "500"),
-          detailInfoRow(title: "Net Salary", subTitle: "44,700"),
-          detailInfoRow(title: "Payment Date", subTitle: "28/10/2024"),
-          detailInfoRow(title: "Payment Method", subTitle: "Bank Transfer"),
-          detailInfoRow(title: "Account Number", subTitle: "******8989"),
-          SizedBox(height: 16.h),
-          CustomElevatedButton(onPressed: () {}, child: Text("Download PDF")),
-        ],
-      ),
-    );
-  }
-}
-*/

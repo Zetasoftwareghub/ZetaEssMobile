@@ -127,7 +127,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
         }
       }
     } catch (e) {
-      print(e.toString() + 'werrror in edit leave ');
+      print('${e} error in edit leave ');
     }
     hasPrefilled = true;
   }
@@ -406,7 +406,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                             leaveController.isBlankLieu == true) {
                           showCustomAlertBox(
                             context,
-                            title: 'Please configure leave to submit',
+                            title: ' ',
                             type: AlertType.error,
                           );
                           return;
