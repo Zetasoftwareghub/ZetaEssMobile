@@ -133,6 +133,7 @@
   "other_requests": "Other Requests",
   "approve": "Approve",
   "leave": "Leave",
+  "quick_actions": "Quick Actions",
   "add_expenses": "Add Expenses",
   "expenses": "Expenses",
   "pending_approvals": "Pending Approvals",
@@ -327,7 +328,7 @@
   "select_region": "Select Region",
   "change_pin_title": "Change PIN?",
   "change_pin_info": "You will need to enter this PIN from now on to open the app.",
-
+"leave_balances": "Leave Balances",
 
   "allowance_details": "Allowance Details",
   "deduction_details": "Deduction Details",
@@ -349,7 +350,7 @@
   "Attendance": "Attendance",
   "HR Requests": "HR Requests",
   "resumption_approve": "Approve Resumption",
-  "approve_leave": "Leave",
+  "approve_leave": "Approve Leave",
   "lieu_day_approve": "Approve Lieu Day",
   "schooling_allowance_approve": "Approve Schooling Allowance",
   "salary_advance_approve": "Approve Salary Advance",
