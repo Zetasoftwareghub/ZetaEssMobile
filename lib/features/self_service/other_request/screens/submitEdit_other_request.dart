@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:dio/dio.dart';
+import 'package:zeta_ess/core/theme/app_theme.dart';
 import '../../../../core/providers/userContext_provider.dart';
 import '../../../../core/utils.dart';
 import '../controller/other_request_controller.dart';
@@ -475,6 +476,7 @@ class _SubmitEditOtherRequestState
                       // This is sarath bro !
                       if (canView && widget.isEditMode)
                         IconButton(
+                          color: AppTheme.primaryColor,
                           onPressed: () => _viewFile(fieldKey),
                           icon: Icon(Icons.visibility, color: Colors.blue),
                           tooltip: 'View file',

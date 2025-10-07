@@ -3,7 +3,7 @@ class LoanDetailModel {
   final int loanSerialNo;
   final String submittedDate;
   final String approvedDate;
-  final int employeeCode;
+  final String employeeCode;
   final int LoanTypeCode;
   final int fromCode;
   final int hrCode;
@@ -57,7 +57,7 @@ class LoanDetailModel {
       loanSerialNo: json['iLqslno'],
       submittedDate: json['sLqdate'] ?? '',
       approvedDate: json['sLqapdt'] ?? '',
-      employeeCode: json['eminid '],
+      employeeCode: json['eminid'] ?? '',
       LoanTypeCode: json['iLocode'],
       fromCode: json['iLqfmcd'],
       hrCode: json['iLqhrcd'],

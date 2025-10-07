@@ -406,7 +406,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                             leaveController.isBlankLieu == true) {
                           showCustomAlertBox(
                             context,
-                            title: ' ',
+                            title: 'Please configure leave to submit'.tr(),
                             type: AlertType.error,
                           );
                           return;

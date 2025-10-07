@@ -292,18 +292,14 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
                 response == 'Leave Updated Successfully') {
               //TODO this is to submit the resumption request if data changes
               if (submitResumptionModel != null) {
+                Navigator.pop(context);
+                Navigator.pop(context);
+
                 showCustomAlertBox(
                   context,
                   title: 'Resumption and Leave Submitted',
                   type: AlertType.success,
                 );
-                // ref
-                //     .read(resumptionControllerProvider.notifier)
-                //     .submitResumptionLeave(
-                //       submitResumptionModel: submitResumptionModel,
-                //       context: context,
-                //       isFromLeaveSubmit: true,
-                //     );
               } else {
                 Navigator.pop(context);
                 showCustomAlertBox(

@@ -56,7 +56,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
               ? Loader()
               : loanDetailsAsync.when(
                 loading: () => Loader(),
-                error: (err, _) => ErrorText(error: err.toString()),
+                error: (err, _) => SelectableText(err.toString()),
                 data: (loan) {
                   approveAmountController.text = loan.loanAmount.toString();
                   return SafeArea(

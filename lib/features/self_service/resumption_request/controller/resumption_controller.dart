@@ -53,10 +53,7 @@ class ResumptionController extends Notifier<bool> {
             Navigator.pop(context);
             showCustomAlertBox(
               context,
-              title:
-                  isFromLeaveSubmit
-                      ? 'Resumption and Leave Submitted' //TODO check this correctly and give for testing !
-                      : 'resumption_request'.tr() + 'submitted'.tr(),
+              title: 'resumption_request'.tr() + 'submitted'.tr(),
               type: AlertType.success,
             );
           }

@@ -62,7 +62,7 @@ class QuickActionsSection extends StatelessWidget {
               ),
               SizedBox(width: 12.w),
               Text(
-                "quick_actions".tr(),
+                "Favorites".tr(),
                 style: AppTextStyles.mediumFont(color: Colors.grey.shade800),
               ),
               const Spacer(),
