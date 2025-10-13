@@ -186,6 +186,8 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
                   titleHeaderText("Comment"),
                   labelText(comment ?? ''),
@@ -294,10 +296,4 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
       ],
     );
   }
-
-  BoxDecoration _boxDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12.r),
-    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
-  );
 }

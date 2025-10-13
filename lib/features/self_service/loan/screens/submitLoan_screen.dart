@@ -65,9 +65,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
     print('model.repaymentStartDate');
 
     //TODO need this global or not? year first concerde
-    reqDate = DateFormat(
-      'dd/MM/yyyy',
-    ).format(DateFormat('yyyy/MM/dd').parse(model.submittedDate));
+    reqDate = model.submittedDate;
     loanTypeID = model.LoanTypeCode;
     if (model.filePath?.isNotEmpty ?? false) {
       editFileUrl =

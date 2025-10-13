@@ -189,6 +189,10 @@ class _EditChangeRequestScreenState
 
                     final user = ref.watch(userContextProvider);
                     final saveModel = ChangeRequestModel(
+                      oldBaName: ref.watch(oldBanmrovider),
+                      oldBcAcNm: oldBankModel?.accountName,
+                      oldBcAcNo: oldBankModel?.accountNumber,
+                      bankNameDetail: ref.watch(oldBanmrovider),
                       suconn: user.companyConnection ?? '',
                       sucode: user.companyCode,
                       chrqcd: widget.chrqcd,

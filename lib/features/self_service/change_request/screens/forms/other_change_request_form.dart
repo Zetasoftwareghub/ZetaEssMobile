@@ -111,6 +111,8 @@ class _OtherChangeRequestFormState
           ),
           if ((widget.isLineManager ?? false) && (comment?.isNotEmpty ?? false))
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [titleHeaderText("comment"), labelText(comment ?? '')],
             ),
         ],

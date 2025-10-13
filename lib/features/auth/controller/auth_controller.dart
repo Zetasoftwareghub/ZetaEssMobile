@@ -203,6 +203,8 @@ class AuthController extends Notifier<bool> {
     required String email,
     required BuildContext context,
   }) async {
+    print(email);
+    print("email123");
     state = true;
     final res = await ref
         .read(authRepositoryProvider)

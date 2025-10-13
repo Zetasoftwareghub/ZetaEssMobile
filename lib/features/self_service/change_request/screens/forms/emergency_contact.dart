@@ -198,6 +198,8 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
                   titleHeaderText("comment"),
                   labelText(comment ?? ''),

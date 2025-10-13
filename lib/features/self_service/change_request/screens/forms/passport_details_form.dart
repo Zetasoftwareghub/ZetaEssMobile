@@ -279,6 +279,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   ),
                   if ((widget.isLineManager) && (comment?.isNotEmpty ?? false))
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         titleHeaderText("Comment"),
                         labelText(comment ?? ''),

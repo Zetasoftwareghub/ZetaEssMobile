@@ -364,7 +364,6 @@ class _SubmitChangeRequestScreenState
                           final saveModel = ChangeRequestModel(
                             suconn: user.companyConnection ?? '',
                             sucode: user.companyCode,
-                            //TODO check this !!
                             oldBaName: ref.watch(oldBanmrovider),
                             oldBcAcNm: oldBankModel?.accountName,
                             oldBcAcNo: oldBankModel?.accountNumber,

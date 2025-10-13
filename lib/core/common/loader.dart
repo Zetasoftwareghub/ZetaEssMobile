@@ -1,6 +1,6 @@
-import 'dart:math';
-
+import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // class Loader extends StatelessWidget {
@@ -17,9 +17,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //     );
 //   }
 // }
-
-import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class Loader extends StatefulWidget {
   final Color? color;
@@ -211,108 +208,3 @@ class _DotConfig {
     required this.opacity,
   });
 }
-
-// Alternative: Liquid/Wave Loader (comment above and use this)
-/*
-class Loader extends StatefulWidget {
-  final Color? color;
-  const Loader({super.key, this.color});
-
-  @override
-  State<Loader> createState() => _LoaderState();
-}
-
-class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loaderColor = widget.color ?? Theme.of(context).primaryColor;
-
-    return Center(
-      child: SizedBox(
-        width: 80.r,
-        height: 50.r,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: _WaveLoaderPainter(
-                color: loaderColor,
-                progress: _controller.value,
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _WaveLoaderPainter extends CustomPainter {
-  final Color color;
-  final double progress;
-
-  _WaveLoaderPainter({required this.color, required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const dotCount = 5;
-    final dotSpacing = size.width / (dotCount + 1);
-
-    for (var i = 0; i < dotCount; i++) {
-      final x = dotSpacing * (i + 1);
-      final phase = (progress + i * 0.15) % 1.0;
-      final y = size.height / 2 + math.sin(phase * 2 * math.pi) * (size.height * 0.3);
-
-      final dotSize = 6.0 + math.sin(phase * 2 * math.pi) * 2.0;
-      final opacity = 0.4 + math.sin(phase * 2 * math.pi) * 0.6;
-
-      // Glow effect
-      final glowPaint = Paint()
-        ..color = color.withOpacity(opacity * 0.3)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
-      canvas.drawCircle(Offset(x, y), dotSize + 6, glowPaint);
-
-      // Main dot
-      final dotPaint = Paint()
-        ..color = color.withOpacity(opacity)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(Offset(x, y), dotSize, dotPaint);
-
-      // Highlight
-      final highlightPaint = Paint()
-        ..color = Colors.white.withOpacity(0.6)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(
-        Offset(x - dotSize * 0.25, y - dotSize * 0.25),
-        dotSize * 0.35,
-        highlightPaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_WaveLoaderPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
-  }
-}
-*/

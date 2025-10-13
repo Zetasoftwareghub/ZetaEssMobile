@@ -93,12 +93,16 @@ class LoanRepository {
     required LoanSubmitRequestModel submitModel,
     required UserContext userContext,
   }) async {
+    print(submitModel.toJson());
+    print("submitModel.toJson()");
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + LoanApis.submitLoanApi,
         data: submitModel.toJson(),
         options: dioHeader(token: userContext.jwtToken),
       );
+      print(response.data);
+      print("response123");
       if (response.statusCode == 200 && response.data['success'] == true) {
         return response.data['data'] as String?;
       } else {

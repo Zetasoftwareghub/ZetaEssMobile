@@ -141,6 +141,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleHeaderText("Comment"),
                   labelText(comment ?? ''),

@@ -381,8 +381,12 @@ class LeaveFlagProcessor {
           final lastHalf = leaveData.last.halfType ?? '';
 
           final isHalfDayCut =
-              (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) ||
-              (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2);
+              (firstDayFlag == 'H' &&
+                  firstHalf == LeaveConstants.halfDay1 &&
+                  lastDayFlag != 'F') ||
+              (lastDayFlag == 'H' &&
+                  lastHalf == LeaveConstants.halfDay2 &&
+                  firstDayFlag != 'F');
           return _getDayFlagValue(
             dayType,
             includeOff,
@@ -553,16 +557,22 @@ bool halfDayRuleHit(
   final firstDayFlag = leaveData.first.dayFlag;
   final lastDayFlag = leaveData.last.dayFlag;
   bool isHalfDayCut = false;
-  printFullJson(conditions.preceding);
-  printFullJson("12343243");
   // Case 1: both preceding and trailing should be satisfied
   if (conditions.preceding && conditions.trailing) {
     final isHolidayHalfCombo =
-        (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) ||
-        (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2);
+        (firstDayFlag == 'H' &&
+            firstHalf == LeaveConstants.halfDay1 &&
+            lastDayFlag != 'F') ||
+        (lastDayFlag == 'H' &&
+            lastHalf == LeaveConstants.halfDay2 &&
+            firstDayFlag != 'F');
     final isFullHalfCombo =
-        (firstDayFlag == 'F' && lastHalf == LeaveConstants.halfDay2) ||
-        (lastDayFlag == 'F' && firstHalf == LeaveConstants.halfDay1);
+        (firstDayFlag == 'F' &&
+            lastHalf == LeaveConstants.halfDay2 &&
+            lastDayFlag != 'F') ||
+        (lastDayFlag == 'F' &&
+            firstHalf == LeaveConstants.halfDay1 &&
+            firstDayFlag != 'F');
 
     if (isHolidayHalfCombo || isFullHalfCombo) {
       isHalfDayCut = true;

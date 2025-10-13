@@ -105,15 +105,13 @@ class AuthRepository {
     required BuildContext context,
   }) async {
     try {
+      print({'userMail': email, 'suconn': userContext.companyConnection});
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.ssoLogin}',
-        data: {
-          'userMail': email,
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-        },
+        data: {'userMail': email, 'suconn': userContext.companyConnection},
       );
-
+      print(response.data);
+      print("response.data");
       final data = response.data;
 
       final escodes = data['data'];

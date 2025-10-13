@@ -154,14 +154,13 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
 
   /// Generic rendering of detail list
   Widget _buildDynamicDetails(List<ChangeRequestDetailModel> details) {
-    print(details.map((e) => e.toJson()));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         titleHeaderText('$title Details'),
         8.heightBox,
-        ...details.map(
-          (d) => detailInfoRow(
+        ...details.map((d) {
+          return detailInfoRow(
             title: d.chtype ?? "",
             subTitle:
                 d.chtype?.toLowerCase() == 'issued country' ||
@@ -170,8 +169,8 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
                         d.chtype?.toLowerCase() == 'passport holder'
                     ? d.chtext
                     : d.chvalu,
-          ),
-        ),
+          );
+        }),
       ],
     );
   }

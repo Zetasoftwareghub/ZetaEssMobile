@@ -221,20 +221,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     20.heightBox,
-                    Center(
-                      child: Text("or".tr(), style: AppTextStyles.mediumFont()),
-                    ),
-                    20.heightBox,
-                    _buildSocialLoginButton(
-                      icon: Constants.googlePath,
-                      label: "google".tr(),
-                      onPressed: () {
-                        ref
-                            .read(authControllerProvider.notifier)
-                            .loginWithGoogle(context: context);
-                        // ref.read(provider)
-                      },
-                    ),
+                    // Center(
+                    //   child: Text("or".tr(), style: AppTextStyles.mediumFont()),
+                    // ),
+                    // 20.heightBox,
+                    // _buildSocialLoginButton(
+                    //   icon: Constants.googlePath,
+                    //   label: "google".tr(),
+                    //   onPressed: () {
+                    //     if (ref.watch(userCompanyProvider) == null) {
+                    //       showSnackBar(
+                    //         context: context,
+                    //         content: 'Please select company',
+                    //         color: AppTheme.errorColor,
+                    //       );
+                    //       return;
+                    //     }
+                    //     ref
+                    //         .read(authControllerProvider.notifier)
+                    //         .loginWithGoogle(context: context);
+                    //     // ref.read(provider)
+                    //   },
+                    // ),
                   ],
                   25.heightBox,
 
