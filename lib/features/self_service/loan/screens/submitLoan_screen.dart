@@ -218,6 +218,8 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
       bottomSheet:
           isEditLoading
               ? null
+              : ref.watch(loanControllerProvider)
+              ? Loader()
               : SafeArea(
                 child: Padding(
                   padding: AppPadding.screenBottomSheetPadding,
@@ -253,7 +255,6 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                       final model = LoanSubmitRequestModel(
                         suconn: userContext.companyConnection,
                         sucode: userContext.companyCode,
-
                         emcode: int.parse(userContext.empCode),
                         lntype: int.parse(loanType.typeCode),
                         note: noteController.text,
@@ -266,6 +267,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                         mediaExtension: fileData?.extension,
                         loid: int.tryParse(widget.loanId ?? '0') ?? 0,
                         baseDirectory: userContext.userBaseUrl,
+                        fileDelete: fileData?.isCleared ?? false,
                       );
 
                       await ref

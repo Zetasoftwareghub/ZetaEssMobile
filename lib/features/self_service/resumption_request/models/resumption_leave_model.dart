@@ -6,6 +6,7 @@ class ResumptionLeaveModel {
   String? lvtype;
   String? leavetype;
   String? dtNxtWrkDay;
+  bool canChangeDate;
 
   ResumptionLeaveModel({
     this.dates,
@@ -15,9 +16,13 @@ class ResumptionLeaveModel {
     this.lvtype,
     this.leavetype,
     this.dtNxtWrkDay,
+    this.canChangeDate = false,
   });
 
-  factory ResumptionLeaveModel.fromJson(Map<String, dynamic> json) {
+  factory ResumptionLeaveModel.fromJson(
+    Map<String, dynamic> json,
+    canChangeDate,
+  ) {
     return ResumptionLeaveModel(
       dates: json["dates"].toString(),
       lsslno: json["lsslno"].toString(),
@@ -26,6 +31,7 @@ class ResumptionLeaveModel {
       lvtype: json["lvtype"].toString(),
       leavetype: json["leavetype"].toString(),
       dtNxtWrkDay: json["dtNxtWrkDay"].toString(),
+      canChangeDate: canChangeDate,
     );
   }
 }

@@ -17,11 +17,13 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../core/providers/storage_repository_provider.dart';
 import '../../../core/providers/userContext_provider.dart';
 import '../../../core/services/NavigationService.dart';
+import '../../../services/version_helper.dart';
 import '../../self_service/attendance_regularisation/models/regularisation_models.dart';
 import '../../self_service/attendance_regularisation/repository/attendance_regularise_repository.dart';
 import '../../self_service/attendance_regularisation/screens/attendanceRegularisation_screen.dart';
 import '../screens/notification_screen.dart';
 import '../screens/widgets/customDrawer.dart';
+import 'controller/version_check_controller.dart';
 import 'home_screen.dart';
 
 class CalendarHomeView extends ConsumerStatefulWidget {
@@ -983,6 +985,18 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
 
   @override
   Widget build(BuildContext context) {
+    final versionAsync = ref.watch(versionFutureProvider);
+
+    versionAsync.when(
+      data: (version) {
+        // Call global version helper once
+        Future.microtask(
+          () => VersionHelper.checkAndShowUpdateDialog(context, version),
+        );
+      },
+      loading: () => const SizedBox(), // or loader
+      error: (e, st) => const SizedBox(), // ignore errors here or handle
+    );
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFF5F7FA),

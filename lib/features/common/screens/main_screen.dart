@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:showcaseview/showcaseview.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loders/customScreen_loader.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
@@ -13,8 +17,11 @@ import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 import 'package:zeta_ess/features/common/screens/profile_screen.dart';
 import 'package:zeta_ess/features/self_service/screens/selfService_screen.dart';
 
+import '../../../services/version_helper.dart';
 import '../../approval_management/screens/lineManagement_screen.dart';
+import '../home/controller/version_check_controller.dart';
 import '../home/home_screen.dart';
+import '../models/version_check.dart';
 import '../providers/common_ui_providers.dart';
 
 final bottomNavProvider = StateProvider<int>((ref) => 0);
@@ -28,6 +35,7 @@ class MainScreen extends ConsumerWidget {
 
     final currentIndex = ref.watch(bottomNavProvider);
     final menuAsync = ref.watch(menuAgainstEmployeeProvider);
+
 
     return menuAsync.when(
       loading: () => CustomScreenLoader(loadingText: 'loading_menus'.tr()),

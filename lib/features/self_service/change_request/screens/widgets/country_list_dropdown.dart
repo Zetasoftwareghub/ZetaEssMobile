@@ -8,9 +8,13 @@ import 'package:zeta_ess/features/self_service/change_request/providers/change_r
 import '../../../../../core/common/widgets/customDropDown_widget.dart';
 
 class CustomCountryDropDown extends ConsumerWidget {
-  final String value;
+  final String countryCode;
   final void Function(String?)? onChanged;
-  const CustomCountryDropDown(this.value, this.onChanged, {super.key});
+  const CustomCountryDropDown({
+    super.key,
+    required this.countryCode,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,13 +23,13 @@ class CustomCountryDropDown extends ConsumerWidget {
         .when(
           data: (countryList) {
             return CustomDropdown(
-              hintText: "Select Country".tr(),
+              hintText: onChanged == null ? "No value" : "Select Country".tr(),
               value:
-                  value == '0'
+                  countryCode == '0'
                       ? null
-                      : value.isEmpty
+                      : countryCode.isEmpty
                       ? null
-                      : value,
+                      : countryCode,
               items:
                   countryList
                       .map(

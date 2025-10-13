@@ -1,15 +1,34 @@
-// leave_helper.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zeta_ess/core/utils.dart';
-
 import '../../../../../core/api_constants/dio_headers.dart';
-import '../../../../../core/common/no_server_screen.dart';
 import '../../../../../core/providers/userContext_provider.dart';
 import '../../controller/old_hrms_configuration_stuffs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+
+/*Fetch Leave Configuration
+→ LeaveApiHelper.extractLeaveConfig()
+
+Check Leave Gaps & Adjacent Days
+→ LeaveConditionChecker.checkPrecedingTrailing()
+→ LeaveConditionChecker.checkGapLeaveConditions()
+
+Apply Leave Policies and Flags
+→ LeaveFlagProcessor.processDayConfiguration()
+→ setDayFlag() updates flags (F, X, etc.)
+
+Data flows through Dio + Riverpod context, using user details.
+
+
+| Class                     | Responsibility                                     |
+| ------------------------- | -------------------------------------------------- |
+| **LeaveApiHelper**        | Safe API execution + parse response                |
+| **LeaveConditionChecker** | Checks conditions between holidays/working days    |
+| **LeaveFlagProcessor**    | Sets and processes final day flags based on policy |
+| **LeaveConstants**        | Stores constants & config values                   |
+| **GapLeaveConditions**    | Holds result of gap leave check                    |*/
 
 class LeaveApiHelper {
   static Future<T?> executeWithTimeout<T>(
@@ -43,6 +62,7 @@ class LeaveApiHelper {
   }
 }
 
+//This class checks conditions related to preceding or trailing leaves, gap leave rules, etc.
 class LeaveConditionChecker {
   static Future<bool> checkPrecedingTrailing(
     List<LeaveConfigurationData> leaveData,
@@ -96,6 +116,7 @@ class LeaveConditionChecker {
     return false;
   }
 
+  //Determines if leave bridging with weekends/holidays is valid.
   static bool _evaluateWorkingDayCondition(
     LeaveConfigDate config,
     List<LeaveConfigurationData> leaveData,
@@ -123,6 +144,7 @@ class LeaveConditionChecker {
         (isTrailing ? LeaveConstants.halfDay2 : LeaveConstants.halfDay1);
   }
 
+  //This method checks gap leave conditions — i.e., if there are working days between two leaves.
   static Future<GapLeaveConditions> checkGapLeaveConditions(
     List<LeaveConfigurationData> leaveData,
     DateTime fromDate,
@@ -225,6 +247,8 @@ class LeaveConditionChecker {
   }
 }
 
+//This class applies flag logic (whether to include/exclude a day from leave count).
+
 class LeaveFlagProcessor {
   static void setDayFlag(
     List<LeaveConfigurationData> leaveData,
@@ -232,8 +256,9 @@ class LeaveFlagProcessor {
     int dayType,
     String includeOff,
     String includeHoliday,
-    String flagValue,
-  ) {
+    String flagValue, {
+    String? glapho,
+  }) {
     final dayConfig = leaveData.firstWhere((element) => element.date == date);
 
     if (flagValue.isEmpty) {
@@ -241,14 +266,35 @@ class LeaveFlagProcessor {
       return;
     }
 
+    if (flagValue == LeaveConstants.flagExcluded) {
+      dayConfig.dayFlag = LeaveConstants.flagExcluded;
+      return;
+    }
+    bool isOFFCombo = false;
+    printFullJson(isOFFCombo);
+    if (glapho == 'S') {
+      //TODO eth thatti koot ann - READY akkanm Sherikk !
+      printFullJson("assa");
+      final firstDayOFF =
+          leaveData.first.dayType == 3 || leaveData.first.dayType == 4;
+      final lastDayOFF =
+          leaveData.last.dayType == 3 || leaveData.last.dayType == 4;
+      final firstHalf = leaveData.first.halfType ?? '';
+      final lastHalf = leaveData.last.halfType ?? '';
+
+      isOFFCombo =
+          (firstDayOFF && lastHalf == LeaveConstants.halfDay2) ||
+          (lastDayOFF && firstHalf == LeaveConstants.halfDay1);
+    }
+
     if (dayType == LeaveConstants.weekOff) {
       dayConfig.dayFlag =
-          includeOff == LeaveConstants.no
+          includeOff == LeaveConstants.no || isOFFCombo
               ? LeaveConstants.flagExcluded
               : LeaveConstants.flagFull;
     } else if (dayType == LeaveConstants.holiday) {
       dayConfig.dayFlag =
-          includeHoliday == LeaveConstants.no
+          includeHoliday == LeaveConstants.no || isOFFCombo
               ? LeaveConstants.flagExcluded
               : LeaveConstants.flagFull;
     }
@@ -260,32 +306,89 @@ class LeaveFlagProcessor {
     int dayType,
     String includeOff,
     String includeHoliday,
+    List<LeaveConfigurationData> leaveData,
   ) {
+    // final firstDayFlag = leaveData.first.dayFlag;
+    // final lastDayFlag = leaveData.last.dayFlag;
+    // final firstHalf = leaveData.first.dayFlag ?? '';
+    // final lastHalf = leaveData.last.halfType ?? '';
+    print(glapho);
+    print("glapho");
+
     switch (glapho) {
+      //isHalfDayCut true ayyal thazhe exclude avvum false ayyal full
       case 'S': // Preceding & Trailing
         if (conditions.preceding && conditions.trailing) {
-          return _getDayFlagValue(dayType, includeOff, includeHoliday);
+          final isHalfDayCut = halfDayRuleHit(
+            leaveData,
+            GapLeaveConditions(preceding: true, trailing: true),
+            leaveData.first.halfType ?? '',
+            leaveData.last.halfType ?? '',
+          );
+          return _getDayFlagValue(
+            dayType,
+            includeOff,
+            includeHoliday,
+            isHalfDayCut,
+          );
         } else {
           return _getInclusiveDayFlagValue(dayType, includeOff, includeHoliday);
         }
 
       case 'P': // Preceding only
         if (conditions.preceding) {
-          return _getDayFlagValue(dayType, includeOff, includeHoliday);
+          final isHalfDayCut = halfDayRuleHit(
+            leaveData,
+            GapLeaveConditions(preceding: true, trailing: false),
+            leaveData.first.halfType ?? '',
+            leaveData.last.halfType ?? '',
+          );
+          return _getDayFlagValue(
+            dayType,
+            includeOff,
+            includeHoliday,
+            isHalfDayCut,
+          );
         } else {
           return _getInclusiveDayFlagValue(dayType, includeOff, includeHoliday);
         }
 
       case 'T': // Trailing only
         if (conditions.trailing) {
-          return _getDayFlagValue(dayType, includeOff, includeHoliday);
+          final isHalfDayCut = halfDayRuleHit(
+            leaveData,
+            GapLeaveConditions(preceding: false, trailing: true),
+            leaveData.first.halfType ?? '',
+            leaveData.last.halfType ?? '',
+          );
+          return _getDayFlagValue(
+            dayType,
+            includeOff,
+            includeHoliday,
+            isHalfDayCut,
+          );
         } else {
           return _getInclusiveDayFlagValue(dayType, includeOff, includeHoliday);
         }
 
       case LeaveConstants.yes: // Preceding or Trailing
         if (conditions.preceding || conditions.trailing) {
-          return _getDayFlagValue(dayType, includeOff, includeHoliday);
+          // --- --- //TODO check the precee OR trail last day second half and firsst day first halff ==== don;t includeee!  !
+
+          final firstDayFlag = leaveData.first.dayFlag ?? '';
+          final lastDayFlag = leaveData.last.dayFlag ?? '';
+          final firstHalf = leaveData.first.halfType ?? '';
+          final lastHalf = leaveData.last.halfType ?? '';
+
+          final isHalfDayCut =
+              (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) ||
+              (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2);
+          return _getDayFlagValue(
+            dayType,
+            includeOff,
+            includeHoliday,
+            isHalfDayCut,
+          );
         } else {
           return _getInclusiveDayFlagValue(dayType, includeOff, includeHoliday);
         }
@@ -295,23 +398,28 @@ class LeaveFlagProcessor {
     }
   }
 
+  //Helper methods to map logic → flag value depending on type:
   static String _getDayFlagValue(
     int dayType,
     String includeOff,
     String includeHoliday,
+    bool isHalfDayCut,
   ) {
+    printFullJson(isHalfDayCut);
+    printFullJson("isHalfDayCut");
     if (dayType == LeaveConstants.weekOff) {
-      return includeOff == LeaveConstants.no
+      return includeOff == LeaveConstants.no || isHalfDayCut
           ? LeaveConstants.flagExcluded
           : LeaveConstants.flagFull;
     } else if (dayType == LeaveConstants.holiday) {
-      return includeHoliday == LeaveConstants.no
+      return includeHoliday == LeaveConstants.no || isHalfDayCut
           ? LeaveConstants.flagExcluded
           : LeaveConstants.flagFull;
     }
     return LeaveConstants.flagEmpty;
   }
 
+  //ETH ann call akkune - prec check cheyymbo false avvonduu@
   static String _getInclusiveDayFlagValue(
     int dayType,
     String includeOff,
@@ -325,6 +433,8 @@ class LeaveFlagProcessor {
     }
     return LeaveConstants.flagEmpty;
   }
+
+  //Main method that orchestrates all rules for a given day: CALLS FROM THE SCREEN !!!!!!!
 
   static Future<void> processDayConfiguration(
     List<LeaveConfigurationData> leaveData,
@@ -343,7 +453,8 @@ class LeaveFlagProcessor {
         dayItem.dayType != LeaveConstants.holiday) {
       return;
     }
-
+    printFullJson(ltaphl);
+    printFullJson("ltaphl");
     if (ltaphl == LeaveConstants.no) {
       // Simple case: no gap leave policy
       setDayFlag(
@@ -372,14 +483,22 @@ class LeaveFlagProcessor {
         toDate,
         dayItem.date ?? '',
       );
-
-      final flagValue = processGapLeavePolicy(
-        glapho,
-        conditions,
-        dayItem.dayType,
-        includeOff,
-        includeHoliday,
-      );
+      printFullJson(conditions.preceding);
+      printFullJson("conditions.preceding");
+      // --- --- //TODO check the precee OR trail like this bro !
+      //TODO evde ann mone set akkande 1FH 2FH
+      final flagValue =
+          (glapho == 'T' && conditions.trailing == false) ||
+                  (glapho == 'P' && conditions.preceding == false)
+              ? LeaveConstants.flagExcluded
+              : processGapLeavePolicy(
+                glapho,
+                conditions,
+                dayItem.dayType,
+                includeOff,
+                includeHoliday,
+                leaveData,
+              );
 
       setDayFlag(
         leaveData,
@@ -388,6 +507,7 @@ class LeaveFlagProcessor {
         includeOff,
         includeHoliday,
         flagValue,
+        glapho: glapho,
       );
     }
   }
@@ -422,4 +542,58 @@ class LeaveConstants {
   // Half day types - keeping original values
   static const String halfDay1 = '1';
   static const String halfDay2 = '2';
+}
+
+bool halfDayRuleHit(
+  List<LeaveConfigurationData> leaveData,
+  GapLeaveConditions conditions,
+  String firstHalf,
+  String lastHalf,
+) {
+  final firstDayFlag = leaveData.first.dayFlag;
+  final lastDayFlag = leaveData.last.dayFlag;
+  bool isHalfDayCut = false;
+  printFullJson(conditions.preceding);
+  printFullJson("12343243");
+  // Case 1: both preceding and trailing should be satisfied
+  if (conditions.preceding && conditions.trailing) {
+    final isHolidayHalfCombo =
+        (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) ||
+        (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2);
+    final isFullHalfCombo =
+        (firstDayFlag == 'F' && lastHalf == LeaveConstants.halfDay2) ||
+        (lastDayFlag == 'F' && firstHalf == LeaveConstants.halfDay1);
+
+    if (isHolidayHalfCombo || isFullHalfCombo) {
+      isHalfDayCut = true;
+    }
+  }
+  // Case 2: only preceding condition
+  else if (conditions.preceding) {
+    final isHolidayHalfCombo =
+        (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2);
+    printFullJson(lastDayFlag == 'H');
+    printFullJson(lastHalf == LeaveConstants.halfDay2);
+    printFullJson("lastHalf == LeaveConstants.halfDay2");
+    final isFullHalfCombo =
+        (firstDayFlag == 'F' && lastHalf == LeaveConstants.halfDay2);
+
+    if (isHolidayHalfCombo || isFullHalfCombo) {
+      isHalfDayCut = true;
+    }
+  }
+  // Case 3: only trailing condition
+  else if (conditions.trailing) {
+    final isHolidayHalfCombo =
+        (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1);
+
+    final isFullHalfCombo =
+        (firstDayFlag == 'F' && firstHalf == LeaveConstants.halfDay1);
+
+    if (isHolidayHalfCombo || isFullHalfCombo) {
+      isHalfDayCut = true;
+    }
+  }
+
+  return isHalfDayCut;
 }

@@ -6,12 +6,16 @@ import '../../../../../core/common/common_ui_stuffs.dart';
 import '../../../../../core/common/error_text.dart';
 import '../../../../../core/common/loader.dart';
 import '../../../../../core/common/widgets/customDropDown_widget.dart';
+import '../../models/bank_model.dart';
 import '../../models/change_request_model.dart';
 import '../../providers/change_request_providers.dart';
+
+BankDetailsModel? oldBankModel;
 
 final bankAccNoProvider = StateProvider<String?>((ref) => null);
 final bankCodeProvider = StateProvider<int?>((ref) => null);
 final bankAccNameProvider = StateProvider<String?>((ref) => null);
+final oldBanmrovider = StateProvider<String?>((ref) => null);
 
 class BankDetailsForm extends ConsumerStatefulWidget {
   final int? reqId;
@@ -34,9 +38,11 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
   final TextEditingController accountNameController = TextEditingController();
   bool _isInitialized = false;
   String? comment;
+  bool _isBankDetailsInitialized = false;
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
+    ref.read(oldBanmrovider.notifier).state ??= changeRequest.bankNameDetail;
 
     if (changeRequest.bcacno != null) {
       accountNumberController.text = changeRequest.bcacno!;
@@ -53,32 +59,66 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
     setState(() => comment = changeRequest.comment);
   }
 
+  void _initializeFromBankDetails(BankDetailsModel bankDetails) {
+    if (_isBankDetailsInitialized) return;
+    oldBankModel = bankDetails;
+
+    ref.read(oldBanmrovider.notifier).state ??= bankDetails.bankCode.toString();
+    ref.read(bankAccNoProvider.notifier).state ??= bankDetails.accountNumber;
+    ref.read(bankCodeProvider.notifier).state ??= bankDetails.bankCode;
+    ref.read(bankAccNameProvider.notifier).state ??= bankDetails.accountName;
+
+    _isBankDetailsInitialized = true;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // if (widget.reqId != null) {
+    //   final changeRequestAsync = ref.watch(
+    //     changeRequestDetailsFetchProvider(widget.reqId!),
+    //   );
+    //
+    //   // Initialize from change request when data is available
+    //   changeRequestAsync.whenData((changeRequest) {
+    //     WidgetsBinding.instance.addPostFrameCallback((_) {
+    //       _initializeFromChangeRequest(changeRequest);
+    //     });
+    //   });
+    // }
+    // Listen to change request provider
     if (widget.reqId != null) {
-      final changeRequestAsync = ref.watch(
+      ref.listen<AsyncValue<ChangeRequestModel>>(
         changeRequestDetailsFetchProvider(widget.reqId!),
+        (prev, next) {
+          next.whenData((changeRequest) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _initializeFromChangeRequest(changeRequest);
+            });
+          });
+        },
       );
-
-      // Initialize from change request when data is available
-      changeRequestAsync.whenData((changeRequest) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _initializeFromChangeRequest(changeRequest);
-        });
-      });
     }
 
+    // Watch bank details provider
     final bankDetailsAsync = ref.watch(
       banksDetailsProvider(widget.employeeCode),
     );
 
+    // Listen to bank details provider to initialize dependent states
+    ref.listen<AsyncValue<BankDetailsModel>>(
+      banksDetailsProvider(widget.employeeCode),
+      (prev, next) {
+        next.whenData((bankDetails) {
+          _initializeFromBankDetails(bankDetails);
+        });
+      },
+    );
+    // final bankDetailsAsync = ref.watch(
+    //   banksDetailsProvider(widget.employeeCode),
+    // );
+
     return bankDetailsAsync.when(
       data: (bankDetails) {
-        Future.microtask(
-          () =>
-              ref.read(bankCodeProvider.notifier).state ??=
-                  bankDetails.bankCode,
-        );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -174,12 +214,6 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
       ],
     );
   }
-
-  BoxDecoration _boxDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12.r),
-    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
-  );
 
   @override
   void dispose() {

@@ -11,7 +11,6 @@ import 'package:zeta_ess/features/self_service/change_request/models/change_requ
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/loader.dart';
 import '../../../../core/providers/userContext_provider.dart';
-import '../../../../core/services/validator_services.dart';
 import '../../../approval_management/approve_change_request/controller/approve_change_request_controoler.dart';
 import '../../../approval_management/approve_change_request/models/approve_change_req.dart';
 import '../providers/change_request_providers.dart';
@@ -143,7 +142,10 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
       children: [
         titleHeaderText('Bank Details'),
         8.heightBox,
-        detailInfoRow(title: "Bank Code", subTitle: model.bacode.toString()),
+        detailInfoRow(
+          title: "Bank Name",
+          subTitle: model.bankNameDetail.toString(),
+        ),
         detailInfoRow(title: "Account No", subTitle: model.bcacno ?? "-"),
         detailInfoRow(title: "Account Name", subTitle: model.bcacnm ?? "-"),
       ],
@@ -159,7 +161,16 @@ class ChangeRequestDetailsScreen extends ConsumerWidget {
         titleHeaderText('$title Details'),
         8.heightBox,
         ...details.map(
-          (d) => detailInfoRow(title: d.chtype ?? "", subTitle: d.chvalu),
+          (d) => detailInfoRow(
+            title: d.chtype ?? "",
+            subTitle:
+                d.chtype?.toLowerCase() == 'issued country' ||
+                        d.chtype?.toLowerCase() == 'nationality' ||
+                        d.chtype?.toLowerCase() == 'country' ||
+                        d.chtype?.toLowerCase() == 'passport holder'
+                    ? d.chtext
+                    : d.chvalu,
+          ),
         ),
       ],
     );

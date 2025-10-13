@@ -476,7 +476,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: SalaryCertificateListingScreen(
-              title: 'salary_certificate_requests'.tr(),
+              title: 'salary_certificate_request'.tr(),
             ),
           );
           break;

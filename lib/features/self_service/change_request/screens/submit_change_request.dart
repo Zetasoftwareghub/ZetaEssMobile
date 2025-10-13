@@ -352,7 +352,7 @@ class _SubmitChangeRequestScreenState
                     : Padding(
                       padding: AppPadding.screenBottomSheetPadding,
                       child: CustomElevatedButton(
-                        child: Text(submitText.tr()),
+                        child: Text("submitText".tr()),
                         onPressed: () {
                           final requestType = ref.watch(changeRequestProvider);
                           final requestDetailsList = ref.watch(
@@ -364,7 +364,11 @@ class _SubmitChangeRequestScreenState
                           final saveModel = ChangeRequestModel(
                             suconn: user.companyConnection ?? '',
                             sucode: user.companyCode,
-
+                            //TODO check this !!
+                            oldBaName: ref.watch(oldBanmrovider),
+                            oldBcAcNm: oldBankModel?.accountName,
+                            oldBcAcNo: oldBankModel?.accountNumber,
+                            bankNameDetail: ref.watch(oldBanmrovider),
                             chrqcd: 0,
                             chrqtp: requestType,
                             emcode: int.parse(user.empCode),
@@ -376,7 +380,8 @@ class _SubmitChangeRequestScreenState
                             detail: requestDetailsList,
                             chrqtpText: "",
                           );
-
+                          printFullJson(saveModel.toJson());
+                          printFullJson("saveModel.toJson()");
                           if (selectedType == RequestType.bankDetails &&
                               (saveModel.bacode == 0 ||
                                   saveModel.bcacno == null ||

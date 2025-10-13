@@ -42,7 +42,6 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
 
 class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
   bool isLoading = false;
-
   //TODO new sandwich claude
   void setSandwich() async {
     if (!mounted) return;
@@ -66,11 +65,12 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
 
     final leaveConfig = LeaveApiHelper.extractLeaveConfig(responseJson);
     if (leaveConfig == null) return;
+    setState(() => isLoading = true);
 
     // Extract configuration values with defaults
     var includeOff = leaveConfig.includeOff ?? LeaveConstants.no;
     var includeHoliday = leaveConfig.includeHolliday ?? LeaveConstants.no;
-    var glapho = leaveConfig.glapho ?? LeaveConstants.no;
+    var glapho = leaveConfig.glapho ?? LeaveConstants.no; //None
     var ltaphl = leaveConfig.ltaphl ?? LeaveConstants.no;
 
     // Check preceding and trailing conditions
@@ -125,7 +125,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
           startDateStr,
           includeOff,
           includeHoliday,
-          glapho,
+          glapho, //None
           ltaphl,
           fromDate,
           toDate,
@@ -440,13 +440,13 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
   String lieuDayValue() {
     String val = "N";
     if ((leaveConfigDataSubLst.length) > 0) {
-      val = leaveConfigDataSubLst[0].lsnote ?? "N";
+      val = leaveConfigDataSubLst[0].isLieuDay ?? "N";
     }
     return val;
   }
 
   void _save() {
-    if ((leaveConfigDataSubLst[0].lsnote ?? 'N') == "Y") {
+    if ((leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y") {
       if (leaveConfigData.first.lieuday == null ||
           leaveConfigData.first.lieuday == "" ||
           leaveConfigData.first.lieuday == "null" ||
@@ -773,7 +773,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
               },
             ),
             DataCell(
-              (leaveConfigDataSubLst[0].lsnote ?? 'N') == "Y"
+              (leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y"
                   ? Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

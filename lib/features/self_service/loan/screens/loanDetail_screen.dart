@@ -21,7 +21,7 @@ import '../providers/loan_providers.dart';
 import 'loanDetail_screen.dart';
 
 class LoanDetailScreen extends ConsumerStatefulWidget {
-  final bool isLineManager, isSelf, isApproveTab;
+  final bool isLineManager, isSelf, isApproveTab, isSubmittedTab;
   final String loanId;
   final LoanListModel? loanListModel;
   final String? requestEmpName;
@@ -31,6 +31,7 @@ class LoanDetailScreen extends ConsumerStatefulWidget {
     this.isLineManager = false,
     this.isSelf = false,
     this.isApproveTab = false,
+    this.isSubmittedTab = false,
     required this.loanId,
     this.loanListModel,
     this.requestEmpName,
@@ -58,7 +59,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                 loading: () => Loader(),
                 error: (err, _) => SelectableText(err.toString()),
                 data: (loan) {
-                  approveAmountController.text = loan.loanAmount.toString();
+                  // approveAmountController.text = loan.loanAmount.toString();
                   return SafeArea(
                     child: Padding(
                       padding: AppPadding.screenPadding,
@@ -105,13 +106,13 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                             title: "note".tr(),
                             subTitle: loan.note ?? '—',
                           ),
-                          if (!(widget.isLineManager ?? false) &&
+                          if (!(widget.isLineManager) &&
                               loan.approvedDate.isNotEmpty)
                             detailInfoRow(
                               title: "Approved Date".tr(),
                               subTitle: loan.approvedDate,
                             ),
-                          if (widget.isApproveTab ||
+                          if (!widget.isSubmittedTab && widget.isApproveTab ||
                               (!widget.isLineManager || !widget.isSelf))
                             detailInfoRow(
                               title: "Approved amount".tr(),
@@ -265,6 +266,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 
   @override
   void dispose() {
+    approveAmountController.dispose();
     commentController.dispose();
     super.dispose();
   }

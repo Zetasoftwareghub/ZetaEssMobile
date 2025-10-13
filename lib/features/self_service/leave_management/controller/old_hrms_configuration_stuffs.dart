@@ -87,7 +87,7 @@ class LeaveConfigurationData {
   int dayType = 1;
   String? includeHolliday;
   String? includeOff;
-  String? lsnote;
+  String? isLieuDay;
   String? dLsdate;
   String? iLsslno;
   String? lieuday;
@@ -104,7 +104,7 @@ class LeaveConfigurationData {
     required this.dayType,
     this.includeHolliday,
     this.includeOff,
-    this.lsnote,
+    this.isLieuDay,
     this.dLsdate,
     this.iLsslno,
     this.lieuday,
@@ -127,7 +127,7 @@ class LeaveConfigurationData {
               : 0,
       includeHolliday: json['includeHolliday']?.toString() ?? '',
       includeOff: json['includeOff']?.toString() ?? '',
-      lsnote: json['lsnote']?.toString() ?? '',
+      isLieuDay: json['lsnote']?.toString() ?? '',
       dLsdate: json['dLsdate']?.toString() ?? json['dLsrdtf']?.toString() ?? '',
 
       //TODO is this needed?
@@ -149,7 +149,7 @@ class LeaveConfigurationData {
     'ArLuslno': "0",
     'halfType': (halfType ?? '').isEmpty ? '1' : halfType,
     // 'halfType': halfType,
-    'Lsnote': lsnote,
+    'Lsnote': isLieuDay,
     'dLsdate': dLsdate,
     'ILsslno': iLsslno,
     'lieuDay': lieuday,

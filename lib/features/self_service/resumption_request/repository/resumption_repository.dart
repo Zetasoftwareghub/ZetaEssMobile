@@ -31,9 +31,15 @@ class ResumptionRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
+
+      printFullJson(response.data['data']);
       if (response.statusCode == 200 && response.data['success'] == true) {
+        final glrsdta = response.data['data']['glrsdta'].toString();
+        print(glrsdta);
+
+        printFullJson(glrsdta == 'Y');
         return (response.data['data']['subLst'] as List? ?? [])
-            .map((e) => ResumptionLeaveModel.fromJson(e))
+            .map((e) => ResumptionLeaveModel.fromJson(e, glrsdta == 'Y'))
             .toList();
       } else {
         throw Exception('Failed to load resumption leaves');

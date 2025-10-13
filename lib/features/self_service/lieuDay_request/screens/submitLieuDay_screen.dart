@@ -165,18 +165,21 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
                       ),
                     ),
           ),
-          bottomSheet: SafeArea(
-            child: Padding(
-              padding: AppPadding.screenBottomSheetPadding,
-              child: CustomElevatedButton(
-                onPressed: () => _submitForm(data),
-                child: Text(
-                  isEditMode ? 'update'.tr() : submitText.tr(),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ),
+          bottomSheet:
+              ref.watch(lieuDayControllerProvider)
+                  ? Loader()
+                  : SafeArea(
+                    child: Padding(
+                      padding: AppPadding.screenBottomSheetPadding,
+                      child: CustomElevatedButton(
+                        onPressed: () => _submitForm(data),
+                        child: Text(
+                          isEditMode ? 'update'.tr() : submitText.tr(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
         );
       },
       loading: () => const Scaffold(body: Loader()),

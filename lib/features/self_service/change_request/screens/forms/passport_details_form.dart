@@ -155,14 +155,10 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     ),
                   labelText("Issued Country"),
                   CustomCountryDropDown(
-                    passport.issuedCountry,
-                    (s) {},
+                    countryCode: passport.issuedCountry,
                   ), //TODO change this
                   labelText("Nationality"),
-                  CustomCountryDropDown(
-                    passport.nationality,
-                    (s) {},
-                  ), //TODO change this
+                  CustomCountryDropDown(countryCode: passport.nationality),
                   // labelText(passport.nationality),
                   labelText("Passport Holder"),
                   CustomDropdown<String>(
@@ -211,7 +207,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
 
                     hint: "Place of Issue",
                     controller: placeOfIssueController,
-                    onChanged: (v) => updateField(ref, " ", v),
+                    onChanged: (v) => updateField(ref, "Place of Issue", v),
                   ),
                   labelText("Issued Date"),
                   CustomDateField(
@@ -237,22 +233,24 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   ),
                   labelText("Issued Country"),
                   CustomCountryDropDown(
-                    issuedCountryCode ?? passport.issuedCountry,
-                    widget.isLineManager
-                        ? null
-                        : (s) {
-                          updateField(ref, "Issued Country", s ?? '');
-                        },
-                  ), //TODO change this
+                    countryCode: issuedCountryCode ?? passport.issuedCountry,
+                    onChanged:
+                        widget.isLineManager
+                            ? null
+                            : (s) {
+                              updateField(ref, "Issued Country", s ?? '');
+                            },
+                  ),
                   labelText("Nationality"),
                   CustomCountryDropDown(
-                    nationalityCode ?? passport.nationality,
-                    widget.isLineManager
-                        ? null
-                        : (s) {
-                          updateField(ref, "Nationality", s ?? '');
-                        },
-                  ), //TODO change this
+                    countryCode: nationalityCode ?? passport.nationality,
+                    onChanged:
+                        widget.isLineManager
+                            ? null
+                            : (s) {
+                              updateField(ref, "Nationality", s ?? '');
+                            },
+                  ),
 
                   labelText("Passport Holder"),
                   CustomDropdown<String>(

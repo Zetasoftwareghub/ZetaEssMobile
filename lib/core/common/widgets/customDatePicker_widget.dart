@@ -10,6 +10,7 @@ class CustomDateField extends StatefulWidget {
   final String hintText;
   final String? initialDate;
   final bool? notBeforeInitialDate;
+  final bool canChangeDate;
   final void Function(String selectedDate)? onDateSelected;
 
   const CustomDateField({
@@ -18,6 +19,7 @@ class CustomDateField extends StatefulWidget {
     this.initialDate,
     this.onDateSelected,
     this.notBeforeInitialDate,
+    this.canChangeDate = true,
   });
 
   @override
@@ -77,7 +79,7 @@ class _CustomDateFieldState extends State<CustomDateField> {
     return TextField(
       controller: _controller,
       readOnly: true,
-      onTap: () => _pickDate(context),
+      onTap: widget.canChangeDate ? () => _pickDate(context) : null,
       decoration: InputDecoration(
         hintText: widget.hintText.tr(),
         suffixIcon: const Icon(Icons.calendar_today_outlined),

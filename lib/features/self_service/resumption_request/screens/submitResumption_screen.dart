@@ -44,8 +44,9 @@ class _SubmitResumptionScreenState
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(resumptionControllerProvider);
-
     final selectedLeave = ref.watch(selectedResumptionLeaveTypeProvider);
+    printFullJson(selectedLeave?.canChangeDate);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${submitText.tr()} ${'resumption_request'.tr()}'),
@@ -114,6 +115,7 @@ class _SubmitResumptionScreenState
                 CustomDateField(
                   hintText: 'resumption_date'.tr(),
                   notBeforeInitialDate: true,
+                  canChangeDate: selectedLeave?.canChangeDate ?? false,
                   initialDate:
                       ref
                           .watch(selectedResumptionLeaveTypeProvider)

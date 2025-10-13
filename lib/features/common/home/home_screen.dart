@@ -5,7 +5,9 @@ import 'package:zeta_ess/features/common/home/calender_home_view.dart';
 import 'package:zeta_ess/features/common/home/widgets/quickAction_widget.dart';
 import 'package:zeta_ess/features/common/screens/widgets/customDrawer.dart';
 
+import '../../../services/version_helper.dart';
 import 'attendance_history.dart';
+import 'controller/version_check_controller.dart';
 import 'home_header_section.dart';
 
 final toggleCalendarProvider = StateProvider<bool>((ref) => false);
@@ -28,14 +30,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _showcaseKeys = ShowcaseKeys();
-
-  @override
-  void initState() {
-    super.initState();
-    // WidgetsBinding.instance.addObserver(this);
-    //TODO check this and implemetn show case in new build
-    //_initializeShowcase();
-  }
 
   @override
   void dispose() {
@@ -72,6 +66,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final showCalendar = ref.watch(toggleCalendarProvider);
+    final versionAsync = ref.watch(versionFutureProvider);
+
+    versionAsync.when(
+      data: (version) {
+        // Call global version helper once
+        Future.microtask(
+          () => VersionHelper.checkAndShowUpdateDialog(context, version),
+        );
+      },
+      loading: () => const SizedBox(), // or loader
+      error: (e, st) => const SizedBox(), // ignore errors here or handle
+    );
 
     return showCalendar
         ? CalendarHomeView(showCheckInOut: widget.showCheckInOut)

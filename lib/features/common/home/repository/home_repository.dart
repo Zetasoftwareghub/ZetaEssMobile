@@ -6,6 +6,7 @@ import '../../../../../core/api_constants/dio_headers.dart';
 import '../../../../../core/error_handling/type_defs.dart';
 import '../../../../../core/providers/userContext_provider.dart';
 import '../../models/punch_model.dart';
+import '../../models/version_check.dart';
 import '../controller/liveLocation_controller.dart';
 
 final homeRepositoryProvider = Provider<HomeRepository>((ref) {
@@ -99,5 +100,21 @@ class HomeRepository {
         throw Exception('Failed to load punch status');
       }
     });
+  }
+
+  Future<VersionModel?> getVersionCheck({
+    required UserContext userContext,
+  }) async {
+    final url =
+        '${userContext.baseUrl}/api/Leave/Check_Version/getVersionCheck';
+    final response = await dio.get(
+      url,
+      options: dioHeader(token: userContext.jwtToken),
+    );
+    if (response.statusCode == 200) {
+      return VersionModel.fromJson(response.data);
+    } else {
+      return null;
+    }
   }
 }

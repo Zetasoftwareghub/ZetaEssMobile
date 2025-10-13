@@ -102,31 +102,6 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     updateField(ref, "Comment", comment ?? '');
   }
 
-  //TODO old code but the backend going logic was not implemented !!!!!!!!!!!!!!!!! IT IS IN ABOVE CODE
-
-  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
-  //   if (_isInitialized) return;
-  //   final details = changeRequest.detail;
-  //
-  //   addressLine1Controller.text =
-  //       getValueFromDetails(details, "House No.") ?? '';
-  //   streetNameController.text = getValueFromDetails(details, "Street.") ?? '';
-  //   cityController.text = getValueFromDetails(details, "Town/City") ?? '';
-  //   stateController.text = getValueFromDetails(details, "State") ?? '';
-  //   countryController.text = getValueFromDetails(details, "Country") ?? '';
-  //   postBoxController.text = getValueFromDetails(details, "Post box") ?? '';
-  //   phoneNumberController.text =
-  //       getValueFromDetails(details, "Phone No.") ?? '';
-  //   mobileNumberController.text = getValueFromDetails(details, "Mobile") ?? '';
-  //   officialEmailController.text =
-  //       getValueFromDetails(details, "Personal Email id") ?? '';
-  //   personalEmailController.text =
-  //       getValueFromDetails(details, "Official Email id.") ?? '';
-  //   setState(() => countryCode = getValueFromDetails(details, "Country"));
-  //   _isInitialized = true;
-  //   setState(() => comment = changeRequest.comment);
-  // }
-
   @override
   Widget build(BuildContext context) {
     if (widget.reqId != null) {
@@ -185,7 +160,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 Text("Country".tr(), style: TextStyle(color: Colors.black54)),
                 8.widthBox,
                 Expanded(
-                  child: CustomCountryDropDown(data.countryCode ?? 'IND', null),
+                  child: CustomCountryDropDown(
+                    countryCode: data.countryCode ?? 'IND',
+                  ),
                 ),
               ],
             ),
@@ -262,9 +239,12 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
         labelText("Country"),
         CustomCountryDropDown(
-          countryCode ?? "IND",
-          (val) =>
-              readOnly ? null : updateField(ref, "Country", val ?? "No value"),
+          countryCode: countryCode ?? "IND",
+          onChanged:
+              (val) =>
+                  readOnly
+                      ? null
+                      : updateField(ref, "Country", val ?? "No value"),
         ), //TODO change this
         labelText("Post box"),
         inputField(

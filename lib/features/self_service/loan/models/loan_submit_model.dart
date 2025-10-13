@@ -13,6 +13,7 @@ class LoanSubmitRequestModel {
   final String? mediaExtension;
   final int loid;
   final String? baseDirectory;
+  final bool fileDelete;
 
   LoanSubmitRequestModel({
     required this.suconn,
@@ -29,6 +30,7 @@ class LoanSubmitRequestModel {
     required this.mediaExtension,
     required this.loid,
     required this.baseDirectory,
+    this.fileDelete = false,
   });
 
   Map<String?, dynamic> toJson() => {
@@ -47,5 +49,6 @@ class LoanSubmitRequestModel {
     "mediaExtension": mediaExtension ?? '',
     "loid": loid,
     "baseDirectory": baseDirectory,
+    'fileDelete': fileDelete,
   };
 }

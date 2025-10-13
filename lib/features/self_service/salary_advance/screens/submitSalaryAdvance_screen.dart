@@ -82,52 +82,55 @@ class _SubmitSalaryAdvanceScreenState
             ) ??
             _buildForm(context, null),
       ),
-      bottomSheet: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenBottomSheetPadding,
-          child: CustomElevatedButton(
-            onPressed: () {
-              if (monthYearController.text.isEmpty ||
-                  amountController.text.isEmpty) {
-                showCustomAlertBox(
-                  context,
-                  title: "pleaseFillRequiredFields".tr(),
-                  type: AlertType.error,
-                );
+      bottomSheet:
+          ref.watch(salaryAdvanceControllerProvider)
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenBottomSheetPadding,
+                  child: CustomElevatedButton(
+                    onPressed: () {
+                      if (monthYearController.text.isEmpty ||
+                          amountController.text.isEmpty) {
+                        showCustomAlertBox(
+                          context,
+                          title: "pleaseFillRequiredFields".tr(),
+                          type: AlertType.error,
+                        );
 
-                return;
-              }
-              final user = ref.read(userContextProvider);
-              final submitModel = SubmitSalaryAdvanceModel(
-                suconn: user.companyConnection,
-                sucode: user.companyCode,
-                emcode: int.parse(user.empCode),
-                username: user.empName,
-                iSaid: int.parse(widget.advanceId ?? '0'),
-                monthyear: monthYearController.text,
-                reqdate: formatDate(DateTime.now()),
-                note: noteController.text,
-                amount: amountController.text,
-                url: user.baseUrl,
-                cocode: 91,
-                paymentMode: ref.watch(withPayroll) ? 1 : 2,
-                baseDirectory: '', //TODO give from locall
-              );
-              ref
-                  .read(salaryAdvanceControllerProvider.notifier)
-                  .submitSalaryAdvance(
-                    submitModel: submitModel,
-                    context: context,
-                    isEditMode: isEditMode,
-                  );
-            },
-            child: Text(
-              isEditMode ? 'Update' : '${submitText.tr()} ',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-      ),
+                        return;
+                      }
+                      final user = ref.read(userContextProvider);
+                      final submitModel = SubmitSalaryAdvanceModel(
+                        suconn: user.companyConnection,
+                        sucode: user.companyCode,
+                        emcode: int.parse(user.empCode),
+                        username: user.empName,
+                        iSaid: int.parse(widget.advanceId ?? '0'),
+                        monthyear: monthYearController.text,
+                        reqdate: formatDate(DateTime.now()),
+                        note: noteController.text,
+                        amount: amountController.text,
+                        url: user.baseUrl,
+                        cocode: 91,
+                        paymentMode: ref.watch(withPayroll) ? 1 : 2,
+                        baseDirectory: '', //TODO give from locall
+                      );
+                      ref
+                          .read(salaryAdvanceControllerProvider.notifier)
+                          .submitSalaryAdvance(
+                            submitModel: submitModel,
+                            context: context,
+                            isEditMode: isEditMode,
+                          );
+                    },
+                    child: Text(
+                      isEditMode ? 'Update' : '${submitText.tr()} ',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
     );
   }
 

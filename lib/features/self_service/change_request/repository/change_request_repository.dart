@@ -25,7 +25,8 @@ class ChangeRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getMaritalStatus,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': empCode ?? userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),
@@ -46,7 +47,8 @@ class ChangeRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getChangeRequestList,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': int.parse(userContext.esCode),
         },
@@ -68,7 +70,8 @@ class ChangeRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getChangeRequestsDropDown,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'escode': userContext.esCode,
         },
@@ -93,8 +96,7 @@ class ChangeRequestRepository {
         data: saveModel.toJson(),
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('updateProfileModel.toJson()');
+print(response.data);
       return response.data['data'].toString();
     });
   }
@@ -106,7 +108,8 @@ class ChangeRequestRepository {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.getCountryDetails,
         data: {
-          'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
         },
         options: dioHeader(token: userContext.jwtToken),
@@ -127,7 +130,11 @@ class ChangeRequestRepository {
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + ChangeRequestApis.deleteChangeRequests,
-        data: {'sucode' : userContext.companyCode,'suconn': userContext.companyConnection, 'chrqcd': reqId},
+        data: {
+          'sucode': userContext.companyCode,
+          'suconn': userContext.companyConnection,
+          'chrqcd': reqId,
+        },
         options: dioHeader(token: userContext.jwtToken),
       );
       print(response.data);
@@ -141,7 +148,8 @@ class ChangeRequestRepository {
     required int reqId,
   }) {
     final data = {
-      'sucode' : userContext.companyCode,'suconn': userContext.companyConnection,
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
       'iChrqcd': reqId,
       'emcode': userContext.empCode,
     };

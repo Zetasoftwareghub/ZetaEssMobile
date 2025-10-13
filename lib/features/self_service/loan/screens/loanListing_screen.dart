@@ -45,6 +45,7 @@ class LoanListingScreen extends ConsumerWidget {
                     children: [
                       LoanListView(
                         loanList: loanListResponse.submitted.loanList,
+                        isSubmittedTab: true,
                         rightsModel: loanListResponse.submitted.listRights,
                       ),
                       LoanListView(
@@ -79,11 +80,13 @@ class LoanListView extends ConsumerWidget {
   final List<LoanListModel> loanList;
   final ListRightsModel? rightsModel;
   final bool isApproveTab;
+  final bool isSubmittedTab;
   const LoanListView({
     super.key,
     required this.loanList,
     this.rightsModel,
     this.isApproveTab = false,
+    this.isSubmittedTab = false,
   });
 
   @override
@@ -120,6 +123,7 @@ class LoanListView extends ConsumerWidget {
                   screen: LoanDetailScreen(
                     isSelf: true,
                     isApproveTab: isApproveTab,
+                    isSubmittedTab: isSubmittedTab,
                     loanId: loan.loanId,
                     loanListModel: loan,
                   ),

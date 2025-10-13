@@ -10,7 +10,12 @@ String? getValueFromDetails(
   return details
       .firstWhere(
         (e) => e.chtype == chtype,
-        orElse: () => ChangeRequestDetailModel(chtype: chtype, chvalu: ''),
+        orElse:
+            () => ChangeRequestDetailModel(
+              chtype: chtype,
+              chvalu: '',
+              oldChvalu: '',
+            ),
       )
       .chvalu;
 }

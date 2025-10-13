@@ -142,18 +142,21 @@ class _SubmitSalaryCertificateScreenState
           ],
         ),
       ),
-      bottomSheet: SafeArea(
-        child: Padding(
-          padding: AppPadding.screenBottomSheetPadding,
-          child: CustomElevatedButton(
-            onPressed: _submitForm,
-            child: Text(
-              isEditMode ? 'update'.tr() : submitText.tr(),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-      ),
+      bottomSheet:
+          ref.watch(salaryCertificateControllerProvider)
+              ? Loader()
+              : SafeArea(
+                child: Padding(
+                  padding: AppPadding.screenBottomSheetPadding,
+                  child: CustomElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text(
+                      isEditMode ? 'update'.tr() : submitText.tr(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
     );
   }
 
