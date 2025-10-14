@@ -232,7 +232,8 @@ class LeaveConfigurationEditData {
       lsnote: json['lsnote']?.toString() ?? '',
       dLsdate: json['dLsdate']?.toString() ?? json['dLsrdtf']?.toString() ?? '',
       iLsslno: json['iLsslno']?.toString() ?? json['iLsslno']?.toString() ?? '',
-      lieuday: json['ltlieu']?.toString() ?? '',
+      lieuday: json['luslno']?.toString() ?? '',
+      // ltlieu: json['ltlieu']?.toString() ?? '', TRY below stuff !!!!!
       ltlieu: json['ltlieu']?.toString() ?? '',
       luslno: json['luslno'],
       ludate: json['ludate']?.toString() ?? '',

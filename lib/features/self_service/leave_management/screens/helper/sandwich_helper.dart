@@ -531,7 +531,7 @@ class LeaveConstants {
   // Day flags - keeping original values
   static const String flagExcluded = 'X';
   static const String flagFull = 'F';
-  static const String flagEmpty = '';
+  static const String flagEmpty = 'X';
 
   // Configuration values - keeping original values
   static const String yes = 'Y';
