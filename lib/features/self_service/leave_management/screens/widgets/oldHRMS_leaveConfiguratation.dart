@@ -447,16 +447,18 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
 
   void _save() {
     if ((leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y") {
-      if (leaveConfigData.first.lieuday == null ||
-          leaveConfigData.first.lieuday == "" ||
-          leaveConfigData.first.lieuday == "null" ||
-          leaveConfigData.first.lieuday == "0") {
+      if (leaveConfigData.any(
+        (e) =>
+            e.lieuday == null ||
+            e.lieuday == "" ||
+            e.lieuday == "null" ||
+            e.lieuday == "0",
+      )) {
         showCustomAlertBox(
           context,
           title: 'Please select lieu day!',
           type: AlertType.warning,
         );
-
         return;
       }
     }

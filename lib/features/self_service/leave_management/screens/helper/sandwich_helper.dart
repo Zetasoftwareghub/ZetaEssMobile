@@ -312,8 +312,6 @@ class LeaveFlagProcessor {
     // final lastDayFlag = leaveData.last.dayFlag;
     // final firstHalf = leaveData.first.dayFlag ?? '';
     // final lastHalf = leaveData.last.halfType ?? '';
-    print(glapho);
-    print("glapho");
 
     switch (glapho) {
       //isHalfDayCut true ayyal thazhe exclude avvum false ayyal full
@@ -374,19 +372,20 @@ class LeaveFlagProcessor {
       case LeaveConstants.yes: // Preceding or Trailing
         if (conditions.preceding || conditions.trailing) {
           // --- --- //TODO check the precee OR trail last day second half and firsst day first halff ==== don;t includeee!  !
-
           final firstDayFlag = leaveData.first.dayFlag ?? '';
           final lastDayFlag = leaveData.last.dayFlag ?? '';
           final firstHalf = leaveData.first.halfType ?? '';
           final lastHalf = leaveData.last.halfType ?? '';
 
-          final isHalfDayCut =
-              (firstDayFlag == 'H' &&
-                  firstHalf == LeaveConstants.halfDay1 &&
-                  lastDayFlag != 'F') ||
-              (lastDayFlag == 'H' &&
-                  lastHalf == LeaveConstants.halfDay2 &&
-                  firstDayFlag != 'F');
+          bool isHalfDayCut = false;
+          // If first day is H and it's the second half, cut
+          if (firstDayFlag != 'F' && lastDayFlag != 'F') {
+            if ((firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) &&
+                (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2)) {
+              isHalfDayCut = true;
+            }
+          }
+
           return _getDayFlagValue(
             dayType,
             includeOff,

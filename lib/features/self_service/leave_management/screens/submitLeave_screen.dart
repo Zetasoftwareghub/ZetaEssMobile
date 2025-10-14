@@ -57,6 +57,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
   bool hasPrefilled = false;
 
   String? editFileUrl;
+  String? submittedDate = formatDate(DateTime.now());
   //FROM old code
   List<LeaveConfigurationEditData> leaveConfigData = [];
   List<LeaveConfigurationEditData> leaveConfigDataSub = [];
@@ -87,7 +88,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
         (model.subLst.first.leaveName?.isNotEmpty ?? false)
             ? '${ref.watch(userContextProvider).userBaseUrl ?? ''}/${model.subLst.first.leaveName ?? ''}'
             : null;
-
+    submittedDate = model.subLst.first.dLsdate ?? '';
     reasonController.text = model.subLst.first.lsnote ?? '';
     contactDetailsController.text = model.subLst.first.lscont ?? '';
     ref.read(dateFromProvider.notifier).state = model.subLst.first.dLsrdtf;
@@ -157,9 +158,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            labelText(
-              "${("submitting_date".tr())}: ${formatDate(DateTime.now())}",
-            ),
+            labelText("${("submitting_date".tr())}: $submittedDate"),
             CustomDateRangePickerField(
               readOnly: widget.submitResumptionModel != null,
               fromDate: dateFrom,
@@ -169,7 +168,6 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                 isEditMode = false;
                 leaveController.setData([]);
                 leaveController.isSubmitted = false;
-
                 ref.read(dateFromProvider.notifier).state = dateFrom;
                 ref.read(dateToProvider.notifier).state = dateTo;
                 if (ref.watch(selectedLeaveTypeProvider) != null) {

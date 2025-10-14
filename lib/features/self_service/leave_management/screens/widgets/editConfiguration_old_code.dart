@@ -444,12 +444,14 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
   void _save() {
     if (widget.isLieuDay) {
       if (leaveConfigData.isEmpty ||
-          leaveConfigData.first.lieuday == null ||
-          leaveConfigData.first.lieuday == "-- select --" ||
-          leaveConfigData.first.lieuday == "" ||
-          leaveConfigData.first.lieuday == "null" ||
-          leaveConfigData.first.lieuday == "0" ||
-          leaveConfigData.first.lieuday == "-- select --") {
+          leaveConfigData.any(
+            (e) =>
+                e.lieuday == null ||
+                e.lieuday == "" ||
+                e.lieuday == "null" ||
+                e.lieuday == "0" ||
+                e.lieuday == "-- select --",
+          )) {
         showCustomAlertBox(context, title: 'Please select lieu day!');
         return;
       }
