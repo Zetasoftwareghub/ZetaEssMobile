@@ -186,7 +186,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
                               ),
                               CustomDateField(
                                 hintText: "select_date".tr(),
-                                initialDate: reqDate,
+                                initialDate: deductionDate,
 
                                 notBeforeInitialDate: true,
                                 onDateSelected:
