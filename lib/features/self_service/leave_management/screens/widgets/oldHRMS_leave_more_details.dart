@@ -224,8 +224,6 @@ class _LeaveMoreDetailsScreenState
           userContext: ref.watch(userContextProvider),
           leaveId: int.parse(widget.leaveCode ?? '0'),
         );
-    printFullJson(leaveDetails);
-    print("leaveDetails");
     if (leaveDetails == null) {
       _navigateToNoServer();
       return;
@@ -326,74 +324,6 @@ class _LeaveMoreDetailsScreenState
     );
   }
 
-  void _showHalfDaySelector(LeaveConfigurationEditData item) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Text(
-                      'Select Half Day Type',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => _updateHalfType('1', item),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                              minimumSize: const Size(100, 40),
-                            ),
-                            child: Text('First Half (FH)'),
-                          ),
-                          SizedBox(width: 20.w),
-                          ElevatedButton(
-                            onPressed: () => _updateHalfType('2', item),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                              minimumSize: const Size(100, 40),
-                            ),
-                            child: Text('Second Half (SH)'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              TextButton(
-                child: const Text('Close'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   void _updateHalfType(String type, LeaveConfigurationEditData targetItem) {
     setState(() {
       for (var item in leaveConfigData) {
@@ -407,34 +337,6 @@ class _LeaveMoreDetailsScreenState
     leaveController.setDataEdit(leaveConfigData);
     _setSandwichLogic();
     Navigator.pop(context);
-  }
-
-  void _setHalfDay(LeaveConfigurationEditData targetItem) {
-    setState(() {
-      for (var item in leaveConfigData) {
-        if (item.date == targetItem.date) {
-          item.dayFlag = 'H';
-          break;
-        }
-      }
-    });
-
-    leaveController.setDataEdit(leaveConfigData);
-    _showHalfDaySelector(targetItem);
-  }
-
-  void _setFullDay(LeaveConfigurationEditData targetItem) {
-    setState(() {
-      for (var item in leaveConfigData) {
-        if (item.date == targetItem.date) {
-          item.dayFlag = 'F';
-          break;
-        }
-      }
-    });
-
-    leaveController.setDataEdit(leaveConfigData);
-    _setSandwichLogic();
   }
 
   String _getDateColor(String dayType) {
@@ -521,7 +423,7 @@ class _LeaveMoreDetailsScreenState
             child: Row(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Text(
                     'Date',
                     style: TextStyle(
@@ -535,7 +437,7 @@ class _LeaveMoreDetailsScreenState
                   flex: 2,
                   child: Center(
                     child: Text(
-                      'Full Day',
+                      'Full\nDay',
                       style: TextStyle(
                         color: HexColor("#374151"),
                         fontSize: 14.sp,
@@ -548,7 +450,7 @@ class _LeaveMoreDetailsScreenState
                   flex: 2,
                   child: Center(
                     child: Text(
-                      'Half Day',
+                      'Half\nDay',
                       style: TextStyle(
                         color: HexColor("#374151"),
                         fontSize: 14.sp,
@@ -559,7 +461,7 @@ class _LeaveMoreDetailsScreenState
                 ),
                 if (_isLieuDayEnabled())
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Center(
                       child: Text(
                         'Lieu Day',
@@ -597,7 +499,7 @@ class _LeaveMoreDetailsScreenState
       child: Row(
         children: [
           // Date Cell
-          Expanded(flex: 3, child: _buildEnhancedDateCell(item)),
+          Expanded(flex: 4, child: _buildEnhancedDateCell(item)),
           // Full Day Cell
           Expanded(
             flex: 2,
@@ -610,7 +512,7 @@ class _LeaveMoreDetailsScreenState
           ),
           // Lieu Day Cell
           if (_isLieuDayEnabled())
-            Expanded(flex: 3, child: _buildEnhancedLieuDayCell(item)),
+            Expanded(flex: 4, child: _buildEnhancedLieuDayCell(item)),
         ],
       ),
     );
@@ -648,7 +550,6 @@ class _LeaveMoreDetailsScreenState
     bool isDisabled = item.dayType == 3 || item.dayType == 4;
 
     return GestureDetector(
-      onTap: isDisabled ? null : () => _setFullDay(item),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 22.w,
@@ -694,7 +595,6 @@ class _LeaveMoreDetailsScreenState
     bool isDisabled = item.dayType == 3 || item.dayType == 4;
 
     return GestureDetector(
-      onTap: isDisabled ? null : () => _setHalfDay(item),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -738,7 +638,6 @@ class _LeaveMoreDetailsScreenState
           if (isSelected) ...[
             SizedBox(height: 4.h),
             GestureDetector(
-              onTap: () => _showHalfDaySelector(item),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
@@ -746,7 +645,7 @@ class _LeaveMoreDetailsScreenState
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  item.halfType == "1" ? "First Half" : "Second Half",
+                  item.halfType == "1" ? "FH" : "SH",
                   style: TextStyle(
                     fontSize: 10.sp,
                     color: Colors.white,
@@ -774,7 +673,7 @@ class _LeaveMoreDetailsScreenState
         child: Text(
           item.ludate ?? '',
           style: TextStyle(
-            fontSize: 13.sp,
+            fontSize: 10.sp,
             color: HexColor("#374151"),
             fontWeight: FontWeight.w500,
           ),

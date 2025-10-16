@@ -93,6 +93,7 @@ class LoanRepository {
     required LoanSubmitRequestModel submitModel,
     required UserContext userContext,
   }) async {
+    print(userContext.jwtToken);
     print(submitModel.toJson());
     print("submitModel.toJson()");
     return handleApiCall(() async {

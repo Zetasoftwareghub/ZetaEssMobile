@@ -327,6 +327,30 @@ class _OtherRequestDetailScreenState
     );
   }
 
+  Widget _buildTimeDisplay(FormFieldModel field) {
+    String value = _getFormFieldValue(field);
+    bool isEmpty = value.isEmpty;
+    String displayValue = value;
+    if (!isEmpty) {
+      try {
+        final parsedTime = DateFormat("HH:mm").parse(value);
+        displayValue = DateFormat("hh:mm a").format(parsedTime);
+      } catch (e) {
+        // In case value isn't valid 24h time, fallback to raw value
+        displayValue = value;
+      }
+    }
+
+    return _buildFieldContainer(
+      label: field.fieldName,
+      isRequired: field.isRequired,
+      content: _buildValueText(
+        isEmpty ? 'No value provided' : displayValue,
+        isEmpty: isEmpty,
+      ),
+    );
+  }
+
   Widget _buildTextAreaDisplay(FormFieldModel field) {
     String value = _getFormFieldValue(field);
     bool isEmpty = value.isEmpty;
@@ -715,7 +739,9 @@ class _OtherRequestDetailScreenState
         switch (field.fieldTypeCases) {
           case FormFieldType.textField:
             formWidget =
-                field.isDateField
+                field.isTimeField
+                    ? _buildTimeDisplay(field)
+                    : field.isDateField
                     ? _buildDateDisplay(field)
                     : _buildTextDisplay(field);
             break;

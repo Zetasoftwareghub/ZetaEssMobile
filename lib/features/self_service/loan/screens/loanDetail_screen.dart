@@ -21,7 +21,7 @@ import '../providers/loan_providers.dart';
 import 'loanDetail_screen.dart';
 
 class LoanDetailScreen extends ConsumerStatefulWidget {
-  final bool isLineManager, isSelf, isApproveTab, isSubmittedTab;
+  final bool isLineManager, isSelf, isApproveTab;
   final String loanId;
   final LoanListModel? loanListModel;
   final String? requestEmpName;
@@ -31,7 +31,6 @@ class LoanDetailScreen extends ConsumerStatefulWidget {
     this.isLineManager = false,
     this.isSelf = false,
     this.isApproveTab = false,
-    this.isSubmittedTab = false,
     required this.loanId,
     this.loanListModel,
     this.requestEmpName,
@@ -49,6 +48,10 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.isApproveTab);
+    print("widget.isApproveTab");
+    print(widget.isSelf);
+    print(widget.isLineManager);
     final loanDetailsAsync = ref.watch(loanDetailsProvider(widget.loanId));
     return Scaffold(
       appBar: AppBar(title: Text('details'.tr())),
@@ -99,10 +102,6 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                           ),
 
                           detailInfoRow(
-                            title: 'status'.tr(),
-                            subTitle: widget.loanListModel?.loanStatus ?? 'N/A',
-                          ),
-                          detailInfoRow(
                             title: "note".tr(),
                             subTitle: loan.note ?? '—',
                           ),
@@ -112,8 +111,8 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                               title: "Approved Date".tr(),
                               subTitle: loan.approvedDate,
                             ),
-                          if (!widget.isSubmittedTab && widget.isApproveTab ||
-                              (!widget.isLineManager || !widget.isSelf))
+                          if (widget.isApproveTab ||
+                              (!(widget.isLineManager) && !widget.isSelf))
                             detailInfoRow(
                               title: "Approved amount".tr(),
                               subTitle: loan.approvedAmount.toString() ?? '—',
@@ -140,7 +139,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                                     : '${ref.watch(userContextProvider).userBaseUrl}/${loan.filePath}',
                           ),
                           15.heightBox,
-                          if (widget.isLineManager ?? false) ...[
+                          if (widget.isLineManager) ...[
                             CustomDateField(
                               hintText: 'Approve date',
                               initialDate: ref.watch(selectedDateProvider),
@@ -271,75 +270,3 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
     super.dispose();
   }
 }
-
-//
-// class LoanDetailScreen extends StatelessWidget {
-//   final bool? isLineManager;
-//   final String loanId;
-//   const LoanDetailScreen({super.key, this.isLineManager, required this.loanId});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text(detailAppBarText.tr())),
-//
-//       body: SafeArea(
-//         child: Padding(
-//           padding: AppPadding.screenPadding,
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               titleHeaderText('employee_details'.tr()),
-//               detailInfoRow(title: 'employee_id'.tr(), subTitle: 'EMP1234'),
-//               detailInfoRow(
-//                 title: 'employee_name'.tr(),
-//                 subTitle: 'Ananthu Krishna',
-//               ),
-//
-//               titleHeaderText("submitted_details".tr()),
-//               detailInfoRow(
-//                 title: 'submitted_date'.tr(),
-//                 subTitle: '10/10/2025',
-//               ),
-//               detailInfoRow(
-//                 title: 'loan_type'.tr(),
-//                 subTitle: 'Education Loan',
-//               ),
-//               detailInfoRow(title: 'loan_tenure'.tr(), subTitle: '10 Years'),
-//               detailInfoRow(title: 'loan_interest_rate'.tr(), subTitle: '10%'),
-//               detailInfoRow(
-//                 title: 'loan_start_date'.tr(),
-//                 subTitle: '2025-01-01',
-//               ),
-//
-//               detailInfoRow(
-//                 title: 'status'.tr(),
-//                 subTitle: 'Pending to approve',
-//               ),
-//               detailInfoRow(
-//                 title: "note".tr(),
-//                 belowValue:
-//                     "dLorem Ipsum is simply dummy  text of the printing and  dhhtypesetting industry.",
-//               ),
-//               titleHeaderText("attachments".tr()),
-//               Padding(
-//                 padding: EdgeInsets.symmetric(vertical: 4.h),
-//                 child: Text(
-//                   '* No Attachments',
-//                   style: TextStyle(color: Colors.red, fontSize: 14.sp),
-//                 ),
-//               ),
-//               30.heightBox,
-//             ],
-//           ),
-//         ),
-//       ),
-//       bottomSheet:
-//           isLineManager ?? false
-//               ? SafeArea(
-//                 child: ApproveRejectButtons(onApprove: () {},            onReject: () {
-
-//               : const SizedBox.shrink(),
-//     );
-//   }
-// }

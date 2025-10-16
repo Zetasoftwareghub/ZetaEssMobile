@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Zeta Ess</string>
+	<string>ZETA HRMS</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -56,36 +56,26 @@
 		<true/>
 	</dict>
 
+	<!-- Local network (used by network_info_plus) -->
 	<key>NSLocalNetworkUsageDescription</key>
-    <string>This app uses the local network to fetch IP address information.</string>
-
-    <key>NSBonjourServices</key>
-    <array>
-        <string>_http._tcp</string>
-    </array>
-
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to provide location-based services.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>This app uses your face id to manage attendance against same user</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>This app uses local network for development debugging purposes.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app uses your location to manage attendance records accurately.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location access is needed even in the background for accurate tracking.</string>
-	<key>NSPushNotificationUsageDescription</key>
-	<string>We want to send you notifications</string>
-	<key>NSUserNotificationAlertStyle</key>
-	<string>alert</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UIBackgroundModes</key>
+	<string>This app uses the local network to detect IP and connectivity details.</string>
+	<key>NSBonjourServices</key>
 	<array>
-		<string>fetch</string>
-		<string>remote-notification</string>
+		<string>_http._tcp</string>
 	</array>
+
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires location access to mark attendance and provide location-based services.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app may use your location in the background to ensure accurate attendance tracking.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location access helps record accurate check-in and check-out data.</string>
+
+	<!-- Biometrics -->
+	<key>NSBiometricsUsageDescription</key>
+	<string>This app uses your fingerprint for secure authentication.</string>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

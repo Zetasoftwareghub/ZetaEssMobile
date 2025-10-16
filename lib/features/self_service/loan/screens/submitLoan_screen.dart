@@ -57,12 +57,7 @@ class _SubmitLoanScreenState extends ConsumerState<SubmitLoanScreen> {
     periodController.text = model.approvedMonths.toString();
     amountController.text = model.loanAmount.toString();
     noteController.text = model.note;
-    deductionDate = model.repaymentStartDate
-        .split('/')
-        .reversed
-        .join('/'); //TO reverse the year coming first
-    print(model.repaymentStartDate);
-    print('model.repaymentStartDate');
+    deductionDate = model.repaymentStartDate;
 
     //TODO need this global or not? year first concerde
     reqDate = model.submittedDate;

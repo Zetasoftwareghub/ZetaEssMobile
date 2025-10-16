@@ -87,6 +87,8 @@ class LeaveRepository {
         'escode': int.parse(userContext.esCode),
         'emcode': int.parse(userContext.empCode),
       };
+      print(data);
+      print('payload data');
       final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.getSelfLeaveDetails,
         data: data,
@@ -94,6 +96,8 @@ class LeaveRepository {
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
         final leaveData = response.data['data'];
+        printFullJson(leaveData);
+        printFullJson('leaveData');
         return right(
           LeaveEditResponse.fromEditApi(leaveData),
         ); //TODO not the config values but others
@@ -307,7 +311,7 @@ class LeaveRepository {
     );
 
     return handleApiCall(() async {
-       final response = await dio.post(
+      final response = await dio.post(
         userContext.baseUrl + LeaveManagementApis.submitLeave,
         data: request.toJson(
           userContext.companyConnection ?? "",

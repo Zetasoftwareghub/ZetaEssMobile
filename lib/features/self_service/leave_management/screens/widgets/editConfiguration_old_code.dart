@@ -72,6 +72,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
     LeaveConfigurationController(),
   );
   List<LeaveConfigurationEditData> editLieuDropDown = [];
+  bool configurationsFetched = false;
 
   @override
   void initState() {
@@ -81,6 +82,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
       Future.microtask(() => getDataToDropDown());
     }
     if (widget.data.isNotEmpty || widget.selectedLeaveType == null) {
+      configurationsFetched = true;
+
       setState(() {
         leaveController.setDataEdit(widget.data);
         leaveConfigData = widget.data;
@@ -103,7 +106,9 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
       });
       Future.microtask(() => setSandwich());
     } else {
-      Future.microtask(() => _getConfigurations());
+      Future.microtask(() {
+        if (!configurationsFetched) _getConfigurations();
+      });
     }
   }
 
@@ -455,10 +460,10 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
         showCustomAlertBox(context, title: 'Please select lieu day!');
         return;
       }
-    }
 
-    if (validateLieuDayConfig() == true) {
-      return;
+      if (validateLieuDayConfig() == true) {
+        return;
+      }
     }
 
     List<LeaveConfigurationEditData> tmp = leaveConfigData;
@@ -599,7 +604,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                         ),
                         onPressed: () => _save(),
                         child: Text(
-                          submitText,
+                          local.tr(submitText),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -869,22 +874,23 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
 
       // matching CanLst items
       var matchingCanLstItems =
-          leaveConfigDataCanLst
-              .where((item) => item.iLsslno == currentLieuDayId)
+          widget.dataCan
+              .where(
+                (item) => item.iLsslno == currentLieuDayId,
+              ) //TODO i have doubt here !
               .toList();
 
       if (matchingCanLstItems.isNotEmpty) {
         var matchedItem = matchingCanLstItems.first;
         double availableLieuDayBalance = 0.0;
-
+        List<String> parts = (matchedItem.lsnote ?? '').split('-');
         // get balance based on condition
-        if (widget.isLieuDay &&
+        if (widget.dataCan.isEmpty &&
             widget.initialLeaveType != widget.selectedLeaveType) {
           List<String> parts = (matchedItem.dLsdate ?? '').split(' ');
           var numberString = parts[1].replaceAll('(', '').replaceAll(')', '');
           availableLieuDayBalance = double.parse(numberString);
         } else {
-          List<String> parts = (matchedItem.lsnote ?? '').split('-');
           availableLieuDayBalance = double.parse(parts[1]);
         }
 

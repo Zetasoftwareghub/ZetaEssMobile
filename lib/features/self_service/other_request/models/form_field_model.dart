@@ -33,6 +33,7 @@ class FormFieldModel {
   bool get isDateField => fieldType == 'D';
   bool get isNumberField => fieldType == 'N';
   bool get isStringField => fieldType == 'S';
+  bool get isTimeField => fieldType == 'T';
 
   FormFieldType get fieldTypeCases {
     switch (fieldWidget) {

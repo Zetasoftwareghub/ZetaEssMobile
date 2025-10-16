@@ -370,21 +370,69 @@ class LeaveFlagProcessor {
         }
 
       case LeaveConstants.yes: // Preceding or Trailing
+
+        final firstDayFlag = leaveData.first.dayFlag ?? '';
+        final firstDayType = leaveData.first.dayType ?? '';
+        final lastDayFlag = leaveData.last.dayFlag ?? '';
+        final lastDayType = leaveData.last.dayType ?? '';
+        final firstHalf = leaveData.first.halfType ?? '';
+        final lastHalf = leaveData.last.halfType ?? '';
+
+        bool isHalfDayCut = false;
+
+        final bool isFirstDayConsidered =
+            firstDayType != LeaveConstants.holiday &&
+            firstDayType != LeaveConstants.weekOff &&
+            firstDayFlag == 'F';
+
+        final bool isLastDayConsidered =
+            lastDayType != LeaveConstants.holiday &&
+            lastDayType != LeaveConstants.weekOff &&
+            lastDayFlag == 'F';
+
+        bool firstCondition = false;
+        bool lastCondition = false;
+
+        if (isFirstDayConsidered || isLastDayConsidered) {
+          return _getDayFlagValue(dayType, includeOff, includeHoliday, false);
+        }
+
+        // ✅ Case 2: First day half, next day is holiday/weekoff
+        if (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) {
+          firstCondition = true;
+        }
+
+        // ✅ Case 3: Last day half, previous day is holiday/weekoff
+        if (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2) {
+          lastCondition = true;
+        }
+
+        final bool useAnd =
+            (firstDayType == LeaveConstants.workingDay &&
+                lastDayType ==
+                    LeaveConstants.workingDay); // both valid full days
+        final bool useOr = (!isFirstDayConsidered || !isLastDayConsidered);
+
+        bool finalResult = false;
+
+        if (useAnd) {
+          finalResult = firstCondition && lastCondition;
+        } else if (useOr) {
+          finalResult = firstCondition || lastCondition;
+        }
+
+        if (finalResult) {
+          isHalfDayCut = true;
+          return _getDayFlagValue(
+            dayType,
+            includeOff,
+            includeHoliday,
+            isHalfDayCut,
+          );
+        }
+
         if (conditions.preceding || conditions.trailing) {
           // --- --- //TODO check the precee OR trail last day second half and firsst day first halff ==== don;t includeee!  !
-          final firstDayFlag = leaveData.first.dayFlag ?? '';
-          final lastDayFlag = leaveData.last.dayFlag ?? '';
-          final firstHalf = leaveData.first.halfType ?? '';
-          final lastHalf = leaveData.last.halfType ?? '';
-
-          bool isHalfDayCut = false;
-          // If first day is H and it's the second half, cut
-          if (firstDayFlag != 'F' && lastDayFlag != 'F') {
-            if ((firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1) &&
-                (lastDayFlag == 'H' && lastHalf == LeaveConstants.halfDay2)) {
-              isHalfDayCut = true;
-            }
-          }
 
           return _getDayFlagValue(
             dayType,
