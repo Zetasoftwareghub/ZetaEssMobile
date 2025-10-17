@@ -208,7 +208,7 @@ class _LoanDetailScreenState extends ConsumerState<LoanDetailScreen> {
                       aprDate:
                           ref.watch(selectedDateProvider) ??
                           formatDate(DateTime.now()),
-                      reqDate: loan?.repaymentStartDate,
+                      reqDate: loan?.submittedDate,
                       amount: double.parse(approveAmountController.text),
                       username: userContext.empName,
                       lqslno: int.parse(loan?.loanSerialNo.toString() ?? '0'),

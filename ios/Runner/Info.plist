@@ -7,11 +7,11 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ZETA HRMS</string>
+	<string>Zeta HRMS</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>com.zetasoftwareuk.zeta</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -20,7 +20,7 @@
 		<string>nb</string>
 	</array>
 	<key>CFBundleName</key>
-	<string>zeta_ess</string>
+	<string>zetaess</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -56,26 +56,39 @@
 		<true/>
 	</dict>
 
-	<!-- Local network (used by network_info_plus) -->
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>This app uses the local network to detect IP and connectivity details.</string>
-	<key>NSBonjourServices</key>
+    <string>This app uses the local network to fetch IP address information.</string>
+
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_http._tcp</string>
+    </array>
+
+ 	     <!-- Location permissions -->
+         <key>NSLocationWhenInUseUsageDescription</key>
+         <string>We need your location to provide location-based services.</string>
+         <key>NSLocationAlwaysUsageDescription</key>
+         <string>We need your location to provide location-based services even in the background.</string>
+
+         <!-- Local Network (for network checks) -->
+         <key>NSLocalNetworkUsageDescription</key>
+         <string>This app uses the local network to fetch IP address information.</string>
+         <key>NSBonjourServices</key>
+         <array>
+             <string>_http._tcp</string>
+         </array>
+
+         <!-- Biometric / Face ID / Touch ID -->
+         <key>NSFaceIDUsageDescription</key>
+         <string>We use Face ID to authenticate you securely.</string>
+
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
 	<array>
-		<string>_http._tcp</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
-
-	<!-- Location permissions -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires location access to mark attendance and provide location-based services.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app may use your location in the background to ensure accurate attendance tracking.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location access helps record accurate check-in and check-out data.</string>
-
-	<!-- Biometrics -->
-	<key>NSBiometricsUsageDescription</key>
-	<string>This app uses your fingerprint for secure authentication.</string>
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

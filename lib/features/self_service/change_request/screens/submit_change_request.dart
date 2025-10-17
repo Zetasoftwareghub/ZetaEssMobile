@@ -352,7 +352,7 @@ class _SubmitChangeRequestScreenState
                     : Padding(
                       padding: AppPadding.screenBottomSheetPadding,
                       child: CustomElevatedButton(
-                        child: Text("submitText".tr()),
+                        child: Text(submitText.tr()),
                         onPressed: () {
                           final requestType = ref.watch(changeRequestProvider);
                           final requestDetailsList = ref.watch(
