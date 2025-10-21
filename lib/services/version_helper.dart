@@ -10,7 +10,7 @@ class VersionHelper {
   static final String _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.zeta.zeta_ess';
   static final String _appStoreUrl =
-      'https://apps.apple.com/in/app/hrms'; //TODO change the url
+      'https://apps.apple.com/in/app/zeta-hrms/id1439102381'; //TODO change the url
 
   /// Checks if current app version is older than latest version
   static bool isNewer(String latest, String current) {

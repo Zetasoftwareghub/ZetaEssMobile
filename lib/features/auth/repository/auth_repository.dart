@@ -55,7 +55,7 @@ class AuthRepository {
       final deviceType = Platform.isAndroid ? 'android' : 'ios';
       final payloadData = {
         'userId': userName,
-        'password': password.toLowerCase(),
+        'password': password,
         'deviceId': fcmToken,
         'deviceType': deviceType,
         'sucode': userContext.companyCode,
