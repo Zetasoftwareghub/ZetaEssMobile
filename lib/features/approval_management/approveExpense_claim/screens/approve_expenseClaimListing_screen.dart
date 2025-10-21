@@ -42,7 +42,10 @@ class ApproveExpenseClaimListingScreen extends ConsumerWidget {
                         expenseClaimList: data.submitted,
                         isLineManager: true,
                       ),
-                      ExpenseClaimListView(expenseClaimList: data.approved),
+                      ExpenseClaimListView(
+                        expenseClaimList: data.approved,
+                        isApprovedTab: true,
+                      ),
                       ExpenseClaimListView(expenseClaimList: data.rejected),
                     ],
                   );
@@ -61,11 +64,13 @@ class ApproveExpenseClaimListingScreen extends ConsumerWidget {
 
 class ExpenseClaimListView extends StatelessWidget {
   final bool? isLineManager;
+  final bool isApprovedTab;
   final List<ApproveExpenseClaimListingModel> expenseClaimList;
   const ExpenseClaimListView({
     super.key,
     required this.expenseClaimList,
     this.isLineManager,
+    this.isApprovedTab = false,
   });
 
   @override
@@ -83,6 +88,7 @@ class ExpenseClaimListView extends StatelessWidget {
             NavigationService.navigateToScreen(
               context: context,
               screen: ExpenseClaimDetailsScreen(
+                isApprovedTab: isApprovedTab,
                 isLineManager: isLineManager,
                 expenseClaimId: int.parse(item.id ?? '0'),
               ),

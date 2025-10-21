@@ -469,7 +469,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "5":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: LeaveListingScreen(title: 'leave_requests'.tr()),
+            screen: LeaveListingScreen(title: 'leave'.tr()),
           );
           break;
         case "6":
@@ -505,13 +505,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "112":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: ResumptionListingScreen(title: "resumption_requests".tr()),
+            screen: ResumptionListingScreen(title: "resumption_request".tr()),
           );
           break;
         case "84":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: LieuDayListingScreen(title: "lieu_days_requests".tr()),
+            screen: LieuDayListingScreen(title: "lieu_day_request".tr()),
           );
           break;
         default:
@@ -541,7 +541,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "Pending Approve Resumption":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: ApproveResumptionListingScreen(title: 'approve_resumption'),
+            screen: ApproveResumptionListingScreen(title: 'resumption_approve'),
           );
           break;
         case "Pending Approve Leave Cancellation Request":
@@ -556,7 +556,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveExpenseClaimListingScreen(
-              title: 'approve_expense_claims',
+              title: 'expense_claim_approve',
             ),
           );
           break;
@@ -564,7 +564,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryAdvanceListingScreen(
-              title: 'approve_salary_advance',
+              title: 'salary_advance_approve',
             ),
           );
           break;
@@ -572,7 +572,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveSalaryCertificateListingScreen(
-              title: 'approve_salary_certificate',
+              title: 'Approve Salary Certificate',
             ),
           );
           break;
@@ -580,7 +580,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveAttendanceRegularisationListingScreen(
-              title: 'approve_attendance_regularization',
+              title: 'attendance_regularisation_approve',
             ),
           );
           break;
@@ -596,7 +596,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           NavigationService.navigatePushReplacement(
             context: context,
             screen: const ApproveLieuDayListingScreen(
-              title: 'approve_lieu_days',
+              title: 'lieu_day_approve',
             ),
           );
           break;

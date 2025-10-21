@@ -10,6 +10,7 @@ import 'package:zeta_ess/core/utils.dart';
 import '../../../../core/common/buttons/approveReject_buttons.dart';
 import '../../../../core/common/common_text.dart';
 import '../../../../core/common/common_ui_stuffs.dart';
+import '../../../../core/common/widgets/comment_section_widget.dart';
 import '../../../../core/services/validator_services.dart';
 import '../controller/approve_cacncel_leave_controller.dart';
 import '../controller/approve_reject.dart';
@@ -93,12 +94,12 @@ class _CancelLeaveDetailsScreenState
                           title: 'Approved Date',
                           subTitle: leave?.approvedDate ?? '-',
                         ),
-                        detailInfoRow(
-                          title: 'comment',
-                          subTitle:
-                              (leave?.prevComment.isEmpty ?? true)
-                                  ? leave?.lmComment
-                                  : leave?.prevComment ?? '-',
+                        CommentSection(
+                          isSelf: false,
+                          isApproveTab: widget.showCommentField,
+                          isLineManagerSelfTab: true,
+                          lmComment: leave?.lmComment,
+                          prevComment: leave?.prevComment,
                         ),
                         10.heightBox,
                         if (widget.showCommentField)

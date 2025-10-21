@@ -104,6 +104,13 @@ class ApprovalManagementScreen extends ConsumerWidget {
                         height: 210.h,
                         bgImagePath: "assets/images/approvalOrangeCard.png",
                         firstColTile: true,
+                        onTap:
+                            () => NavigationService.navigateToScreen(
+                              context: context,
+                              screen: ApproveLeaveListingScreen(
+                                title: 'approve_leave',
+                              ),
+                            ),
                       ),
                     ),
                     10.widthBox,
@@ -121,11 +128,20 @@ class ApprovalManagementScreen extends ConsumerWidget {
                             ),
                             height: 100.h,
                             bgImagePath: "assets/images/approvalBlueCard.png",
+                            onTap:
+                                () => NavigationService.navigateToScreen(
+                                  context: context,
+                                  screen:
+                                      ApproveAttendanceRegularisationListingScreen(
+                                        title:
+                                            'attendance_regularisation_approve',
+                                      ),
+                                ),
                           ),
                           10.heightBox,
                           buildLineManagerTopTile(
                             icon: Icons.money,
-                            title: 'expenses'.tr(),
+                            title: 'expense_claim'.tr(),
                             value: expenseClaimList.when(
                               data: (data) => "(${data.submitted.length})",
                               loading: () => "(...)",
@@ -133,6 +149,13 @@ class ApprovalManagementScreen extends ConsumerWidget {
                             ),
                             height: 100.h,
                             bgImagePath: "assets/images/approvalYellowCard.png",
+                            onTap:
+                                () => NavigationService.navigateToScreen(
+                                  context: context,
+                                  screen: ApproveExpenseClaimListingScreen(
+                                    title: 'approve_leave',
+                                  ),
+                                ),
                           ),
                         ],
                       ),
@@ -465,57 +488,60 @@ class ApprovalManagementScreen extends ConsumerWidget {
     );
   }
 
-  Container buildLineManagerTopTile({
+  GestureDetector buildLineManagerTopTile({
     required icon,
     required title,
     required value,
-
+    required void Function()? onTap,
     required height,
     required bgImagePath,
 
     bool firstColTile = false,
   }) {
-    return Container(
-      height: height,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(bgImagePath),
-          fit: BoxFit.cover,
+    return GestureDetector(
+      // onTap: onTap,
+      child: Container(
+        height: height,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(bgImagePath),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(10.r),
         ),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          if (firstColTile) Icon(icon, color: Colors.white70),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            if (firstColTile) Icon(icon, color: Colors.white70),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (!firstColTile) Icon(icon, color: Colors.white70),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                if (!firstColTile) Icon(icon, color: Colors.white70),
 
-              if (!firstColTile) SizedBox(width: 5),
-              Flexible(
-                child: Text(
-                  title,
-                  style: AppTextStyles.mediumFont(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                if (!firstColTile) SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: AppTextStyles.mediumFont(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Text(
-            value,
-            style: AppTextStyles.largeFont(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              ],
             ),
-          ),
-        ],
+            Text(
+              value,
+              style: AppTextStyles.largeFont(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

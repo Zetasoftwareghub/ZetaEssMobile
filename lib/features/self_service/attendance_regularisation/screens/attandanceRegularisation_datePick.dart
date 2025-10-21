@@ -419,7 +419,7 @@ class _AttendanceRegularisationDatePickState
           rightChevronIcon: Icon(CupertinoIcons.right_chevron, size: 20.w),
         ),
         firstDay: _minDate,
-        lastDay: _maxDate,
+        lastDay: DateTime.now(),
         focusedDay: _focusedDay,
         calendarFormat: _calendarFormat,
         rangeSelectionMode: _rangeSelectionMode,

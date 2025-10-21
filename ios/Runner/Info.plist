@@ -55,33 +55,18 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library so you can select and upload images.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID to authenticate you securely.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-    <string>This app uses the local network to fetch IP address information.</string>
-
-    <key>NSBonjourServices</key>
-    <array>
-        <string>_http._tcp</string>
-    </array>
-
- 	     <!-- Location permissions -->
-         <key>NSLocationWhenInUseUsageDescription</key>
-         <string>We need your location to provide location-based services.</string>
-         <key>NSLocationAlwaysUsageDescription</key>
-         <string>We need your location to provide location-based services even in the background.</string>
-
-         <!-- Local Network (for network checks) -->
-         <key>NSLocalNetworkUsageDescription</key>
-         <string>This app uses the local network to fetch IP address information.</string>
-         <key>NSBonjourServices</key>
-         <array>
-             <string>_http._tcp</string>
-         </array>
-
-         <!-- Biometric / Face ID / Touch ID -->
-         <key>NSFaceIDUsageDescription</key>
-         <string>We use Face ID to authenticate you securely.</string>
-
+	<string>This app uses the local network to fetch IP address information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to verify your attendance when you punch in and out.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -93,18 +78,14 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>
