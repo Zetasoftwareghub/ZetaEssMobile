@@ -58,21 +58,6 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
     addListener(placeOfIssueController, "Place of Issue");
   }
 
-  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
-  //   if (_isInitialized) return;
-  //   final details = changeRequest.detail;
-  //
-  //   passportNumberController.text =
-  //       getValueFromDetails(details, "Number") ?? '';
-  //   placeOfIssueController.text =
-  //       getValueFromDetails(details, "Place of Issue") ?? '';
-  //   setState(() {
-  //     issuedCountryCode = getValueFromDetails(details, "Issued Country");
-  //     nationalityCode = getValueFromDetails(details, "Nationality");
-  //   });
-  //   _isInitialized = true;
-  //   setState(() => comment = changeRequest.comment);
-  // }
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
@@ -303,84 +288,3 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
     boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
   );
 }
-
-// class PassportDetailsForm extends StatelessWidget {
-//   const PassportDetailsForm({super.key});
-//
-//   Widget titleHeaderText(String title) => Padding(
-//     padding: EdgeInsets.symmetric(vertical: 8.h),
-//     child: Text(
-//       title,
-//       style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
-//     ),
-//   );
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Container(
-//           padding: EdgeInsets.all(12.w),
-//           decoration: _boxDecoration(),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text(
-//                 "Passport Details",
-//                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-//               ),
-//               SizedBox(height: 12.h),
-//               titleHeaderText("Old Value"),
-//               labelText("Number"),
-//               inputField(hint: "Enter Passport Number"),
-//               labelText("Place of Issue"),
-//               inputField(hint: "Enter place of issue"),
-//               labelText("Issued Date"),
-//               CustomDateField(hintText: 'issue date'),
-//               labelText("Expiry Date"),
-//               CustomDateField(hintText: 'issue date'),
-//
-//               labelText("Issued Country"),
-//               CustomDateField(hintText: 'issue date'),
-//               labelText("Nationality"),
-//               CustomDateField(hintText: 'issue date'),
-//               labelText("Passport Holder"),
-//               CustomDateField(hintText: 'issue date'),
-//             ],
-//           ),
-//         ),
-//         SizedBox(height: 16.h),
-//         Container(
-//           padding: EdgeInsets.all(12.w),
-//           decoration: _boxDecoration(),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               titleHeaderText("New Value"),
-//               labelText("Number"),
-//               inputField(hint: "Enter Passport Number"),
-//               labelText("Place of Issue"),
-//               inputField(hint: "Enter place of issue"),
-//               labelText("Issued Date"),
-//               CustomDateField(hintText: 'issue date'),
-//               labelText("Expiry Date"),
-//               CustomDateField(hintText: 'issue date'),
-//               labelText("Issued Country"),
-//               CustomDropdown(hintText: "Select"),
-//               labelText("Nationality"),
-//               CustomDropdown(hintText: "Select"),
-//               labelText("Passport Holder"),
-//               CustomDropdown(hintText: "Select"),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   BoxDecoration _boxDecoration() => BoxDecoration(
-//     color: Colors.white,
-//     borderRadius: BorderRadius.circular(12.r),
-//     boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
-//   );
-// }

@@ -62,7 +62,7 @@ class _LieuDayDetailScreenState extends ConsumerState<LieuDayDetailScreen> {
                               subTitle: lieuDay.lieuDate,
                             ),
                             detailInfoRow(
-                              title: 'leave_type'.tr(),
+                              title: 'type'.tr(),
                               subTitle: lieuDay.type,
                             ),
                             detailInfoRow(

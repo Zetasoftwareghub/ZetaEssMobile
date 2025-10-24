@@ -36,7 +36,6 @@ class MainScreen extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavProvider);
     final menuAsync = ref.watch(menuAgainstEmployeeProvider);
 
-
     return menuAsync.when(
       loading: () => CustomScreenLoader(loadingText: 'loading_menus'.tr()),
       error: (e, st) {

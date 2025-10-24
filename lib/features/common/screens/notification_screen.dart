@@ -541,7 +541,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "Pending Approve Resumption":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: ApproveResumptionListingScreen(title: 'resumption_approve'),
+            screen: ApproveResumptionListingScreen(
+              title: 'resumption_approve'.tr(),
+            ),
           );
           break;
         case "Pending Approve Leave Cancellation Request":
@@ -555,16 +557,16 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "Pending Approve Expense Claim Request":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: const ApproveExpenseClaimListingScreen(
-              title: 'expense_claim_approve',
+            screen: ApproveExpenseClaimListingScreen(
+              title: 'expense_claim_approve'.tr(),
             ),
           );
           break;
         case "Pending Approve Salary Advance Request":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: const ApproveSalaryAdvanceListingScreen(
-              title: 'salary_advance_approve',
+            screen: ApproveSalaryAdvanceListingScreen(
+              title: 'salary_advance_approve'.tr(),
             ),
           );
           break;
@@ -595,9 +597,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         case "Pending Approve Lieu Days Request":
           NavigationService.navigatePushReplacement(
             context: context,
-            screen: const ApproveLieuDayListingScreen(
-              title: 'lieu_day_approve',
-            ),
+            screen: ApproveLieuDayListingScreen(title: 'lieu_day_approve'.tr()),
           );
           break;
         default:

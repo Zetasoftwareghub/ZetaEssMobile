@@ -66,18 +66,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final showCalendar = ref.watch(toggleCalendarProvider);
-    final versionAsync = ref.watch(versionFutureProvider);
-
-    versionAsync.when(
-      data: (version) {
-        // Call global version helper once
-        Future.microtask(
-          () => VersionHelper.checkAndShowUpdateDialog(context, version),
-        );
-      },
-      loading: () => const SizedBox(), // or loader
-      error: (e, st) => const SizedBox(), // ignore errors here or handle
-    );
+    // final versionAsync = ref.watch(versionFutureProvider);
+    //
+    // versionAsync.when(
+    //   data: (version) {
+    //     print('object111');
+    //     // Call global version helper once
+    //     Future.microtask(
+    //       () => VersionHelper.checkAndShowUpdateDialog(context, version),
+    //     );
+    //   },
+    //   loading: () => const SizedBox(), // or loader
+    //   error: (e, st) => const SizedBox(), // ignore errors here or handle
+    // );
 
     return showCalendar
         ? CalendarHomeView(showCheckInOut: widget.showCheckInOut)

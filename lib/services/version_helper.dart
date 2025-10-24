@@ -32,6 +32,7 @@ class VersionHelper {
     BuildContext context,
     VersionModel? version,
   ) async {
+    print(version?.message);
     if (version == null) return;
 
     final latestVersion = version.latestVersion;

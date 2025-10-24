@@ -56,8 +56,6 @@ class _EditChangeRequestScreenState
   }
 
   getWhichEditScreen() {
-    printFullJson(widget.chrqcd);
-    printFullJson("widget.chrqcd");
     switch (widget.chrqst) {
       case "O":
         screen = OtherChangeRequestForm(

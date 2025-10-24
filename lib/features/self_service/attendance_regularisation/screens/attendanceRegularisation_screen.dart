@@ -941,120 +941,153 @@ class _AttendanceRegularisationScreenState
   ) {
     showDialog(
       context: context,
-      builder:
-          (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF09A5D9).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.comment,
-                            color: Color(0xFF09A5D9),
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Add Remarks'.tr(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _remarkController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText:
-                            'Enter remarks for this regularization request...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF09A5D9),
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.all(16),
-                      ),
-                      validator: (value) {
-                        if (value?.isNotEmpty == true) {
-                          // Add emoji validation if needed
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('Cancel'.tr()),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                final result = await controller.buildAndSubmit(
-                                  _remarkController.text,
-                                  context,
-                                );
+      builder: (context) {
+        final TextEditingController _remarkController = TextEditingController();
+        final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-                                if (result != null) {
-                                  showCustomAlertBox(
-                                    context,
-                                    title: result,
-                                    type:
-                                        result == 'Submitted Successfully'
-                                            ? AlertType.success
-                                            : AlertType.warning,
-                                  );
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              }
-                            },
+        return StatefulBuilder(
+          builder: (context, setState) {
+            bool isLoading =
+                ref.watch(attendanceRegularizationControllerProvider).isLoading;
 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF09A5D9),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child:
+                      isLoading
+                          ? Loader()
+                          : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF09A5D9,
+                                      ).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.comment,
+                                      color: Color(0xFF09A5D9),
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Add Remarks'.tr(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            child: Text(submitText.tr()),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                controller: _remarkController,
+                                maxLines: 4,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'Enter remarks for this regularization request...'
+                                          .tr(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF09A5D9),
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.all(16),
+                                ),
+                                validator: (value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Remarks cannot be empty'.tr();
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('Cancel'.tr()),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+
+                                          final result = await controller
+                                              .buildAndSubmit(
+                                                _remarkController.text,
+                                                context,
+                                              );
+
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+
+                                          if (result != null) {
+                                            Navigator.pop(context);
+                                            showCustomAlertBox(
+                                              context,
+                                              title: result,
+                                              type:
+                                                  result ==
+                                                          'Submitted Successfully'
+                                                      ? AlertType.success
+                                                      : AlertType.warning,
+                                            );
+                                          } else {
+                                            Navigator.pop(context);
+                                          }
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF09A5D9,
+                                        ),
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      child: Text('Submit'.tr()),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-            ),
-          ),
+            );
+          },
+        );
+      },
     );
   }
 
