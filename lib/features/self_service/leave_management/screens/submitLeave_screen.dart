@@ -135,11 +135,11 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(leaveControllerProvider);
     final AsyncValue<LeaveEditResponse?>? details =
         isEditMode
             ? ref.watch(getSelfLeaveDetailsProvider(widget.leaveId ?? '0'))
             : null;
+    final isLoading = details?.isLoading ?? false;
 
     final data = details?.maybeWhen(data: (d) => d, orElse: () => null);
     if (data != null && !hasPrefilled) {
@@ -153,219 +153,244 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
     final isSubmitting = submitState.isLoading;
     return Scaffold(
       appBar: AppBar(title: Text('submit_leave'.tr())),
-      body: SingleChildScrollView(
-        padding: AppPadding.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            labelText("${("submitting_date".tr())}: $submittedDate"),
-            CustomDateRangePickerField(
-              readOnly: widget.submitResumptionModel != null,
-              fromDate: dateFrom,
-              toDate: dateTo,
-              hintText: "select_duration",
-              onDateRangeSelected: (dateFrom, dateTo) {
-                isEditMode = false;
-                leaveController.setData([]);
-                leaveController.isSubmitted = false;
-                ref.read(dateFromProvider.notifier).state = dateFrom;
-                ref.read(dateToProvider.notifier).state = dateTo;
-                if (ref.watch(selectedLeaveTypeProvider) != null) {
-                  ref
-                      .read(leaveControllerProvider.notifier)
-                      .getLeaveDays(
-                        dateFrom: dateFrom,
-                        dateTo: dateTo,
-                        leaveCode: selectedLeaveType ?? '',
-                      );
-                }
-              },
-            ),
-            labelText("leave_type".tr(), isRequired: true),
-            Row(
-              children: [
-                Expanded(
-                  child: ref
-                      .watch(leaveTypesProvider)
-                      .when(
-                        data: (leaveTypes) {
-                          leaveTypeList = leaveTypes;
-                          return CustomDropdown(
-                            value: selectedLeaveType,
-                            onChanged: (leaveTypeId) {
-                              isEditMode = false;
+      body:
+          isLoading
+              ? Loader()
+              : SingleChildScrollView(
+                padding: AppPadding.screenPadding,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    labelText("${("submitting_date".tr())}: $submittedDate"),
+                    CustomDateRangePickerField(
+                      readOnly: widget.submitResumptionModel != null,
+                      fromDate: dateFrom,
+                      toDate: dateTo,
+                      hintText: "select_duration",
+                      onDateRangeSelected: (dateFrom, dateTo) {
+                        isEditMode = false;
+                        leaveController.setData([]);
+                        leaveController.isSubmitted = false;
+                        ref.read(dateFromProvider.notifier).state = dateFrom;
+                        ref.read(dateToProvider.notifier).state = dateTo;
+                        if (ref.watch(selectedLeaveTypeProvider) != null) {
+                          ref
+                              .read(leaveControllerProvider.notifier)
+                              .getLeaveDays(
+                                dateFrom: dateFrom,
+                                dateTo: dateTo,
+                                leaveCode: selectedLeaveType ?? '',
+                              );
+                        }
+                      },
+                    ),
+                    labelText("leave_type".tr(), isRequired: true),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ref
+                              .watch(leaveTypesProvider)
+                              .when(
+                                data: (leaveTypes) {
+                                  leaveTypeList = leaveTypes;
+                                  return CustomDropdown(
+                                    value: selectedLeaveType,
+                                    onChanged: (leaveTypeId) {
+                                      isEditMode = false;
 
-                              leaveController.setData([]);
-                              leaveController.isSubmitted = false;
-                              ref
-                                  .read(selectedLeaveTypeProvider.notifier)
-                                  .state = leaveTypeId;
-
-                              if (dateFrom != null &&
-                                  dateTo != null &&
-                                  leaveTypeId != null) {
-                                ref
-                                    .read(leaveControllerProvider.notifier)
-                                    .getLeaveDays(
-                                      dateFrom: dateFrom,
-                                      dateTo: dateTo,
-                                      leaveCode: leaveTypeId,
-                                    );
-                              }
-                            },
-                            items:
-                                leaveTypes
-                                    .map(
-                                      (e) => DropdownMenuItem<String>(
-                                        value: e.leaveTypeId,
-                                        child: Text(e.leaveType ?? ''),
-                                      ),
-                                    )
-                                    .toList(),
-                            hintText: "leave_type".tr(),
-                          );
-                        },
-                        error:
-                            (error, stackTrace) => ErrorText(error: '$error'),
-                        loading: () => const Loader(),
-                      ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (selectedLeaveType != null &&
-                        dateFrom != null &&
-                        dateTo != null) {
-                      if (isEditMode) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => LeaveConfigurationEdit(
-                                  isResumptionLeave:
-                                      widget.submitResumptionModel != null,
-
-                                  dateFrom: dateFrom,
-                                  dateTo: dateTo,
-                                  leaveCode: ref.watch(
-                                    selectedLeaveTypeProvider,
-                                  ),
-                                  isLieuDay:
-                                      leaveTypeList
-                                          ?.firstWhere(
-                                            (element) =>
-                                                element.leaveTypeId ==
-                                                selectedLeaveType,
+                                      leaveController.setData([]);
+                                      leaveController.isSubmitted = false;
+                                      ref
+                                          .read(
+                                            selectedLeaveTypeProvider.notifier,
                                           )
-                                          .ltlieu ==
-                                      'Y',
+                                          .state = leaveTypeId;
 
-                                  selectedLeaveType: leaveTypeList?.firstWhere(
-                                    (element) =>
-                                        element.leaveTypeId ==
-                                        selectedLeaveType,
+                                      if (dateFrom != null &&
+                                          dateTo != null &&
+                                          leaveTypeId != null) {
+                                        ref
+                                            .read(
+                                              leaveControllerProvider.notifier,
+                                            )
+                                            .getLeaveDays(
+                                              dateFrom: dateFrom,
+                                              dateTo: dateTo,
+                                              leaveCode: leaveTypeId,
+                                            );
+                                      }
+                                    },
+                                    items:
+                                        leaveTypes
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e.leaveTypeId,
+                                                child: Text(e.leaveType ?? ''),
+                                              ),
+                                            )
+                                            .toList(),
+                                    hintText: "leave_type".tr(),
+                                  );
+                                },
+                                error:
+                                    (error, stackTrace) =>
+                                        ErrorText(error: '$error'),
+                                loading: () => const Loader(),
+                              ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            if (selectedLeaveType != null &&
+                                dateFrom != null &&
+                                dateTo != null) {
+                              if (isEditMode) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => LeaveConfigurationEdit(
+                                          isResumptionLeave:
+                                              widget.submitResumptionModel !=
+                                              null,
+
+                                          dateFrom: dateFrom,
+                                          dateTo: dateTo,
+                                          leaveCode: ref.watch(
+                                            selectedLeaveTypeProvider,
+                                          ),
+                                          isLieuDay:
+                                              leaveTypeList
+                                                  ?.firstWhere(
+                                                    (element) =>
+                                                        element.leaveTypeId ==
+                                                        selectedLeaveType,
+                                                  )
+                                                  .ltlieu ==
+                                              'Y',
+
+                                          selectedLeaveType: leaveTypeList
+                                              ?.firstWhere(
+                                                (element) =>
+                                                    element.leaveTypeId ==
+                                                    selectedLeaveType,
+                                              ),
+                                          initialLeaveType: initialLeaveType,
+                                          selectedSameValues:
+                                              leaveTypeList?.firstWhere(
+                                                (element) =>
+                                                    element.leaveTypeId ==
+                                                    selectedLeaveType,
+                                              ) ==
+                                              initialLeaveType,
+                                          data: leaveConfigData,
+                                          dataSub: leaveConfigDataSub,
+                                          dataCan: leaveConfigDataCan,
+                                          lssNo: widget.leaveId ?? '0',
+                                        ),
                                   ),
-                                  initialLeaveType: initialLeaveType,
-                                  selectedSameValues:
-                                      leaveTypeList?.firstWhere(
-                                        (element) =>
-                                            element.leaveTypeId ==
-                                            selectedLeaveType,
-                                      ) ==
-                                      initialLeaveType,
-                                  data: leaveConfigData,
-                                  dataSub: leaveConfigDataSub,
-                                  dataCan: leaveConfigDataCan,
-                                  lssNo: widget.leaveId ?? '0',
-                                ),
-                          ),
-                        ).then((v) {
-                          if (leaveController
-                              .leaveConfigurationData
-                              .isNotEmpty) {
-                            final first =
-                                leaveController.leaveConfigurationData.first;
-                            final last =
-                                leaveController.leaveConfigurationData.last;
-                            ref.read(dateFromProvider.notifier).state =
-                                (first.dayFlag != ''
-                                    ? first.dLsdate
-                                    : last.dLsdate) ??
-                                '';
+                                ).then((v) {
+                                  if (leaveController
+                                      .leaveConfigurationData
+                                      .isNotEmpty) {
+                                    final first =
+                                        leaveController
+                                            .leaveConfigurationData
+                                            .first;
+                                    final last =
+                                        leaveController
+                                            .leaveConfigurationData
+                                            .last;
+                                    ref.read(dateFromProvider.notifier).state =
+                                        (first.dayFlag != ''
+                                            ? first.dLsdate
+                                            : last.dLsdate) ??
+                                        '';
 
-                            ref.read(dateToProvider.notifier).state =
-                                (last.dayFlag != ''
-                                    ? last.dLsdate
-                                    : first.dLsdate) ??
-                                '';
-                          }
-                        });
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => LeaveConfiguration(
-                                  isResumptionLeave:
-                                      widget.submitResumptionModel != null,
-                                  dateFrom: dateFrom,
-                                  dateTo: dateTo,
-                                  leaveCode: ref.watch(
-                                    selectedLeaveTypeProvider,
+                                    ref.read(dateToProvider.notifier).state =
+                                        (last.dayFlag != ''
+                                            ? last.dLsdate
+                                            : first.dLsdate) ??
+                                        '';
+                                  }
+                                });
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => LeaveConfiguration(
+                                          isResumptionLeave:
+                                              widget.submitResumptionModel !=
+                                              null,
+                                          dateFrom: dateFrom,
+                                          dateTo: dateTo,
+                                          leaveCode: ref.watch(
+                                            selectedLeaveTypeProvider,
+                                          ),
+                                        ),
                                   ),
-                                ),
-                          ),
-                        ).then((v) {
-                          if (leaveController
-                              .leaveConfigurationData
-                              .isNotEmpty) {
-                            final first =
-                                leaveController.leaveConfigurationData.first;
-                            final last =
-                                leaveController.leaveConfigurationData.last;
-                            ref.read(dateFromProvider.notifier).state =
-                                (first.dayFlag != ''
-                                    ? first.dLsdate
-                                    : last.dLsdate) ??
-                                '';
+                                ).then((v) {
+                                  if (leaveController
+                                      .leaveConfigurationData
+                                      .isNotEmpty) {
+                                    final first =
+                                        leaveController
+                                            .leaveConfigurationData
+                                            .first;
+                                    final last =
+                                        leaveController
+                                            .leaveConfigurationData
+                                            .last;
+                                    ref.read(dateFromProvider.notifier).state =
+                                        (first.dayFlag != ''
+                                            ? first.dLsdate
+                                            : last.dLsdate) ??
+                                        '';
 
-                            ref.read(dateToProvider.notifier).state =
-                                (last.dayFlag != ''
-                                    ? last.dLsdate
-                                    : first.dLsdate) ??
-                                '';
-                          }
-                        });
-                      }
-                    } else {
-                      showSnackBar(
-                        context: context,
-                        color: AppTheme.errorColor,
-                        content: 'Select date and leave type first',
-                      );
-                    }
-                  },
-                  child: Text("${"configure".tr()} *"),
+                                    ref.read(dateToProvider.notifier).state =
+                                        (last.dayFlag != ''
+                                            ? last.dLsdate
+                                            : first.dLsdate) ??
+                                        '';
+                                  }
+                                });
+                              }
+                            } else {
+                              showSnackBar(
+                                context: context,
+                                color: AppTheme.errorColor,
+                                content: 'Select date and leave type first',
+                              );
+                            }
+                          },
+                          child: Text("${"configure".tr()} *"),
+                        ),
+                      ],
+                    ),
+                    Center(
+                      child: titleHeaderText(
+                        '${'Total leave days'.tr()}: ${ref.watch(totalLeaveDaysStateProvider)} ',
+                      ),
+                    ),
+                    labelText("reason_for_leave".tr()),
+                    inputField(
+                      hint: "enter".tr(),
+                      controller: reasonController,
+                    ),
+
+                    labelText("contact_details".tr()),
+                    inputField(
+                      hint: "enter",
+                      controller: contactDetailsController,
+                    ),
+
+                    16.heightBox,
+                    FileUploadButton(editFileUrl: editFileUrl),
+
+                    50.heightBox,
+                  ],
                 ),
-              ],
-            ),
-            Center(
-              child: titleHeaderText(
-                '${'Total leave days'.tr()}: ${ref.watch(totalLeaveDaysStateProvider)} ',
               ),
-            ),
-            labelText("reason_for_leave".tr()),
-            inputField(hint: "enter".tr(), controller: reasonController),
-
-            labelText("contact_details".tr()),
-            inputField(hint: "enter", controller: contactDetailsController),
-
-            16.heightBox,
-            FileUploadButton(editFileUrl: editFileUrl),
-
-            50.heightBox,
-          ],
-        ),
-      ),
       bottomSheet: SafeArea(
         child: Padding(
           padding: AppPadding.screenBottomSheetPadding,

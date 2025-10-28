@@ -48,11 +48,27 @@ class _EditChangeRequestScreenState
     extends ConsumerState<EditChangeRequestScreen> {
   Widget? screen;
   final TextEditingController commentController = TextEditingController();
+  // bool isLoading = false;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getWhichEditScreen();
+  // }
+  bool isLoading = true; // 👈 Initially true to show loader
 
   @override
   void initState() {
     super.initState();
+    _initScreen();
+  }
+
+  Future<void> _initScreen() async {
+    setState(() => isLoading = true);
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // 👈 small delay (optional)
     getWhichEditScreen();
+    setState(() => isLoading = false);
   }
 
   getWhichEditScreen() {

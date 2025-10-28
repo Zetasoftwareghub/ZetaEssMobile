@@ -642,6 +642,8 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
       return "#FF0000";
     } else if (dayType == "4") {
       return "#78DE95";
+    } else if (dayType == "2") {
+      return "#B0B0B0";
     }
 
     return "#ffffff";
@@ -707,7 +709,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 if (widget.showDetail) {
                   return;
                 }
-                if (i.dayType == 3 || i.dayType == 4) {
+                if (i.dayType == 3 || i.dayType == 4 || i.dayType == 2) {
                   return;
                 }
                 _fullDay(i);
@@ -767,7 +769,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                 if (widget.showDetail) {
                   return;
                 }
-                if (i.dayType == 3 || i.dayType == 4) {
+                if (i.dayType == 3 || i.dayType == 4 || i.dayType == 2) {
                   return;
                 }
 
