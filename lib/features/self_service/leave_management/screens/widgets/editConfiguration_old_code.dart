@@ -632,6 +632,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
       return "#FF0000";
     } else if (dayType == "4") {
       return "#78DE95";
+    } else if (dayType == "2") {
+      return "#B0B0B0";
     }
 
     return "#ffffff";
@@ -740,7 +742,9 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
                             _halfDay(i);
                           },
                           child: Text(
-                            i.halfType == "1" ? 'FH' : 'SH',
+                            (i.halfType ?? '').isEmpty || i.halfType == "1"
+                                ? 'FH'
+                                : 'SH',
                             style: TextStyle(fontSize: 10),
                           ),
                         )

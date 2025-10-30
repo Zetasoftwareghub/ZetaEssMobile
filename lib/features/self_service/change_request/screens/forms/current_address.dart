@@ -7,6 +7,7 @@ import 'package:zeta_ess/core/utils.dart';
 import '../../../../../core/common/common_ui_stuffs.dart';
 import '../../../../../core/common/error_text.dart';
 import '../../../../../core/common/loader.dart';
+import '../../models/address_model.dart';
 import '../../models/change_request_model.dart';
 import '../../providers/change_request_providers.dart';
 import '../../providers/form_provider.dart';
@@ -54,7 +55,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     );
     void addListener(TextEditingController c, String field) {
       c.addListener(() {
-        updateField(ref, field, c.text);
+        updateField(ref, field, c.text, oldChvalu: c.text);
       });
     }
 
@@ -79,7 +80,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value); // ⚡ sync with provider
+      updateField(ref, field, value, oldChvalu: value);
     }
 
     // Set all fields
@@ -96,10 +97,10 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
     // After setting countryCode and comment
     setState(() => countryCode = getValueFromDetails(details, "Country"));
-    updateField(ref, "Country", countryCode ?? '');
+    updateField(ref, "Country", countryCode ?? '', oldChvalu: countryCode);
 
     setState(() => comment = changeRequest.comment);
-    updateField(ref, "Comment", comment ?? '');
+    updateField(ref, "Comment", comment ?? '', oldChvalu: comment);
     _isInitialized = true;
   }
 
@@ -182,7 +183,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
               subTitle: data.emailId ?? '', //TODO issue in backend
             ),
             SizedBox(height: 16.h),
-            _formSection(readOnly: widget.isLineManager ?? false),
+            _formSection(readOnly: widget.isLineManager ?? false, data: data),
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
@@ -199,7 +200,10 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     );
   }
 
-  Widget _formSection({required bool readOnly}) {
+  Widget _formSection({
+    required bool readOnly,
+    required AddressContactModel data,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -210,14 +214,22 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           readOnly: readOnly,
           hint: 'House No.',
           controller: addressLine1Controller,
-          onChanged: (val) => updateField(ref, "House No.", val),
+          onChanged:
+              (val) => updateField(
+                ref,
+                "House No.",
+                val,
+                oldChvalu: data.addressLine1,
+              ),
         ),
         labelText("Street Name"),
         inputField(
           readOnly: readOnly,
           hint: 'Street',
           controller: streetNameController,
-          onChanged: (val) => updateField(ref, "Street.", val),
+          onChanged:
+              (val) =>
+                  updateField(ref, "Street.", val, oldChvalu: data.streetName),
         ),
 
         labelText("Town/City"),
@@ -226,7 +238,13 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
           hint: "Town/City",
           controller: cityController,
-          onChanged: (val) => updateField(ref, "Town/City", val),
+          onChanged:
+              (val) => updateField(
+                ref,
+                "Town/City",
+                val,
+                oldChvalu: data.townCityName,
+              ),
         ),
 
         labelText("State"),
@@ -235,7 +253,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
           hint: "State",
           controller: stateController,
-          onChanged: (val) => updateField(ref, "State", val),
+          onChanged:
+              (val) =>
+                  updateField(ref, "State", val, oldChvalu: data.stateName),
         ),
 
         labelText("Country"),
@@ -264,7 +284,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           readOnly: readOnly,
           hint: "Post box",
           controller: postBoxController,
-          onChanged: (val) => updateField(ref, "Post box", val),
+          onChanged:
+              (val) =>
+                  updateField(ref, "Post box", val, oldChvalu: data.postBox),
         ),
         labelText("Phone No."),
         inputPhoneField(
@@ -273,7 +295,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: phoneNumberController,
           isRequired: true,
           onChanged: (val) {
-            updateField(ref, "Phone No.", val);
+            updateField(ref, "Phone No.", val, oldChvalu: data.phoneNumber);
           },
         ),
         labelText("Mobile"),
@@ -283,7 +305,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: mobileNumberController,
           isRequired: true,
           onChanged: (val) {
-            updateField(ref, "Mobile", val);
+            updateField(ref, "Mobile", val, oldChvalu: data.mobileNumber);
           },
         ),
         labelText("Personal Email id"),
@@ -293,14 +315,26 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: personalEmailController,
 
           //TODO ESS THIS IS WRANNNG onChanged: (val) => updateField(ref, "Personal Email id", val),
-          onChanged: (val) => updateField(ref, "Official Email id.", val),
+          onChanged:
+              (val) => updateField(
+                ref,
+                "Official Email id.",
+                val,
+                oldChvalu: data.emailId,
+              ),
         ),
         labelText("Official Email id"),
         inputField(
           readOnly: readOnly,
           hint: "Official Email id",
           controller: officialEmailController,
-          onChanged: (val) => updateField(ref, "Personal Email id", val),
+          onChanged:
+              (val) => updateField(
+                ref,
+                "Personal Email id",
+                val,
+                oldChvalu: data.personalMailId,
+              ),
 
           //TODO ESS THIS IS WRANNNG onChanged: (val) => updateField(ref, "Official Email id.", val),
         ),

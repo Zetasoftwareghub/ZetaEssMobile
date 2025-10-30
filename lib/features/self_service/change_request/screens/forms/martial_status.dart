@@ -54,7 +54,7 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
     final value =
         getValueFromDetails(changeRequest.detail, "Marital Status") ?? '';
 
-    updateField(ref, "Marital Status", value);
+    updateField(ref, "Marital Status", value, oldChvalu: value);
 
     ref.read(newMaritalStatusProvider.notifier).state = value;
 

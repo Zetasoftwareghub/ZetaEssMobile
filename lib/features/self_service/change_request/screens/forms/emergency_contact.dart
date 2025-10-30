@@ -7,6 +7,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/change_request/providers/change_request_providers.dart';
 
 import '../../../../../core/common/common_ui_stuffs.dart';
+import '../../models/address_model.dart';
 import '../../models/change_request_model.dart';
 import '../../providers/form_provider.dart';
 import '../widgets/input_phone_field.dart';
@@ -50,7 +51,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
 
   void addListener(TextEditingController controller, String fieldName) {
     controller.addListener(() {
-      updateField(ref, fieldName, controller.text);
+      updateField(ref, fieldName, controller.text, oldChvalu: controller.text);
     });
   }
 
@@ -87,7 +88,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value); // ⚡ sync with provider
+      updateField(ref, field, value, oldChvalu: value); // ⚡ sync with provider
     }
 
     // Contact 1
@@ -135,7 +136,6 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     setState(() => comment = changeRequest.comment);
   }
 */
-
   @override
   Widget build(BuildContext context) {
     if (widget.reqId != null) {

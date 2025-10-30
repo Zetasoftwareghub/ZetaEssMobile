@@ -424,7 +424,6 @@ class _AttendanceRegularisationDatePickState
         calendarFormat: _calendarFormat,
         rangeSelectionMode: _rangeSelectionMode,
         eventLoader: _getEventsForDay,
-
         startingDayOfWeek: StartingDayOfWeek.monday,
         selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
         rangeStartDay: _rangeStart,

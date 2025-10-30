@@ -140,7 +140,7 @@ class LeaveConfigurationData {
 
   Map toJson() => {
     'leaveDate': date,
-    'dayType': leaveType,
+    'dayType': dayType,
     'leaveCode': leaveCode,
     'dayFlag': (dayFlag ?? '').isEmpty ? 'F' : dayFlag,
     'paidAbsent': paidAbsent,
