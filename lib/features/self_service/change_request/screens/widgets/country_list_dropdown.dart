@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/error_text.dart';
 import 'package:zeta_ess/core/common/loader.dart';
+import 'package:zeta_ess/features/self_service/change_request/models/country_details_model.dart';
 import 'package:zeta_ess/features/self_service/change_request/providers/change_request_providers.dart';
 
 import '../../../../../core/common/widgets/customDropDown_widget.dart';
@@ -24,9 +25,10 @@ class CustomCountryDropDown extends ConsumerWidget {
           data: (countryList) {
             final selectedCountry = countryList.firstWhere(
               (element) => element.countryCode == countryCode,
+              orElse:
+                  () => CountryDetailsModel(countryCode: '', countryName: ''),
             );
 
-            // Extract the name safely
             final oldCountryName = selectedCountry.countryName ?? '';
 
             // 🔼 Automatically notify parent (if needed)

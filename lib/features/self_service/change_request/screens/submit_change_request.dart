@@ -358,7 +358,6 @@ class _SubmitChangeRequestScreenState
                           final requestDetailsList = ref.watch(
                             changeRequestDetailsListProvider,
                           );
-
                           if (requestType == null) return;
                           final user = ref.watch(userContextProvider);
                           final saveModel = ChangeRequestModel(
@@ -382,8 +381,6 @@ class _SubmitChangeRequestScreenState
                             detail: requestDetailsList,
                             chrqtpText: "",
                           );
-                          printFullJson(saveModel.toJson());
-                          printFullJson("saveModel.toJson()");
                           if (selectedType == RequestType.bankDetails &&
                               (saveModel.bacode == 0 ||
                                   saveModel.bcacno == null ||
