@@ -31,6 +31,7 @@ class PassportRepository {
           'emcode': employeeCode ?? userContext.empCode,
         },
       );
+      print(res.data['data'][0][0]);
       if (res.statusCode == 200 && res.data['success'] == true) {
         return PassportDetails.fromJson(res.data['data'][0][0]);
       } else {

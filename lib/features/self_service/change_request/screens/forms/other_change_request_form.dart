@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/loader.dart';
 
 import '../../../../../core/common/common_ui_stuffs.dart';
 import '../../models/change_request_model.dart';
@@ -72,6 +73,8 @@ class _OtherChangeRequestFormState
     });
   }
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     if (widget.reqId != null) {
@@ -85,38 +88,46 @@ class _OtherChangeRequestFormState
           _initializeFromChangeRequest(changeRequest);
         });
       });
+      isLoading = changeRequestAsync.isLoading ?? false;
     }
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Other Change Request".tr(),
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: 12.h),
-          labelText("Request Details"),
-          inputField(
-            hint: "Request Details",
-            readOnly: widget.isLineManager,
-            minLines: 3,
-            onChanged: (v) => updateField(ref, "Other Change Request", v),
-            controller: otherChangeRequestCtrl,
-          ),
-          if ((widget.isLineManager ?? false) && (comment?.isNotEmpty ?? false))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
 
-              children: [titleHeaderText("comment"), labelText(comment ?? '')],
-            ),
-        ],
-      ),
-    );
+    return isLoading
+        ? Loader()
+        : Container(
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Other Change Request".tr(),
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 12.h),
+              labelText("Request Details"),
+              inputField(
+                hint: "Request Details",
+                readOnly: widget.isLineManager,
+                minLines: 3,
+                onChanged: (v) => updateField(ref, "Other Change Request", v),
+                controller: otherChangeRequestCtrl,
+              ),
+              if ((widget.isLineManager ?? false) &&
+                  (comment?.isNotEmpty ?? false))
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    titleHeaderText("comment"),
+                    labelText(comment ?? ''),
+                  ],
+                ),
+            ],
+          ),
+        );
   }
 }

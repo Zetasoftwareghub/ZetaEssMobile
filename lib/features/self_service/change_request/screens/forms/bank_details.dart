@@ -14,8 +14,10 @@ BankDetailsModel? oldBankModel;
 
 final bankAccNoProvider = StateProvider<String?>((ref) => null);
 final bankCodeProvider = StateProvider<int?>((ref) => null);
+final bankNameProvider = StateProvider<String?>((ref) => null);
 final bankAccNameProvider = StateProvider<String?>((ref) => null);
-final oldBanmrovider = StateProvider<String?>((ref) => null);
+final oldBankCodeProvider = StateProvider<String?>((ref) => null);
+final oldBankNameProvider = StateProvider<String?>((ref) => null);
 
 class BankDetailsForm extends ConsumerStatefulWidget {
   final int? reqId;
@@ -42,7 +44,7 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
 
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
-    ref.read(oldBanmrovider.notifier).state ??= changeRequest.bankNameDetail;
+    ref.read(bankNameProvider.notifier).state ??= changeRequest.bankNameDetail;
 
     if (changeRequest.bcacno != null) {
       accountNumberController.text = changeRequest.bcacno!;
@@ -63,7 +65,8 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
     if (_isBankDetailsInitialized) return;
     oldBankModel = bankDetails;
 
-    ref.read(oldBanmrovider.notifier).state ??= bankDetails.bankCode.toString();
+    ref.read(oldBankCodeProvider.notifier).state ??=
+        bankDetails.bankCode.toString();
     ref.read(bankAccNoProvider.notifier).state ??= bankDetails.accountNumber;
     ref.read(bankCodeProvider.notifier).state ??= bankDetails.bankCode;
     ref.read(bankAccNameProvider.notifier).state ??= bankDetails.accountName;
@@ -73,19 +76,6 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
 
   @override
   Widget build(BuildContext context) {
-    // if (widget.reqId != null) {
-    //   final changeRequestAsync = ref.watch(
-    //     changeRequestDetailsFetchProvider(widget.reqId!),
-    //   );
-    //
-    //   // Initialize from change request when data is available
-    //   changeRequestAsync.whenData((changeRequest) {
-    //     WidgetsBinding.instance.addPostFrameCallback((_) {
-    //       _initializeFromChangeRequest(changeRequest);
-    //     });
-    //   });
-    // }
-    // Listen to change request provider
     if (widget.reqId != null) {
       ref.listen<AsyncValue<ChangeRequestModel>>(
         changeRequestDetailsFetchProvider(widget.reqId!),
@@ -171,14 +161,32 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
             .watch(banksListProvider)
             .when(
               data: (bankList) {
+                if (readOnly) {
+                  Future.microtask(
+                    () =>
+                        ref.read(oldBankNameProvider.notifier).state =
+                            bankList
+                                .firstWhere(
+                                  (element) => element.bankCode == bankCode,
+                                )
+                                .bankDisplayName,
+                  );
+                }
                 return CustomDropdown<int>(
                   hintText: 'Bank not selected',
                   value: bankCode == 0 ? null : bankCode,
                   onChanged:
                       readOnly
                           ? null
-                          : (v) =>
-                              ref.read(bankCodeProvider.notifier).state = v,
+                          : (v) {
+                            ref.read(bankNameProvider.notifier).state =
+                                bankList
+                                    .firstWhere(
+                                      (element) => element.bankCode == v,
+                                    )
+                                    .bankDisplayName;
+                            ref.read(bankCodeProvider.notifier).state = v;
+                          },
                   items:
                       bankList
                           .map(

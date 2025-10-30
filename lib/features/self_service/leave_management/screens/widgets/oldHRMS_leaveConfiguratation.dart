@@ -655,6 +655,8 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     List<DataRow> ConfigList = [];
     int index = 0;
     for (var i in leaveConfigList) {
+      print(i.halfType);
+      print("i.halfType");
       var item = leaveController.leaveConfigurationData.where(
         (x) => x.dLsdate == i.dLsdate,
       );
@@ -753,7 +755,9 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                             _halfDay(i);
                           },
                           child: Text(
-                            i.halfType == "1" ? 'FH' : 'SH',
+                            (i.halfType ?? '').isEmpty || i.halfType == "1"
+                                ? 'FH'
+                                : 'SH',
                             style: AppTextStyles.smallFont(),
                           ),
                         )
@@ -858,8 +862,6 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
         "dtto": dateTo,
         "leavcode": leaveType,
       };
-      print(data);
-      print('getLeaveCONFIG');
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",
         data: data,

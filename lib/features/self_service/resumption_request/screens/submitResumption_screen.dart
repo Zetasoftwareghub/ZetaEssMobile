@@ -45,7 +45,6 @@ class _SubmitResumptionScreenState
   Widget build(BuildContext context) {
     final isLoading = ref.watch(resumptionControllerProvider);
     final selectedLeave = ref.watch(selectedResumptionLeaveTypeProvider);
-    printFullJson(selectedLeave?.canChangeDate);
 
     return Scaffold(
       appBar: AppBar(
@@ -166,6 +165,9 @@ class _SubmitResumptionScreenState
                   padding: AppPadding.screenBottomSheetPadding,
                   child: CustomElevatedButton(
                     onPressed: () {
+                      final newlyDate = ref.watch(newlySelectedDate);
+                      final filedData = ref.watch(fileUploadProvider).value;
+
                       final user = ref.watch(userContextProvider);
                       final selectedLeave = ref.watch(
                         selectedResumptionLeaveTypeProvider,
@@ -180,9 +182,6 @@ class _SubmitResumptionScreenState
                         return;
                       }
 
-                      final filedData = ref.watch(fileUploadProvider).value;
-                      final newlyDate = ref.watch(newlySelectedDate);
-
                       final submitResumptionModel = SubmitResumptionModel(
                         reslno: 0,
                         sucode: user.companyCode ?? '0',
@@ -192,7 +191,10 @@ class _SubmitResumptionScreenState
                         selectedValue: selectedLeave.lsslno ?? '',
                         selectedText: selectedLeave.dates ?? '',
                         resDate:
-                            newlyDate ?? //todo check the latest bug steev told about resumption date
+                            newlyDate?.replaceAll(
+                              '/',
+                              '-',
+                            ) ?? //todo check the latest bug steev told about resumption date
                             selectedLeave.dtNxtWrkDay?.replaceAll('/', '-') ??
                             '',
                         note: noteController.text,
@@ -204,7 +206,6 @@ class _SubmitResumptionScreenState
                         lvtype: selectedLeave.lvtype ?? '',
                         baseDirectory: user.userBaseUrl ?? '',
                       );
-
                       if (newlyDate != null &&
                           newlyDate != selectedLeave.dtNxtWrkDay) {
                         // 👇 Subtract 1 day here before navigation

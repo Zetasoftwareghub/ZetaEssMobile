@@ -54,7 +54,9 @@ class _LeaveMoreDetailsScreenState
   @override
   void initState() {
     super.initState();
-    _getConfigurations();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getConfigurations();
+    });
   }
 
   void _addSelectOption() {
@@ -73,7 +75,7 @@ class _LeaveMoreDetailsScreenState
     }
   }
 
-  void _setSandwichLogic() async {
+  Future<void> _setSandwichLogic() async {
     try {
       List<LeaveConfigurationEditData> updatedData = List.from(leaveConfigData);
 
@@ -205,9 +207,11 @@ class _LeaveMoreDetailsScreenState
   void _getConfigurations() async {
     setState(() => isLoading = true);
     try {
-      Future.microtask(() async => await _getLeaveDetails());
-
-      _setSandwichLogic();
+      // Future.microtask(() async => await _getLeaveDetails());
+      //
+      // _setSandwichLogic();
+      await _getLeaveDetails(); // ✅ Wait for this to complete
+      await _setSandwichLogic(); // ✅ Also make this async and wait
     } catch (e) {
       print('Error getting configurations: $e');
       _navigateToNoServer();
@@ -230,63 +234,6 @@ class _LeaveMoreDetailsScreenState
     }
 
     _processLeaveDetailsResponse(leaveDetails);
-  }
-
-  Future<void> _getLeaveConfigurationsEdit() async {
-    var responseJson = await getLeaveConfigurations(
-      widget.dateFrom.toString(),
-      widget.dateTo.toString(),
-      widget.leaveCode.toString(),
-      ref.read(userContextProvider),
-    ).timeout(
-      const Duration(seconds: 60),
-      onTimeout: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => const NoServer()),
-        );
-        return null;
-      },
-    );
-
-    if (responseJson == null) {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(builder: (context) => const NoServer()),
-      );
-      return;
-    }
-
-    if (responseJson is String) {
-      showCustomAlertBox(
-        context,
-        title: responseJson,
-        type: AlertType.error,
-        onSecondaryPressed: () {
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
-      );
-
-      return;
-    }
-
-    // ✅ FIX: Read maps correctly
-    final data = responseJson as Map<String, dynamic>;
-    final appLst = data["appLst"] as List<dynamic>? ?? [];
-    final subLst = data["subLst"] as List<dynamic>? ?? [];
-    final canLst = data["canLst"] as List<dynamic>? ?? [];
-
-    /*
-    d = appLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
-    dSubLst = subLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
-    dCanLst = canLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
-*/
-
-    _processLeaveDetailsResponse(responseJson);
-    setState(() {
-      dateChanged = true;
-    });
   }
 
   void _processLeaveDetailsResponse(dynamic responseJson) {

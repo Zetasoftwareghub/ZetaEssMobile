@@ -6,7 +6,13 @@ import '../models/change_request_model.dart';
 final changeRequestDetailsListProvider =
     StateProvider<List<ChangeRequestDetailModel>>((ref) => []);
 
-void updateField(WidgetRef ref, String field, String value) {
+void updateField(
+  WidgetRef ref,
+  String field,
+  String value, {
+  String? chtext,
+  String? oldChtext,
+}) {
   final list = [...ref.read(changeRequestDetailsListProvider)];
   final index = list.indexWhere((e) => e.chtype == field);
   //TODO give old values from evey where !!!!!!
@@ -15,7 +21,9 @@ void updateField(WidgetRef ref, String field, String value) {
     list[index] = ChangeRequestDetailModel(
       chtype: field,
       chvalu: value,
-      oldChvalu: "oldValue",
+      oldChvalu: "",
+      chtext: chtext,
+      oldChtext: oldChtext,
     );
   } else {
     // add new
@@ -23,7 +31,9 @@ void updateField(WidgetRef ref, String field, String value) {
       ChangeRequestDetailModel(
         chtype: field,
         chvalu: value,
-        oldChvalu: "oldValue",
+        oldChvalu: "",
+        chtext: chtext,
+        oldChtext: oldChtext,
       ),
     );
   }

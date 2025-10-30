@@ -452,7 +452,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                         .isEmpty
                                 ? leaveController.leaveConfigurationEditData
                                 : leaveController.leaveConfigurationData,
-                        dtsub: formatDate(DateTime.now()),
+                        dtsub: submittedDate ?? formatDate(DateTime.now()),
                         note: reasonController.text,
                         contact: contactDetailsController.text,
                         days: ref.watch(totalLeaveDaysStateProvider),

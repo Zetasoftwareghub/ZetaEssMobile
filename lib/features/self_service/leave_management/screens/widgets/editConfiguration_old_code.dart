@@ -18,6 +18,7 @@ import '../../controller/old_hrms_configuration_stuffs.dart';
 import '../../models/leave_model.dart';
 import 'package:easy_localization/easy_localization.dart' as local;
 
+import '../../providers/leave_providers.dart';
 import '../helper/sandwich_helper.dart';
 
 class LeaveConfigurationEdit extends ConsumerStatefulWidget {
@@ -489,6 +490,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
     leaveController.isSubmitted = true;
     String n = leaves.toString();
     leaveController.setTotalLeaves(n);
+
+    ref.watch(totalLeaveDaysStateProvider.notifier).state = n;
 
     Navigator.pop(context, true);
   }

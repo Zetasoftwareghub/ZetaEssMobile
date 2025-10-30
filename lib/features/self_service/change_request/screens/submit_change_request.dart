@@ -364,10 +364,13 @@ class _SubmitChangeRequestScreenState
                           final saveModel = ChangeRequestModel(
                             suconn: user.companyConnection ?? '',
                             sucode: user.companyCode,
-                            oldBaName: ref.watch(oldBanmrovider),
+                            oldBaName: ref.watch(oldBankNameProvider),
+                            oldBaCode: ref.watch(oldBankCodeProvider),
                             oldBcAcNm: oldBankModel?.accountName,
                             oldBcAcNo: oldBankModel?.accountNumber,
-                            bankNameDetail: ref.watch(oldBanmrovider),
+                            bankNameDetail: ref.watch(
+                              bankNameProvider,
+                            ), //NEW BANK NAME !!
                             chrqcd: 0,
                             chrqtp: requestType,
                             emcode: int.parse(user.empCode),

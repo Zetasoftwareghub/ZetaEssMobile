@@ -53,140 +53,147 @@ class _LeaveDetailsScreenState extends State<LeaveDetailsScreen> {
           child: SingleChildScrollView(
             child: Consumer(
               builder: (context, ref, _) {
-                return ref
-                    .watch(getApproveLeaveDetailsProvider(widget.leaveId))
-                    .when(
-                      data: (leave) {
-                        leaveModel = leave;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            titleHeaderText('employee_details'),
-                            detailInfoRow(
-                              title: 'employee_id',
-                              subTitle: leave.employeId ?? '-',
-                            ),
-                            detailInfoRow(
-                              title: 'employee_name',
-                              subTitle: leave.employeName ?? '-',
-                            ),
-                            titleHeaderText('submitted_leave_details'),
-                            detailInfoRow(
-                              title: 'date_from',
-                              subTitle: leave.leaveFrom ?? '-',
-                            ),
-                            detailInfoRow(
-                              title: 'date_to',
-                              subTitle: leave.leaveTo ?? '-',
-                            ),
-                            detailInfoRow(
-                              title: 'no_of_days',
-                              subTitle: '${leave.leaveDays ?? '-'} Days',
-                            ),
-                            detailInfoRow(
-                              title: 'submitted_date',
-                              subTitle: leave.submitted ?? '-',
-                            ),
-                            detailInfoRow(
-                              title: 'requested_by',
-                              subTitle: leave.employeName ?? '-',
-                            ),
-                            detailInfoRow(
-                              title: 'leave_type',
-                              subTitle: leave.leaveType ?? '-',
-                            ),
+                return ref.watch(leaveControllerProvider)
+                    ? Loader()
+                    : ref
+                        .watch(getApproveLeaveDetailsProvider(widget.leaveId))
+                        .when(
+                          data: (leave) {
+                            leaveModel = leave;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                titleHeaderText('employee_details'),
+                                detailInfoRow(
+                                  title: 'employee_id',
+                                  subTitle: leave.employeId ?? '-',
+                                ),
+                                detailInfoRow(
+                                  title: 'employee_name',
+                                  subTitle: leave.employeName ?? '-',
+                                ),
+                                titleHeaderText('submitted_leave_details'),
+                                detailInfoRow(
+                                  title: 'date_from',
+                                  subTitle: leave.leaveFrom ?? '-',
+                                ),
+                                detailInfoRow(
+                                  title: 'date_to',
+                                  subTitle: leave.leaveTo ?? '-',
+                                ),
+                                detailInfoRow(
+                                  title: 'no_of_days',
+                                  subTitle: '${leave.leaveDays ?? '-'} Days',
+                                ),
+                                detailInfoRow(
+                                  title: 'submitted_date',
+                                  subTitle: leave.submitted ?? '-',
+                                ),
+                                detailInfoRow(
+                                  title: 'requested_by',
+                                  subTitle: leave.employeName ?? '-',
+                                ),
+                                detailInfoRow(
+                                  title: 'leave_type',
+                                  subTitle: leave.leaveType ?? '-',
+                                ),
 
-                            titleHeaderText('attachments'),
+                                titleHeaderText('attachments'),
 
-                            AttachmentWidget(
-                              attachmentUrl:
-                                  leave.lRTPAC == null || leave.lRTPAC == ''
-                                      ? null
-                                      : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/${leave.lRTPAC ?? ''}',
-                            ),
+                                AttachmentWidget(
+                                  attachmentUrl:
+                                      leave.lRTPAC == null || leave.lRTPAC == ''
+                                          ? null
+                                          : '${ref.watch(userContextProvider).userBaseUrl ?? ''}/${leave.lRTPAC ?? ''}',
+                                ),
 
-                            titleHeaderText('contact_details'),
-                            Text(
-                              leave.emergencyContact?.isNotEmpty == true
-                                  ? leave.emergencyContact!
-                                  : 'N/A',
-                              style: TextStyle(fontSize: 14.sp),
-                            ),
+                                titleHeaderText('contact_details'),
+                                Text(
+                                  leave.emergencyContact?.isNotEmpty == true
+                                      ? leave.emergencyContact!
+                                      : 'N/A',
+                                  style: TextStyle(fontSize: 14.sp),
+                                ),
 
-                            titleHeaderText('reason_for_leave'),
-                            Text(
-                              leave.note == '' ? 'N/A' : leave.note ?? 'N/A',
-                              style: TextStyle(fontSize: 14.sp),
-                            ),
-                            10.heightBox,
+                                titleHeaderText('reason_for_leave'),
+                                Text(
+                                  leave.note == ''
+                                      ? 'N/A'
+                                      : leave.note ?? 'N/A',
+                                  style: TextStyle(fontSize: 14.sp),
+                                ),
+                                10.heightBox,
 
-                            CommentSection(
-                              isApproveTab: widget.isLineManager,
-                              isLineManagerSelfTab:
-                                  !widget.isLineManager || !widget.isSelf,
-                              isSelf: widget.isSelf,
-                              lmComment: leave.lmComment,
-                              prevComment: leave.prevComment,
-                              finalComment: leave.appRejComment,
-                            ),
+                                CommentSection(
+                                  isApproveTab: widget.isLineManager,
+                                  isLineManagerSelfTab:
+                                      !widget.isLineManager || !widget.isSelf,
+                                  isSelf: widget.isSelf,
+                                  lmComment: leave.lmComment,
+                                  prevComment: leave.prevComment,
+                                  finalComment: leave.appRejComment,
+                                ),
 
-                            10.heightBox,
-                            if (widget.isLineManager)
-                              inputField(
-                                hint: 'Approve/Reject Comment'.tr(),
-                                minLines: 3,
-                                controller: commentController,
-                              ),
-                            10.heightBox,
+                                10.heightBox,
+                                if (widget.isLineManager)
+                                  inputField(
+                                    hint: 'Approve/Reject Comment'.tr(),
+                                    minLines: 3,
+                                    controller: commentController,
+                                  ),
+                                10.heightBox,
 
-                            //TODO ! THIS IS ONLY FOR LINE MANAGERS YOU IDIOT
-                            if (widget.showCancelLeave ?? false)
-                              CustomElevatedButton(
-                                onPressed: () {
-                                  ref
-                                      .read(leaveControllerProvider.notifier)
-                                      .cancelLeave(
+                                //TODO ! THIS IS ONLY FOR LINE MANAGERS YOU IDIOT
+                                if (widget.showCancelLeave ?? false)
+                                  CustomElevatedButton(
+                                    onPressed: () {
+                                      ref
+                                          .read(
+                                            leaveControllerProvider.notifier,
+                                          )
+                                          .cancelLeave(
+                                            context: context,
+                                            lsslno: leave.leaveId ?? '',
+                                            dateFrom: leave.leaveFrom ?? '',
+                                          );
+                                    },
+                                    child: Text("cancel_request".tr()),
+                                  ),
+
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      NavigationService.navigateToScreen(
                                         context: context,
-                                        lsslno: leave.leaveId ?? '',
-                                        dateFrom: leave.leaveFrom ?? '',
+                                        screen: LeaveMoreDetailsScreen(
+                                          leaveCode:
+                                              leave.leaveId
+                                                  .toString(), //todo leave code ind
+                                          lssNo: leave.leaveId.toString(),
+                                          dateFrom: leave.leaveFrom,
+                                          dateTo: leave.leaveTo,
+                                        ),
                                       );
-                                },
-                                child: Text("cancel_request".tr()),
-                              ),
-
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  NavigationService.navigateToScreen(
-                                    context: context,
-                                    screen: LeaveMoreDetailsScreen(
-                                      leaveCode:
-                                          leave.leaveId
-                                              .toString(), //todo leave code ind
-                                      lssNo: leave.leaveId.toString(),
-                                      dateFrom: leave.leaveFrom,
-                                      dateTo: leave.leaveTo,
+                                    },
+                                    child: Text(
+                                      "view_more_details".tr(),
+                                      style: TextStyle(
+                                        color: AppTheme.primaryColor,
+                                      ),
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  "view_more_details".tr(),
-                                  style: TextStyle(
-                                    color: AppTheme.primaryColor,
                                   ),
                                 ),
+                                100.heightBox,
+                              ],
+                            );
+                          },
+                          loading: () => Loader(),
+                          error:
+                              (error, _) => ErrorText(
+                                error: "Error: ${error.toString()}",
                               ),
-                            ),
-                            100.heightBox,
-                          ],
                         );
-                      },
-                      loading: () => Loader(),
-                      error:
-                          (error, _) =>
-                              ErrorText(error: "Error: ${error.toString()}"),
-                    );
               },
             ),
           ),

@@ -9,7 +9,7 @@ import '../../../../../core/common/widgets/customDropDown_widget.dart';
 
 class CustomCountryDropDown extends ConsumerWidget {
   final String countryCode;
-  final void Function(String?)? onChanged;
+  final void Function(String? code, String? name, String? oldName)? onChanged;
   const CustomCountryDropDown({
     super.key,
     required this.countryCode,
@@ -22,6 +22,20 @@ class CustomCountryDropDown extends ConsumerWidget {
         .watch(countryListProvider)
         .when(
           data: (countryList) {
+            final selectedCountry = countryList.firstWhere(
+              (element) => element.countryCode == countryCode,
+            );
+
+            // Extract the name safely
+            final oldCountryName = selectedCountry.countryName ?? '';
+
+            // 🔼 Automatically notify parent (if needed)
+            if (onChanged != null && oldCountryName.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                onChanged!(countryCode, oldCountryName, oldCountryName);
+              });
+            }
+
             return CustomDropdown(
               hintText: onChanged == null ? "No value" : "Select Country".tr(),
               value:
@@ -39,7 +53,21 @@ class CustomCountryDropDown extends ConsumerWidget {
                         ),
                       )
                       .toList(),
-              onChanged: onChanged,
+
+              onChanged: (value) {
+                if (value != null) {
+                  final name =
+                      countryList
+                          .firstWhere((c) => c.countryCode == value)
+                          .countryName;
+                  onChanged?.call(value, name, oldCountryName);
+                } // if (onChanged != null) {
+                //   final selected = countryList.firstWhere(
+                //     (element) => element.countryCode == v,
+                //   );
+                //   onChanged!(v, selected.countryName);
+                // }
+              },
             );
           },
           error: (err, stack) => ErrorText(error: err.toString()),

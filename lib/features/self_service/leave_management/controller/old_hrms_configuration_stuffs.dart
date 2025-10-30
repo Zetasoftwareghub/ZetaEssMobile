@@ -116,8 +116,8 @@ class LeaveConfigurationData {
     return LeaveConfigurationData(
       date: json['dLsdate']?.toString() ?? '', // or dLsdate for approved list
       leaveType: json['cLtpType']?.toString() ?? '',
-      dayFlag: "F",
-      // json['cLsflag'] == null ? 'F' : json['cLsflag']?.toString() ?? '',
+      dayFlag:
+          json['cLsflag'] == null ? 'F' : json['cLsflag']?.toString() ?? '',
       paidAbsent: json['cLtpType'] == '1' ? 'Y' : 'N',
       unpaidAbs: json['cLtpType'] == '1' ? 'N' : 'Y',
       halfType: json['halfDayType']?.toString() ?? '',

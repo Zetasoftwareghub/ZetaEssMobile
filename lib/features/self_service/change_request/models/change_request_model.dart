@@ -62,7 +62,7 @@ class ChangeRequestModel {
       bacode: header?['bacode'],
       bcacno: header?['bcacno'],
       bcacnm: header?['bcacnm'],
-      bankNameDetail: header?['baname'],
+      bankNameDetail: header?['baname'] ?? '',
       chrqst: header?['chrqst'],
       chapby: header?['chapby'],
       chapdt: header?['chapdt'],
@@ -95,12 +95,13 @@ class ChangeRequestModel {
 
 class ChangeRequestDetailModel {
   final int? chRqCd;
-  final String? chtype;
+  final String? chtype, oldChtext;
   final String? chvalu;
   final String? chtext;
   final String? oldChvalu;
   ChangeRequestDetailModel({
     this.chRqCd,
+    this.oldChtext,
     this.chtext,
     required this.chtype,
     required this.oldChvalu,
@@ -110,6 +111,7 @@ class ChangeRequestDetailModel {
     return ChangeRequestDetailModel(
       chRqCd: json['chRqCd'] ?? 0,
       chtype: json['chtype'],
+      oldChtext: json['oldChtext'],
       chvalu: json['chvalu'],
       chtext: json['chtext'],
       oldChvalu: json['oldChvalu'] ?? '',
@@ -118,6 +120,8 @@ class ChangeRequestDetailModel {
   Map<String?, dynamic> toJson() => {
     "chRqCd": chRqCd ?? 0,
     "chtype": chtype,
+    "oldChtext": oldChtext,
+    "chtext": chtext,
     "chvalu": chvalu,
     "oldChvalu": oldChvalu,
   };

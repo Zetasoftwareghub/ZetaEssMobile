@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +39,12 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
   final TextEditingController passportNumberController =
       TextEditingController();
   final TextEditingController placeOfIssueController = TextEditingController();
-  String? issuedCountryCode, nationalityCode, comment;
+  String? issuedCountryCode,
+      nationalityCode,
+      comment,
+      issuedDate,
+      expiryDate,
+      passportHolder;
 
   bool _isInitialized = false;
 
@@ -77,8 +84,10 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
     setState(() {
       issuedCountryCode = getValueFromDetails(details, "Issued Country");
       nationalityCode = getValueFromDetails(details, "Nationality");
+      issuedDate = getValueFromDetails(details, "Issued Date");
+      expiryDate = getValueFromDetails(details, "Expiry Date");
+      passportHolder = getValueFromDetails(details, "Passport Holder");
     });
-
     _isInitialized = true;
 
     // Keep comment in local state for UI
@@ -189,7 +198,6 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   labelText("Place of issue"),
                   inputField(
                     readOnly: widget.isLineManager,
-
                     hint: "Place of Issue",
                     controller: placeOfIssueController,
                     onChanged: (v) => updateField(ref, "Place of Issue", v),
@@ -197,9 +205,9 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   labelText("Issued Date"),
                   CustomDateField(
                     hintText: 'Issued Date',
-                    initialDate: formatDate(
-                      passport.issuedDate ?? DateTime.now(),
-                    ),
+                    initialDate:
+                        issuedDate ??
+                        formatDate(passport.issuedDate ?? DateTime.now()),
                     onDateSelected:
                         widget.isLineManager
                             ? null
@@ -208,22 +216,29 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   labelText("Expiry Date"),
                   CustomDateField(
                     hintText: 'Expiry Date',
-                    initialDate: formatDate(
-                      passport.expiryDate ?? DateTime.now(),
-                    ),
+                    initialDate:
+                        expiryDate ??
+                        formatDate(passport.expiryDate ?? DateTime.now()),
                     onDateSelected:
                         widget.isLineManager
                             ? null
                             : (v) => updateField(ref, "Expiry Date", v),
                   ),
+                  //TODO change this !
                   labelText("Issued Country"),
                   CustomCountryDropDown(
                     countryCode: issuedCountryCode ?? passport.issuedCountry,
                     onChanged:
                         widget.isLineManager
                             ? null
-                            : (s) {
-                              updateField(ref, "Issued Country", s ?? '');
+                            : (countryCode, countryName, oldCountryName) {
+                              updateField(
+                                ref,
+                                "Issued Country",
+                                countryCode ?? '',
+                                chtext: countryName,
+                                oldChtext: oldCountryName,
+                              );
                             },
                   ),
                   labelText("Nationality"),
@@ -232,15 +247,21 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     onChanged:
                         widget.isLineManager
                             ? null
-                            : (s) {
-                              updateField(ref, "Nationality", s ?? '');
+                            : (countryCode, countryName, oldCountryName) {
+                              updateField(
+                                ref,
+                                "Nationality",
+                                countryCode ?? '',
+                                chtext: countryName,
+                                oldChtext: oldCountryName,
+                              );
                             },
                   ),
 
                   labelText("Passport Holder"),
                   CustomDropdown<String>(
                     hintText: "Select",
-                    // value: selectedValue,
+                    value: passportHolder,
                     items:
                         [
                               {"value": "R", "text": "Employer"},

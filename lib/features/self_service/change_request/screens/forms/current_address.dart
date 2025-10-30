@@ -100,6 +100,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
     setState(() => comment = changeRequest.comment);
     updateField(ref, "Comment", comment ?? '');
+    _isInitialized = true;
   }
 
   @override
@@ -180,14 +181,12 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
               title: "Official Email id",
               subTitle: data.emailId ?? '', //TODO issue in backend
             ),
-
             SizedBox(height: 16.h),
             _formSection(readOnly: widget.isLineManager ?? false),
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
                   titleHeaderText("Comment"),
                   labelText(comment ?? ''),
@@ -242,11 +241,17 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
         labelText("Country"),
         CustomCountryDropDown(
           countryCode: countryCode ?? "IND",
-          onChanged:
-              (val) =>
-                  readOnly
-                      ? null
-                      : updateField(ref, "Country", val ?? "No value"),
+          onChanged: (countryCode, countryName, oldCountryName) {
+            readOnly
+                ? null
+                : updateField(
+                  ref,
+                  "Country",
+                  countryCode ?? "No value",
+                  chtext: countryName,
+                  oldChtext: oldCountryName,
+                );
+          },
         ), //TODO change this
         labelText("Post box"),
         inputField(

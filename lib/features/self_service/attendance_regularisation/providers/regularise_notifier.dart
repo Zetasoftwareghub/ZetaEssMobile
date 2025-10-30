@@ -253,7 +253,7 @@ class AttendanceRegularizationController
       case "-2":
         return "Could not save details, because already submitted another request!";
       default:
-        return "Something went wrong, try again later";
+        return response ?? "Something went wrong, try again later";
     }
   }
 }

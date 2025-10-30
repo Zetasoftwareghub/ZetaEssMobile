@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zeta_ess/core/common/buttons/approveReject_buttons.dart';
 import 'package:zeta_ess/core/common/common_text.dart';
 import 'package:zeta_ess/core/common/common_ui_stuffs.dart';
+import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/change_request/screens/submit_change_request.dart';
 
@@ -140,36 +141,40 @@ class _EditChangeRequestScreenState
                   : "EDIT",
             ).tr(),
       ),
-      body: Padding(
-        padding: AppPadding.screenPadding,
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height, // screen height
-            ),
-            child: IntrinsicHeight(
-              child: Column(
-                children: [
-                  if (widget.isSubmittedTab)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        titleHeaderText('Approval/Reject comment'),
-                        inputField(
-                          hint: 'Approve/Reject Comment'.tr(),
-                          controller: commentController,
-                        ),
-                        12.heightBox,
-                      ],
+      body:
+          isLoading
+              ? Loader()
+              : Padding(
+                padding: AppPadding.screenPadding,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          MediaQuery.of(context).size.height, // screen height
                     ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          if (widget.isSubmittedTab)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                titleHeaderText('Approval/Reject comment'),
+                                inputField(
+                                  hint: 'Approve/Reject Comment'.tr(),
+                                  controller: commentController,
+                                ),
+                                12.heightBox,
+                              ],
+                            ),
 
-                  screen ?? const SizedBox(),
-                ],
+                          screen ?? const SizedBox(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      ),
       bottomSheet: Padding(
         padding: AppPadding.screenBottomSheetPadding,
         child:
@@ -203,10 +208,10 @@ class _EditChangeRequestScreenState
 
                     final user = ref.watch(userContextProvider);
                     final saveModel = ChangeRequestModel(
-                      oldBaName: ref.watch(oldBanmrovider),
+                      oldBaName: ref.watch(oldBankNameProvider),
                       oldBcAcNm: oldBankModel?.accountName,
                       oldBcAcNo: oldBankModel?.accountNumber,
-                      bankNameDetail: ref.watch(oldBanmrovider),
+                      bankNameDetail: ref.watch(bankNameProvider),
                       suconn: user.companyConnection ?? '',
                       sucode: user.companyCode,
                       chrqcd: widget.chrqcd,

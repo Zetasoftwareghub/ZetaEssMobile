@@ -92,7 +92,7 @@ class _HomeCountryAddressFormState
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
-
+    //TODO evan scene ann
     // Helper function to set controller text and update the provider
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
@@ -109,6 +109,8 @@ class _HomeCountryAddressFormState
     setController(postBoxCtrl, "Post box");
     setController(phoneNumberCtrl, "Phone No.");
     setController(mobileCtrl, "Mobile");
+    setController(nexOfKinCtrl, "Next of kin");
+    setController(nexOfKinPhoneNumberCtrl, "Next of kin phone");
 
     // Update local state
     setState(() => countryCode = getValueFromDetails(details, "Country"));
@@ -131,6 +133,7 @@ class _HomeCountryAddressFormState
         });
       });
     }
+
     final detailsAsync = ref.watch(
       addressContactDetailsProvider(widget.employeeCode),
     );
@@ -228,7 +231,19 @@ class _HomeCountryAddressFormState
           labelText("Country"),
           CustomCountryDropDown(
             countryCode: countryCode,
-            onChanged: (val) => updateField(ref, "Country", val ?? ''),
+            onChanged: (countryCode, countryName, oldCountryName) {
+              readOnly
+                  ? null
+                  : updateField(
+                    ref,
+                    "Country",
+                    countryCode ?? "No value",
+                    chtext: countryName,
+                    oldChtext:
+                        oldCountryName, //TODO need the oldCountry name here
+                  );
+            },
+            // onChanged: (val) => updateField(ref, "Country", val ?? ''),
           ), //TODO change this
 
           labelText("Post box"),
