@@ -701,7 +701,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
               onTap: () {
                 if (widget.isResumptionLeave) return;
 
-                if (i.dayType == 3 || i.dayType == 4) {
+                if (i.dayType == 3 || i.dayType == 4 || i.dayType == 2) {
                   return;
                 }
                 _fullDay(i);
@@ -755,7 +755,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
               onTap: () {
                 if (widget.isResumptionLeave) return;
 
-                if (i.dayType == 3 || i.dayType == 4) {
+                if (i.dayType == 3 || i.dayType == 4 || i.dayType == 2) {
                   return;
                 }
 

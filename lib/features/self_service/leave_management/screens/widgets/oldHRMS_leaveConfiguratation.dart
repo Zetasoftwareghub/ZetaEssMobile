@@ -655,8 +655,6 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     List<DataRow> ConfigList = [];
     int index = 0;
     for (var i in leaveConfigList) {
-      print(i.halfType);
-      print("i.halfType");
       var item = leaveController.leaveConfigurationData.where(
         (x) => x.dLsdate == i.dLsdate,
       );
