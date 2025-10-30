@@ -114,6 +114,9 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
 
     return passportAsync.when(
       data: (passport) {
+        print(passport.passportHolder);
+        print("passport.passportHolder");
+        print(passportHolder);
         return Column(
           children: [
             // Old Value Section
@@ -231,13 +234,19 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     onChanged:
                         widget.isLineManager
                             ? null
-                            : (countryCode, countryName, oldCountryName) {
+                            : (
+                              countryCode,
+                              countryName,
+                              oldCountryName,
+                              oldCountryCode,
+                            ) {
                               updateField(
                                 ref,
                                 "Issued Country",
                                 countryCode ?? '',
                                 chtext: countryName,
                                 oldChtext: oldCountryName,
+                                oldChvalu: oldCountryCode,
                               );
                             },
                   ),
@@ -247,13 +256,19 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     onChanged:
                         widget.isLineManager
                             ? null
-                            : (countryCode, countryName, oldCountryName) {
+                            : (
+                              countryCode,
+                              countryName,
+                              oldCountryName,
+                              oldCountryCode,
+                            ) {
                               updateField(
                                 ref,
                                 "Nationality",
                                 countryCode ?? '',
                                 chtext: countryName,
                                 oldChtext: oldCountryName,
+                                oldChvalu: oldCountryCode,
                               );
                             },
                   ),
@@ -261,7 +276,13 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   labelText("Passport Holder"),
                   CustomDropdown<String>(
                     hintText: "Select",
-                    value: passportHolder,
+                    value:
+                        passportHolder ??
+                        (passport.passportHolder == '0'
+                            ? null
+                            : passport.passportHolder.isEmpty
+                            ? null
+                            : passport.passportHolder),
                     items:
                         [
                               {"value": "R", "text": "Employer"},

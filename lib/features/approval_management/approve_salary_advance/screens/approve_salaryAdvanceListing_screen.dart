@@ -41,13 +41,13 @@ class ApproveSalaryAdvanceListingScreen extends ConsumerWidget {
                       SalaryAdvanceListView(
                         salaryList: data.submitted,
                         isLineManger: true,
-                        showApproveAmount: false,
+                        showApproveAmount: true,
                       ),
-                      SalaryAdvanceListView(salaryList: data.approved),
                       SalaryAdvanceListView(
-                        salaryList: data.rejected,
-                        showApproveAmount: false,
+                        salaryList: data.approved,
+                        showApproveAmount: true,
                       ),
+                      SalaryAdvanceListView(salaryList: data.rejected),
                     ],
                   );
                 },
@@ -71,7 +71,7 @@ class SalaryAdvanceListView extends StatelessWidget {
     super.key,
     required this.salaryList,
     this.isLineManger,
-    this.showApproveAmount = true,
+    this.showApproveAmount = false,
   });
 
   @override

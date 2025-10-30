@@ -10,7 +10,13 @@ import '../../../../../core/common/widgets/customDropDown_widget.dart';
 
 class CustomCountryDropDown extends ConsumerWidget {
   final String countryCode;
-  final void Function(String? code, String? name, String? oldName)? onChanged;
+  final void Function(
+    String? code,
+    String? name,
+    String? oldName,
+    String? oldChvalu,
+  )?
+  onChanged;
   const CustomCountryDropDown({
     super.key,
     required this.countryCode,
@@ -30,11 +36,17 @@ class CustomCountryDropDown extends ConsumerWidget {
             );
 
             final oldCountryName = selectedCountry.countryName ?? '';
+            final oldCountryCode = selectedCountry.countryCode ?? '';
 
             // 🔼 Automatically notify parent (if needed)
             if (onChanged != null && oldCountryName.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                onChanged!(countryCode, oldCountryName, oldCountryName);
+                onChanged!(
+                  countryCode,
+                  oldCountryName,
+                  oldCountryName,
+                  oldCountryCode,
+                );
               });
             }
 
@@ -62,7 +74,7 @@ class CustomCountryDropDown extends ConsumerWidget {
                       countryList
                           .firstWhere((c) => c.countryCode == value)
                           .countryName;
-                  onChanged?.call(value, name, oldCountryName);
+                  onChanged?.call(value, name, oldCountryName, oldCountryCode);
                 } // if (onChanged != null) {
                 //   final selected = countryList.firstWhere(
                 //     (element) => element.countryCode == v,

@@ -231,7 +231,12 @@ class _HomeCountryAddressFormState
           labelText("Country"),
           CustomCountryDropDown(
             countryCode: countryCode,
-            onChanged: (countryCode, countryName, oldCountryName) {
+            onChanged: (
+              countryCode,
+              countryName,
+              oldCountryName,
+              oldCountryCode,
+            ) {
               readOnly
                   ? null
                   : updateField(
@@ -241,6 +246,7 @@ class _HomeCountryAddressFormState
                     chtext: countryName,
                     oldChtext:
                         oldCountryName, //TODO need the oldCountry name here
+                    oldChvalu: oldCountryCode,
                   );
             },
             // onChanged: (val) => updateField(ref, "Country", val ?? ''),

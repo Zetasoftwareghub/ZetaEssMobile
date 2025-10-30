@@ -241,7 +241,12 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
         labelText("Country"),
         CustomCountryDropDown(
           countryCode: countryCode ?? "IND",
-          onChanged: (countryCode, countryName, oldCountryName) {
+          onChanged: (
+            countryCode,
+            countryName,
+            oldCountryName,
+            oldCountryCode,
+          ) {
             readOnly
                 ? null
                 : updateField(
@@ -250,6 +255,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                   countryCode ?? "No value",
                   chtext: countryName,
                   oldChtext: oldCountryName,
+                  oldChvalu: oldCountryCode,
                 );
           },
         ), //TODO change this

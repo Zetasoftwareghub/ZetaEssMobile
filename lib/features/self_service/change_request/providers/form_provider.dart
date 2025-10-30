@@ -12,6 +12,7 @@ void updateField(
   String value, {
   String? chtext,
   String? oldChtext,
+  String? oldChvalu,
 }) {
   final list = [...ref.read(changeRequestDetailsListProvider)];
   final index = list.indexWhere((e) => e.chtype == field);
@@ -21,7 +22,7 @@ void updateField(
     list[index] = ChangeRequestDetailModel(
       chtype: field,
       chvalu: value,
-      oldChvalu: "",
+      oldChvalu: oldChvalu,
       chtext: chtext,
       oldChtext: oldChtext,
     );
@@ -31,7 +32,7 @@ void updateField(
       ChangeRequestDetailModel(
         chtype: field,
         chvalu: value,
-        oldChvalu: "",
+        oldChvalu: oldChvalu,
         chtext: chtext,
         oldChtext: oldChtext,
       ),

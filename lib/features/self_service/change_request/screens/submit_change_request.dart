@@ -381,6 +381,8 @@ class _SubmitChangeRequestScreenState
                             detail: requestDetailsList,
                             chrqtpText: "",
                           );
+                          print(saveModel.toJson());
+                          print('saveModel.toJson');
                           if (selectedType == RequestType.bankDetails &&
                               (saveModel.bacode == 0 ||
                                   saveModel.bcacno == null ||

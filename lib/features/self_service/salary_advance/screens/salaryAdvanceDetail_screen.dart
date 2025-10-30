@@ -70,8 +70,9 @@ class _SalaryAdvanceDetailScreenState
                                 title: '${'requested'.tr()} ${'amount'.tr()}',
                                 subTitle: advance.amount,
                               ),
-
-                              if (widget.showApproveAmount)
+                              if (advance.appAmount.isNotEmpty &&
+                                  widget.showApproveAmount)
+                                //TODO kona kona testing advance apprv amount !  if (widget.showApproveAmount )
                                 detailInfoRow(
                                   title: '${'approved'.tr()} ${'amount'.tr()}',
                                   subTitle: advance.appAmount,
