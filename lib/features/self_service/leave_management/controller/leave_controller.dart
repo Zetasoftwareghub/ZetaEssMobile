@@ -243,7 +243,7 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
     state = const AsyncLoading();
     final repo = ref.read(leaveRepositoryProvider);
     final userContext = ref.read(userContextProvider);
-
+    print('object');
     // Step 1: Call First API
     final firstResult = await repo.submitLeaveFirstApi(
       leaveCode: leaveSubmitModel.leaveCode,
@@ -251,6 +251,7 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
       toDate: leaveSubmitModel.toDate,
       userContext: userContext,
     );
+    print(firstResult);
     final first = firstResult.fold((l) {
       NavigationService.navigateToScreen(
         context: context,
@@ -258,7 +259,7 @@ class SubmitLeaveNotifier extends AutoDisposeAsyncNotifier<String?> {
       );
       return null;
     }, (r) => r);
-
+    print('object2');
     if (first == null) return null;
 
     if (submitResumptionModel != null) {

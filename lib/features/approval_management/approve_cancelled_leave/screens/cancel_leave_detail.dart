@@ -73,6 +73,10 @@ class _CancelLeaveDetailsScreenState
                           title: 'employee_name',
                           subTitle: leave?.employeeName ?? '-',
                         ),
+                        detailInfoRow(
+                          title: 'leave_type',
+                          subTitle: leave.leaveType ?? '-',
+                        ),
                         titleHeaderText('submitted_leave_details'),
                         detailInfoRow(
                           title: 'date_from',

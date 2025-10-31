@@ -118,7 +118,7 @@ class _SubmitLieuDayScreenState extends ConsumerState<SubmitLieuDayScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (isEditMode) ...[
-                              labelText('submitted_date'.tr()),
+                              labelText('lieu_day_date'.tr()),
                               Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 12.w,

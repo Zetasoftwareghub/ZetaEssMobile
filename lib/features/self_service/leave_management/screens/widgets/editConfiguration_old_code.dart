@@ -120,6 +120,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
         widget.dateTo.toString(),
         widget.leaveCode.toString(),
         ref.watch(userContextProvider),
+        widget.lssNo,
       ).timeout(
         const Duration(seconds: 60),
         onTimeout: () {
@@ -180,6 +181,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
         widget.dateTo.toString(),
         widget.leaveCode.toString(),
         userContext,
+        widget.lssNo,
       ),
       'getLeaveConfigurations',
       context,
@@ -289,6 +291,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
       widget.dateTo.toString(),
       widget.leaveCode.toString(),
       ref.watch(userContextProvider),
+      widget.lssNo,
     ).timeout(
       const Duration(seconds: 60),
       onTimeout: () {
@@ -828,6 +831,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
     String dateTo,
     String leaveType,
     UserContext userContext,
+    String? leaveEditId,
   ) async {
     try {
       final data = {
@@ -836,6 +840,7 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
         "dtfrm": dateFrom,
         "dtto": dateTo,
         "leavcode": leaveType,
+        'lsslno': leaveEditId ?? 0,
       };
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",

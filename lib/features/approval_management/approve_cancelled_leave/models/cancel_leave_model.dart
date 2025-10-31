@@ -10,6 +10,7 @@ class CancelLeaveModel {
   final String employeeCode; // "emcode": "2078"
   final String lmComment; // "lmComment": ""
   final String prevComment; // "prevComment": ""
+  final String leaveType;
 
   CancelLeaveModel({
     required this.employeeId,
@@ -23,6 +24,7 @@ class CancelLeaveModel {
     required this.employeeCode,
     required this.lmComment,
     required this.prevComment,
+    required this.leaveType,
   });
 
   factory CancelLeaveModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class CancelLeaveModel {
       employeeCode: json['emcode'] ?? '',
       lmComment: json['lmComment'] ?? '',
       prevComment: json['prevComment'] ?? '',
+      leaveType: json['ltname'] ?? '',
     );
   }
 
