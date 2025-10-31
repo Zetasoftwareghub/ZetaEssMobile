@@ -77,6 +77,8 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
 
   @override
   void initState() {
+    print(widget.lssNo);
+    print("lssNo");
     super.initState();
     if (widget.initialLeaveType != widget.selectedLeaveType &&
         widget.selectedLeaveType != null) {

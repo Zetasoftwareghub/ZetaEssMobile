@@ -101,6 +101,7 @@ class LeaveController extends Notifier<bool> {
     required String dateFrom,
     required String dateTo,
     required String leaveCode,
+    String? leaveId,
   }) async {
     state = true;
 
@@ -111,6 +112,7 @@ class LeaveController extends Notifier<bool> {
           dateFrom: dateFrom,
           dateTo: dateTo,
           leaveCode: leaveCode,
+          leaveId: leaveId,
         );
 
     result.fold(

@@ -21,6 +21,7 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
   String? dateFrom;
   String? dateTo;
   String? leaveCode;
+  String? leaveId;
   // String? showSubmit; TODO eth view  nte case ann thonnunu !
   final bool showDetail;
   final bool isResumptionLeave;
@@ -30,6 +31,7 @@ class LeaveConfiguration extends ConsumerStatefulWidget {
     this.dateFrom,
     this.dateTo,
     this.leaveCode,
+    this.leaveId,
     this.showDetail = false,
     this.isResumptionLeave = false,
     // this.showSubmit,
@@ -58,6 +60,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
         widget.dateTo.toString(),
         widget.leaveCode.toString(),
         userContext,
+        widget.leaveId,
       ),
       'getLeaveConfigurations',
       context,
@@ -157,6 +160,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
       widget.dateTo.toString(),
       widget.leaveCode.toString(),
       ref.read(userContextProvider),
+      widget.leaveId,
     ).timeout(
       const Duration(seconds: 60),
       onTimeout: () {
@@ -851,6 +855,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     String dateTo,
     String leaveType,
     UserContext userContext,
+    String? leaveId,
   ) async {
     try {
       final data = {
@@ -859,6 +864,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
         "dtfrm": dateFrom,
         "dtto": dateTo,
         "leavcode": leaveType,
+        "lsslno": leaveId,
       };
       final responseJson = await Dio().post(
         "${userContext.baseUrl}/api/Leave/CalculateLeave",

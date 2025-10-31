@@ -237,6 +237,7 @@ class LeaveRepository {
     required String dateFrom,
     required String dateTo,
     required String leaveCode,
+    String? leaveId,
   }) {
     return handleApiCall(() async {
       final data = {
@@ -246,6 +247,7 @@ class LeaveRepository {
         'dtto': dateTo,
         'leavcode': leaveCode,
         'emcode': userContext.empCode,
+        'lsslno': leaveId ?? '0',
       };
       print(data);
       print('calculate total leave');

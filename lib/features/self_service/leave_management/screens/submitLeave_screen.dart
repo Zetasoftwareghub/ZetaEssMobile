@@ -180,6 +180,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                 dateFrom: dateFrom,
                                 dateTo: dateTo,
                                 leaveCode: selectedLeaveType ?? '',
+                                leaveId: widget.leaveId ?? '0',
                               );
                         }
                       },
@@ -217,6 +218,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                               dateFrom: dateFrom,
                                               dateTo: dateTo,
                                               leaveCode: leaveTypeId,
+                                              leaveId: widget.leaveId ?? '0',
                                             );
                                       }
                                     },
@@ -319,6 +321,7 @@ class _SubmitLeaveScreenState extends ConsumerState<SubmitLeaveScreen> {
                                   MaterialPageRoute(
                                     builder:
                                         (context) => LeaveConfiguration(
+                                          leaveId: widget.leaveId ?? '0',
                                           isResumptionLeave:
                                               widget.submitResumptionModel !=
                                               null,
