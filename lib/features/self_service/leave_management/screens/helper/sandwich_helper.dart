@@ -640,14 +640,15 @@ bool halfDayRuleHit(
     }
   }
   // Case 3: only trailing condition
+  // Case 3: only trailing condition
   else if (conditions.trailing) {
     final isHolidayHalfCombo =
         (firstDayFlag == 'H' && firstHalf == LeaveConstants.halfDay1);
 
-    final isFullHalfCombo =
-        (firstDayFlag == 'F' && firstHalf == LeaveConstants.halfDay1);
+    // final isFullHalfCombo =
+    //     (firstDayFlag == 'F' && firstHalf == LeaveConstants.halfDay1);
 
-    if (isHolidayHalfCombo || isFullHalfCombo) {
+    if (isHolidayHalfCombo) {
       isHalfDayCut = true;
     }
   }
