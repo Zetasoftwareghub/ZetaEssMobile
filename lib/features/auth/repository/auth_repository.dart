@@ -62,11 +62,15 @@ class AuthRepository {
         'suconn': userContext.companyConnection,
         'baseUrl': userContext.userBaseUrl,
       };
+      print(userContext.baseUrl);
+      print("userContext.baseUrl");
+      print(payloadData);
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.loginInApi}',
         data: payloadData,
       );
       final data = response.data;
+      print(data);
       // Defensive: ensure 'data' is a List and has at least one item
       final escodes = data['data'];
       if (escodes is String) {

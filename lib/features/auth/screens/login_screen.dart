@@ -112,7 +112,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       .when(
                         data: (companyList) {
                           return DropdownButtonFormField<CompanyModel>(
-                            value: ref.watch(userCompanyProvider),
                             items:
                                 companyList.map((e) {
                                   return DropdownMenuItem<CompanyModel>(
@@ -253,6 +252,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           context: context,
                           screen: ActivationUrlScreen(),
                         );
+                        ref.read(baseUrlProvider.notifier).state = null;
                         await SecureStorageService.delete(
                           key: StorageKeys.baseUrl,
                         );

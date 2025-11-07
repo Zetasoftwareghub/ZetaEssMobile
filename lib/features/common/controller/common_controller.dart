@@ -70,6 +70,7 @@ class CommonController extends Notifier<bool> {
 
     res.fold(
       (l) {
+        print(l.errMsg);
         showSnackBar(
           context: context,
           content: 'Failed to get URL: ${l.errMsg}',

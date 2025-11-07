@@ -65,6 +65,8 @@ class EmployeeRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
+      print(response);
+      print("response");
       if (response.statusCode == 200 && response.data['success'] == true) {
         return MainMenuModel.fromJson(response.data);
       } else {

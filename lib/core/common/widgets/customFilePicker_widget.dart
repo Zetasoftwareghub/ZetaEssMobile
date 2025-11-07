@@ -176,6 +176,7 @@ class FileUploadButton extends ConsumerWidget {
           // Show upload button
           OutlinedButton.icon(
             onPressed: () {
+              FocusScope.of(context).unfocus();
               notifier.pickFile();
             },
             icon: const Icon(

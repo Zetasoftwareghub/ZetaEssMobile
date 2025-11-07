@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/core/common/loader.dart';
 import 'package:zeta_ess/core/providers/storage_repository_provider.dart';
 import 'package:zeta_ess/core/services/NavigationService.dart';
 import 'package:zeta_ess/core/theme/common_theme.dart';
@@ -107,6 +108,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(localAuthProvider);
+    final isLoading = ref.watch(authControllerProvider);
     final user = ref.watch(userDataProvider);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -247,10 +249,12 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
               30.heightBox,
 
               /// PIN Input
-              CustomPinPutWidget(
-                controller: pinController,
-                onCompleted: (pin) => _confirmPin(),
-              ),
+              isLoading
+                  ? Loader()
+                  : CustomPinPutWidget(
+                    controller: pinController,
+                    onCompleted: (pin) => _confirmPin(),
+                  ),
 
               40.heightBox,
 
