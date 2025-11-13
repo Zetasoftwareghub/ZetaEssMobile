@@ -19,6 +19,7 @@ import '../../../core/services/NavigationService.dart';
 import '../attendance_regularisation/screens/attandanceRegularisation_datePick.dart';
 import '../change_request/screens/change_request_listing_screen.dart';
 import '../expense_claim/screens/expenseClaimListing_screen.dart';
+import '../expense_claim/screens/newForm_submitExpenseClaim_screen.dart';
 import '../leave_management/screens/leaveListing_screen.dart';
 import '../lieuDay_request/screens/lieuDayListing_screen.dart';
 import '../loan/screens/loanListing_screen.dart';
@@ -48,7 +49,7 @@ class _SelfServicesScreenState extends ConsumerState<SelfServicesScreen> {
     'submit_leave': (key) => LeaveListingScreen(title: key),
     'resumption_request': (key) => ResumptionListingScreen(title: key),
     'lieu_day_request': (key) => LieuDayListingScreen(title: key),
-    'expense_claim_request': (key) => ExpenseClaimListingScreen(title: key),
+    'expense_claim_request': (key) => SubmitExpenseClaimForm(),
     'salary_advance_requests': (key) => SalaryAdvanceListingScreen(title: key),
     'loan_request': (key) => LoanListingScreen(title: key),
     'leave_balances': (key) => LeaveBalancesScreen(title: key),

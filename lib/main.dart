@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zeta_ess/services/firebase_notification.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils.dart';
 import 'features/splash_screen.dart';
 import 'firebase_options.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +30,7 @@ Future<void> main() async {
 Future<void> _initialise() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await EasyLocalization.ensureInitialized();
+  await FCMService.initialize();
 }
 
 Future<void> _setPreferredOrientations() async {
@@ -55,6 +59,8 @@ class ZetaApp extends StatelessWidget {
           designSize: const Size(393, 851),
           builder:
               (context, child) => MaterialApp(
+                navigatorKey: navigatorKey,
+
                 navigatorObservers: [SnackBarNavigatorObserver()],
                 builder:
                     (context, child) => SafeArea(

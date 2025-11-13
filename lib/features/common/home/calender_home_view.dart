@@ -1211,7 +1211,10 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
             PageRouteBuilder(
               pageBuilder:
                   (context, animation, secondaryAnimation) =>
-                      AttendanceRegularisationScreen(regulariseDay: day),
+                      AttendanceRegularisationScreen(
+                        regulariseDay: day,
+                        fromHomeScreen: true,
+                      ),
               transitionsBuilder: (
                 context,
                 animation,

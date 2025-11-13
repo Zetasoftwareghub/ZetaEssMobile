@@ -18,16 +18,16 @@ import 'forms/add_more_expnse_claim_screen.dart';
 import 'forms/advance_payment_form.dart';
 import 'forms/business_gift_form.dart';
 
-class SubmitExpenseClaimScreen extends ConsumerStatefulWidget {
-  const SubmitExpenseClaimScreen({super.key});
+class SubmitExpenseClaimForm extends ConsumerStatefulWidget {
+  const SubmitExpenseClaimForm({super.key});
 
   @override
-  ConsumerState<SubmitExpenseClaimScreen> createState() =>
+  ConsumerState<SubmitExpenseClaimForm> createState() =>
       _SubmitExpenseClaimScreenState();
 }
 
 class _SubmitExpenseClaimScreenState
-    extends ConsumerState<SubmitExpenseClaimScreen>
+    extends ConsumerState<SubmitExpenseClaimForm>
     with TickerProviderStateMixin {
   final advanceProvider = StateProvider<bool>((ref) => false);
   final includeBusinessGiftProvider = StateProvider<bool>((ref) => false);

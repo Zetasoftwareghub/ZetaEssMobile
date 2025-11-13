@@ -16,10 +16,11 @@ import '../providers/regularise_notifier.dart';
 
 class AttendanceRegularisationScreen extends ConsumerStatefulWidget {
   final RegulariseCalendarDay regulariseDay;
-
+  final bool fromHomeScreen;
   const AttendanceRegularisationScreen({
     super.key,
     required this.regulariseDay,
+    this.fromHomeScreen = false,
   });
 
   @override
@@ -1046,7 +1047,9 @@ class _AttendanceRegularisationScreenState
                                           });
 
                                           if (result != null) {
-                                            Navigator.pop(context);
+                                            if (!widget.fromHomeScreen) {
+                                              Navigator.pop(context);
+                                            }
                                             showCustomAlertBox(
                                               context,
                                               title: result,
