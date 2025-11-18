@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -144,12 +145,16 @@ class AuthController extends Notifier<bool> {
     bool fromPinScreen = false,
   }) async {
     state = true;
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    debugPrint("FCM Token fetched: $fcmToken");
+
     final res = await ref
         .read(authRepositoryProvider)
         .loginUser(
           userContext: ref.watch(userContextProvider),
           userName: userName,
-          fcmToken: ref.watch(fcmTokenProvider) ?? "noToken",
+          // fcmToken: ref.watch(fcmTokenProvider) ?? "noToken",
+          fcmToken: fcmToken ?? "noToken",
           password: password,
           context: context,
         );

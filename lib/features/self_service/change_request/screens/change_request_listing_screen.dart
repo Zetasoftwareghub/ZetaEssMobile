@@ -103,6 +103,8 @@ class ChangeRequestListView extends ConsumerWidget {
           child: CustomTileListingWidget(
             listRights: rights,
             text1: convertRawDateToString(request.date),
+            subText1: "requested_date".tr(),
+
             text2: request.requestType,
             subText2:
                 request.status.isEmpty

@@ -79,7 +79,6 @@ class _RealTimeClockState extends ConsumerState<RealTimeClock>
 
   Future<void> _initializeTimeFromLocation(LiveLocation location) async {
     if (_isInitialized) return;
-
     try {
       final locationTime = await _fetchLocationTime(
         location.position.latitude,

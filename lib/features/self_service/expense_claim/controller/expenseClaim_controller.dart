@@ -1,19 +1,3 @@
-//
-// class SubmittedLeavesNotifier
-//     extends AutoDisposeAsyncNotifier<SubmittedLeaveResponse> {
-//   @override
-//   FutureOr<SubmittedLeaveResponse> build() async {
-//     final repo = ref.read(leaveRepositoryProvider);
-//     final userContext = ref.read(userContextProvider);
-//
-//     final result = await repo.getSubmittedLeaves(userContext: userContext);
-//     return result.fold(
-//           (failure) => throw Exception(failure.errMsg),
-//           (data) => data,
-//     );
-//   }
-// }
-
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';

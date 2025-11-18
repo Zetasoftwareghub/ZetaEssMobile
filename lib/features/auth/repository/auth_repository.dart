@@ -63,6 +63,7 @@ class AuthRepository {
         'baseUrl': userContext.userBaseUrl,
       };
       print(userContext.baseUrl);
+      print(fcmToken);
       print("userContext.baseUrl");
       print(payloadData);
       final response = await dio.post(

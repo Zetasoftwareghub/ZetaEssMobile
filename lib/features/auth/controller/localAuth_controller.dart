@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
@@ -60,6 +61,10 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
     // final jwtToken = await SecureStorageService.read(
     //   key: StorageKeys.jwtToken,
     // );
+
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    debugPrint("🔥 FCM Token fetched inside LocalAuthNotifier: $fcmToken");
+
     final localUrl = await SecureStorageService.read(key: StorageKeys.baseUrl);
     ref.read(baseUrlProvider.notifier).state = localUrl ?? '';
 

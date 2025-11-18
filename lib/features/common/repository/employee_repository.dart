@@ -78,16 +78,21 @@ class EmployeeRepository {
   FutureEither<EmployeeMenuModel> getEmployeeSelfLineMenus({
     required UserContext userContext,
   }) {
+    final data = {
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
+      'emcode': userContext.empCode,
+    };
+    print(data);
+    print("data");
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + EmployeeApi.getEmployeeSelfLineMenus,
-        data: {
-          'sucode': userContext.companyCode,
-          'suconn': userContext.companyConnection,
-          'emcode': userContext.empCode,
-        },
+        data: data,
         options: dioHeader(token: userContext.jwtToken),
       );
+      print(response);
+      print("respons123e");
       if (response.statusCode == 200 && response.data['success'] == true) {
         return EmployeeMenuModel.fromJson(response.data);
       } else {

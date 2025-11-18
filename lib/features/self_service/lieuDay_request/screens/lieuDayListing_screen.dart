@@ -106,7 +106,7 @@ class LieuDayListView extends ConsumerWidget {
               ),
           child: CustomTileListingWidget(
             text1: item.ludate ?? '',
-
+            subText1: "requested_date".tr(),
             text2: item.lulvtp ?? "Unknown",
             subText2: approveTab ? "${'Status'.tr()}: ${item.apstat}" : "",
             listRights: rightsModel,

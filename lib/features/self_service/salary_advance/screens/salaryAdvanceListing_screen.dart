@@ -111,6 +111,8 @@ class SalaryAdvanceListView extends ConsumerWidget {
 
           child: CustomTileListingWidget(
             text1: item.date?.split(' ')[0] ?? '',
+            subText1: "requested_date".tr(),
+
             text2: 'Amount: ${item.amount}' ?? '',
             subText2:
                 '${'Status'.tr()}: ${item.empName}, Note: ${item.note ?? ''}',

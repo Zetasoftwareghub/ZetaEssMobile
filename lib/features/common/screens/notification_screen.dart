@@ -449,31 +449,31 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     if (isRequestTab) {
       switch (id) {
         case "9":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: LoanListingScreen(title: 'loan_request'.tr()),
           );
           break;
         case "97":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ChangeRequestListingScreen(title: 'change__request'.tr()),
           );
           break;
         case "152":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: AttendanceRegularisationDatePick(),
           );
           break;
         case "5":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: LeaveListingScreen(title: 'leave'.tr()),
           );
           break;
         case "6":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: SalaryCertificateListingScreen(
               title: 'salary_certificate_request'.tr(),
@@ -481,7 +481,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "7":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: SalaryAdvanceListingScreen(
               title: 'salary_advance_requests'.tr(),
@@ -489,7 +489,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "8":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ExpenseClaimListingScreen(
               title: 'expense_claim_request'.tr(),
@@ -497,19 +497,19 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "9999":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: OtherRequestFirstListingScreen(title: 'other_requests'),
           );
           break;
         case "112":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ResumptionListingScreen(title: "resumption_request".tr()),
           );
           break;
         case "84":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: LieuDayListingScreen(title: "lieu_day_request".tr()),
           );
@@ -519,13 +519,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     } else {
       switch (name) {
         case "Pending Approve Leave":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveLeaveListingScreen(title: 'approve_leave'),
           );
           break;
         case "Pending Approve Change Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveChangeRequestListing(
               title: 'change_request_approve'.tr(),
@@ -533,13 +533,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Loan Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveLoanListingScreen(title: 'loan_approve'),
           );
           break;
         case "Pending Approve Resumption":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveResumptionListingScreen(
               title: 'resumption_approve'.tr(),
@@ -547,7 +547,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Leave Cancellation Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveCancelLeaveListingScreen(
               title: 'cancel_approved_leave',
@@ -555,7 +555,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Expense Claim Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveExpenseClaimListingScreen(
               title: 'expense_claim_approve'.tr(),
@@ -563,7 +563,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Salary Advance Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveSalaryAdvanceListingScreen(
               title: 'salary_advance_approve'.tr(),
@@ -571,7 +571,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Salary Certificate Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveSalaryCertificateListingScreen(
               title: 'Approve Salary Certificate',
@@ -579,7 +579,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Attendance Regularization Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveAttendanceRegularisationListingScreen(
               title: 'attendance_regularisation_approve',
@@ -587,7 +587,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Other Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveOtherRequestFirstListingScreen(
               title: 'other_requests',
@@ -595,7 +595,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           );
           break;
         case "Pending Approve Lieu Days Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveLieuDayListingScreen(title: 'lieu_day_approve'.tr()),
           );
@@ -709,19 +709,19 @@ class NotificationsScreen extends ConsumerWidget {
     if (isRequestTab) {
       switch (id) {
         case "152":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: AttendanceRegularisationDatePick(),
           );
           break;
         case "5":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: LeaveListingScreen(title: 'leave_requests'.tr()),
           );
           break;
         case "6":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: SalaryCertificateListingScreen(
               title: 'salary_certificate_requests'.tr(),
@@ -729,7 +729,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "7":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: SalaryAdvanceListingScreen(
               title: 'salary_certificates_requests'.tr(),
@@ -737,7 +737,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "8":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ExpenseClaimListingScreen(
               title: 'expense_claim_requests'.tr(),
@@ -745,19 +745,19 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "9999":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: OtherRequestFirstListingScreen(title: 'other_requests'),
           );
           break;
         case "112":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ResumptionListingScreen(title: "resumption_requests".tr()),
           );
           break;
         case "84":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: LieuDayListingScreen(title: "lieu_days_requests".tr()),
           );
@@ -767,43 +767,43 @@ class NotificationsScreen extends ConsumerWidget {
     } else {
       switch (name) {
         case "Pending Approve Leave":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveLeaveListingScreen(title: 'approve_leave'),
           );
           break;
         case "Pending Approve Resumption":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: ApproveResumptionListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Leave Cancellation Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context, //TODO this was cancel leave listing screen
             screen: ApproveLeaveListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Expense Claim Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveExpenseClaimListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Salary Advance Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveSalaryAdvanceListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Salary Certificate Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveSalaryCertificateListingScreen(title: 'title'),
           );
           break;
         case "Pending Approve Attendance Regularization Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveAttendanceRegularisationListingScreen(
               title: 'title',
@@ -811,7 +811,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Other Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context, //TODO need req id micode passs karo
             screen: const ApproveOtherRequestListingScreen(
               title: 'title',
@@ -821,7 +821,7 @@ class NotificationsScreen extends ConsumerWidget {
           );
           break;
         case "Pending Approve Lieu Days Request":
-          NavigationService.navigatePushReplacement(
+          NavigationService.navigateToScreen(
             context: context,
             screen: const ApproveLieuDayListingScreen(title: 'title'),
           );
