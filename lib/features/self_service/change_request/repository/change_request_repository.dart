@@ -96,7 +96,6 @@ class ChangeRequestRepository {
         data: saveModel.toJson(),
         options: dioHeader(token: userContext.jwtToken),
       );
-print(response.data);
       return response.data['data'].toString();
     });
   }

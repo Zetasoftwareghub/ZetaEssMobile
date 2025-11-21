@@ -50,7 +50,7 @@ Widget inputField({
     inputFormatters:
         keyboardType == TextInputType.number
             ? [
-              // FilteringTextInputFormatter.digitsOnly,
+              FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(11), // Limit to 10 digits
             ]
             : [],

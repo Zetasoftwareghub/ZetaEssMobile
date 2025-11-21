@@ -103,9 +103,6 @@ class _BankDetailsFormState extends ConsumerState<BankDetailsForm> {
         });
       },
     );
-    // final bankDetailsAsync = ref.watch(
-    //   banksDetailsProvider(widget.employeeCode),
-    // );
 
     return bankDetailsAsync.when(
       data: (bankDetails) {

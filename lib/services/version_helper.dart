@@ -10,16 +10,40 @@ class VersionHelper {
   static final String _playStoreUrl =
       'https://play.google.com/store/apps/details?id=com.zeta.zeta_ess';
   static final String _appStoreUrl =
-      'https://apps.apple.com/in/app/zeta-hrms/id1439102381'; //TODO change the url
+      'https://apps.apple.com/in/app/zeta-hrms/id1439102381';
 
-  /// Checks if current app version is older than latest version
+  // /// Checks if current app version is older than latest version
+  // static bool isNewer(String latest, String current) {
+  //
+  //   final latestParts = latest.split('.').map(int.parse).toList();
+  //   final currentParts = current.split('.').map(int.parse).toList();
+  //
+  //   for (int i = 0; i < latestParts.length; i++) {
+  //     final l = latestParts[i];
+  //     final c = i < currentParts.length ? currentParts[i] : 0;
+  //
+  //     if (l > c) return true;
+  //     if (l < c) return false;
+  //   }
+  //   return false;
+  // }
   static bool isNewer(String latest, String current) {
-    final latestParts = latest.split('.').map(int.parse).toList();
-    final currentParts = current.split('.').map(int.parse).toList();
+    int parsePart(String part) {
+      final cleaned = part.split(RegExp(r'[^0-9]')).first;
+      return int.tryParse(cleaned) ?? 0;
+    }
 
-    for (int i = 0; i < latestParts.length; i++) {
-      final l = latestParts[i];
-      final c = i < currentParts.length ? currentParts[i] : 0;
+    final latestParts = latest.split('.');
+    final currentParts = current.split('.');
+
+    final maxLen =
+        (latestParts.length > currentParts.length)
+            ? latestParts.length
+            : currentParts.length;
+
+    for (int i = 0; i < maxLen; i++) {
+      final l = i < latestParts.length ? parsePart(latestParts[i]) : 0;
+      final c = i < currentParts.length ? parsePart(currentParts[i]) : 0;
 
       if (l > c) return true;
       if (l < c) return false;

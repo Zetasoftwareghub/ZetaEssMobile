@@ -76,11 +76,11 @@ class ApprovalManagementScreen extends ConsumerWidget {
         child: Padding(
           padding: AppPadding.screenPadding,
           child: InkWell(
-            onTap:
-                () => NavigationService.navigateToScreen(
-                  context: context,
-                  screen: ShiftAllocationScreen(),
-                ),
+            // onTap:
+            //     () => NavigationService.navigateToScreen(
+            //       context: context,
+            //       screen: ShiftAllocationScreen(),
+            //     ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

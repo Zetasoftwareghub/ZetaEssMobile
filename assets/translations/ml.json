@@ -1,4 +1,6 @@
-{ "Failed to fetch attendance data": "ഹാജർ ഡാറ്റ കൊണ്ടുവരാൻ കഴിഞ്ഞില്ല",
+{
+  "Real-Time Clock":"റിയൽ-ടൈം ക്ലോക്ക്",
+  "Failed to fetch attendance data": "ഹാജർ ഡാറ്റ കൊണ്ടുവരാൻ കഴിഞ്ഞില്ല",
   "Tap \"Add New\" to create a punch entry": "പഞ്ച് എൻട്രി സൃഷ്ടിക്കാൻ \"പുതിയത് ചേർക്കുക\" അമർത്തുക",
   "Entry": "എൻട്രി",
   "Location": "സ്ഥലം",

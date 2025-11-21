@@ -73,7 +73,9 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value); // ⚡ sync with provider
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        updateField(ref, field, value); // ⚡i  sync with provider
+      });
     }
 
     // Set Passport fields
@@ -114,12 +116,12 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
 
     return passportAsync.when(
       data: (passport) {
-        print(passport.passportHolder);
-        print("passport.passportHolder");
-        print(passportHolder);
+        if (widget.reqId == null) {
+          placeOfIssueController.text = passport.placeOfIssue ?? '';
+          passportNumberController.text = passport.passportNumber ?? '';
+        }
         return Column(
           children: [
-            // Old Value Section
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(12.w),
@@ -136,19 +138,27 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                   ),
 
                   titleHeaderText("Old Value"),
-                  labelText("Number"),
-                  labelText(passport.passportNumber),
-                  labelText("Place of Issue"),
-                  labelText(passport.placeOfIssue),
-                  labelText("Issued Date"),
+                  detailInfoRow(
+                    title: "Number",
+                    subTitle: passport.passportNumber,
+                  ),
+                  detailInfoRow(
+                    title: "Place of Issue",
+                    subTitle: passport.placeOfIssue,
+                  ),
                   if (passport.issuedDate != null)
-                    labelText(
-                      formatDate(passport.issuedDate ?? DateTime.now()),
+                    detailInfoRow(
+                      title: "Issued Date",
+                      subTitle: formatDate(
+                        passport.issuedDate ?? DateTime.now(),
+                      ),
                     ),
-                  labelText("Expiry Date"),
                   if (passport.expiryDate != null)
-                    labelText(
-                      formatDate(passport.expiryDate ?? DateTime.now()),
+                    detailInfoRow(
+                      title: "Expiry Date",
+                      subTitle: formatDate(
+                        passport.expiryDate ?? DateTime.now(),
+                      ),
                     ),
                   labelText("Issued Country"),
                   CustomCountryDropDown(
@@ -182,7 +192,7 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                 ],
               ),
             ),
-
+            10.heightBox,
             // New Value Section
             Container(
               padding: EdgeInsets.all(12.w),
@@ -196,14 +206,26 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     readOnly: widget.isLineManager,
                     hint: "Enter Passport Number",
                     controller: passportNumberController,
-                    onChanged: (v) => updateField(ref, "Number", v),
+                    onChanged:
+                        (v) => updateField(
+                          ref,
+                          "Number",
+                          v,
+                          oldChtext: passport.passportNumber,
+                        ),
                   ),
                   labelText("Place of issue"),
                   inputField(
                     readOnly: widget.isLineManager,
                     hint: "Place of Issue",
                     controller: placeOfIssueController,
-                    onChanged: (v) => updateField(ref, "Place of Issue", v),
+                    onChanged:
+                        (v) => updateField(
+                          ref,
+                          "Place of Issue",
+                          v,
+                          oldChtext: passport.placeOfIssue,
+                        ),
                   ),
                   labelText("Issued Date"),
                   CustomDateField(
@@ -214,7 +236,14 @@ class _PassportDetailsFormState extends ConsumerState<PassportDetailsForm> {
                     onDateSelected:
                         widget.isLineManager
                             ? null
-                            : (v) => updateField(ref, "Issued Date", v),
+                            : (v) => updateField(
+                              ref,
+                              "Issued Date",
+                              v,
+                              oldChtext: formatDate(
+                                passport.issuedDate ?? DateTime.now(),
+                              ),
+                            ),
                   ),
                   labelText("Expiry Date"),
                   CustomDateField(

@@ -122,6 +122,7 @@ class _SalaryAdvanceDetailScreenState
                                 inputField(
                                   hint: 'Approve amount'.tr(),
                                   controller: amountController,
+
                                   keyboardType: TextInputType.number,
                                   onChanged: (amount) {
                                     ValidatorServices.validateApproveAmount(

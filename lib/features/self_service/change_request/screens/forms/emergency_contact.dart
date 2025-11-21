@@ -88,7 +88,7 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value, oldChvalu: value); // ⚡ sync with provider
+      updateField(ref, field, value, oldChtext: value); // ⚡ sync with provider
     }
 
     // Contact 1
@@ -113,29 +113,6 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     setState(() => comment = changeRequest.comment);
   }
 
-  /*
-
-  void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
-    if (_isInitialized) return;
-    final details = changeRequest.detail;
-    nameCtrl1.text = getValueFromDetails(details, "Contact 1") ?? '';
-    relationCtrl1.text = getValueFromDetails(details, "Relation 1") ?? '';
-    phoneCtrl1.text = getValueFromDetails(details, "Phone No. 1") ?? '';
-    emailCtrl1.text = getValueFromDetails(details, "Email Id 1") ?? '';
-
-    nameCtrl2.text = getValueFromDetails(details, "Contact 2") ?? '';
-    relationCtrl2.text = getValueFromDetails(details, "Relation 2") ?? '';
-    phoneCtrl2.text = getValueFromDetails(details, "Phone No. 2") ?? '';
-    emailCtrl2.text = getValueFromDetails(details, "Email Id 2") ?? '';
-
-    nameCtrl3.text = getValueFromDetails(details, "Contact 3") ?? '';
-    relationCtrl3.text = getValueFromDetails(details, "Relation 3") ?? '';
-    phoneCtrl3.text = getValueFromDetails(details, "Phone No 3") ?? '';
-    emailCtrl3.text = getValueFromDetails(details, "Email Id 3") ?? '';
-    _isInitialized = true;
-    setState(() => comment = changeRequest.comment);
-  }
-*/
   @override
   Widget build(BuildContext context) {
     if (widget.reqId != null) {
@@ -194,7 +171,10 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
             ],
 
             SizedBox(height: 16.h),
-            _formSection(readOnly: widget.isLineManager ?? false),
+            _formSection(
+              readOnly: widget.isLineManager ?? false,
+              oldData: data,
+            ),
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
@@ -212,7 +192,10 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     );
   }
 
-  Widget _formSection({required bool readOnly}) {
+  Widget _formSection({
+    required bool readOnly,
+    required AddressContactModel oldData,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -226,8 +209,13 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
           phoneController: phoneCtrl1,
           emailController: emailCtrl1,
           readOnly: readOnly,
+          oldName: oldData.emergencyPerson ?? "",
+          oldRelation: oldData.emergencyRelation ?? "",
+          oldPhone: oldData.emergencyPhone ?? "",
+          oldEmail: oldData.emergencyEmail ?? "",
         ),
-        SizedBox(height: 12.h),
+
+        12.heightBox,
 
         // Emergency 2
         _singleEmergencyCard(
@@ -236,10 +224,14 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
           relationController: relationCtrl2,
           phoneController: phoneCtrl2,
           emailController: emailCtrl2,
-
           readOnly: readOnly,
+          oldName: oldData.emergencyPerson1 ?? "",
+          oldRelation: oldData.emergencyRelation1 ?? "",
+          oldPhone: oldData.emergencyPhone1 ?? "",
+          oldEmail: oldData.emergencyEmail1 ?? "",
         ),
-        SizedBox(height: 12.h),
+
+        12.heightBox,
 
         // Emergency 3
         _singleEmergencyCard(
@@ -248,8 +240,11 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
           relationController: relationCtrl3,
           phoneController: phoneCtrl3,
           emailController: emailCtrl3,
-
           readOnly: readOnly,
+          oldName: oldData.emergencyPerson2 ?? "",
+          oldRelation: oldData.emergencyRelation2 ?? "",
+          oldPhone: oldData.emergencyPhone2 ?? "",
+          oldEmail: oldData.emergencyEmail2 ?? "",
         ),
       ],
     );
@@ -262,68 +257,174 @@ class _EmergencyContactFormState extends ConsumerState<EmergencyContactForm> {
     required TextEditingController phoneController,
     required TextEditingController emailController,
     required bool readOnly,
+
+    // OLD VALUES HERE
+    required String oldName,
+    required String oldRelation,
+    required String oldPhone,
+    required String oldEmail,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        labelText('Contact $index'),
+        labelText("Contact $index"),
         inputField(
-          hint: 'Contact $index',
+          hint: "Contact $index",
           controller: nameController,
           readOnly: readOnly,
-          onChanged: (val) => updateField(ref, "Contact $index", val),
+          onChanged:
+              (val) =>
+                  updateField(ref, "Contact $index", val, oldChtext: oldName),
         ),
-        labelText('Relation $index'),
+
+        labelText("Relation $index"),
         inputField(
-          hint: 'Relation $index',
+          hint: "Relation $index",
           controller: relationController,
           readOnly: readOnly,
-          onChanged: (val) => updateField(ref, "Relation $index", val),
+          onChanged:
+              (val) => updateField(
+                ref,
+                "Relation $index",
+                val,
+                oldChtext: oldRelation,
+              ),
         ),
-        labelText('Phone No. $index'),
+
+        labelText("Phone No. $index"),
         inputPhoneField(
           hint: "Phone No. $index",
-          readOnly: readOnly,
           controller: phoneController,
+          readOnly: readOnly,
           isRequired: true,
-          onChanged: (val) {
-            updateField(
-              ref,
-              index == 3 ? "Phone No $index" : "Phone No. $index",
-              val,
-            );
-          },
+          onChanged:
+              (val) => updateField(
+                ref,
+                "Phone No. $index",
+                val,
+                oldChtext: oldPhone,
+              ),
         ),
-        labelText('Email Id $index'),
+
+        labelText("Email Id $index"),
         inputField(
-          hint: 'Email Id  $index',
+          hint: "Email Id $index",
           controller: emailController,
           readOnly: readOnly,
-          onChanged: (val) => updateField(ref, "Email Id $index", val),
+          onChanged:
+              (val) =>
+                  updateField(ref, "Email Id $index", val, oldChtext: oldEmail),
         ),
       ],
     );
   }
-
-  @override
-  void dispose() {
-    nameCtrl1.dispose();
-    relationCtrl1.dispose();
-    phoneCtrl1.dispose();
-
-    nameCtrl2.dispose();
-    relationCtrl2.dispose();
-    phoneCtrl2.dispose();
-
-    nameCtrl3.dispose();
-    relationCtrl3.dispose();
-    phoneCtrl3.dispose();
-    super.dispose();
-  }
-
-  BoxDecoration _boxDecoration() => BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12.r),
-    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4.r)],
-  );
 }
+// Widget _formSection({required bool readOnly}) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       titleHeaderText("New Value"),
+//
+//       // Emergency 1
+//       _singleEmergencyCard(
+//         index: 1,
+//         nameController: nameCtrl1,
+//         relationController: relationCtrl1,
+//         phoneController: phoneCtrl1,
+//         emailController: emailCtrl1,
+//         readOnly: readOnly,
+//       ),
+//       SizedBox(height: 12.h),
+//
+//       // Emergency 2
+//       _singleEmergencyCard(
+//         index: 2,
+//         nameController: nameCtrl2,
+//         relationController: relationCtrl2,
+//         phoneController: phoneCtrl2,
+//         emailController: emailCtrl2,
+//
+//         readOnly: readOnly,
+//       ),
+//       SizedBox(height: 12.h),
+//
+//       // Emergency 3
+//       _singleEmergencyCard(
+//         index: 3,
+//         nameController: nameCtrl3,
+//         relationController: relationCtrl3,
+//         phoneController: phoneCtrl3,
+//         emailController: emailCtrl3,
+//
+//         readOnly: readOnly,
+//       ),
+//     ],
+//   );
+// }
+
+//   Widget _singleEmergencyCard({
+//     required int index,
+//     required TextEditingController nameController,
+//     required TextEditingController relationController,
+//     required TextEditingController phoneController,
+//     required TextEditingController emailController,
+//     required bool readOnly,
+//   }) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         labelText('Contact $index'),
+//         inputField(
+//           hint: 'Contact $index',
+//           controller: nameController,
+//           readOnly: readOnly,
+//           onChanged: (val) => updateField(ref, "Contact $index", val),
+//         ),
+//         labelText('Relation $index'),
+//         inputField(
+//           hint: 'Relation $index',
+//           controller: relationController,
+//           readOnly: readOnly,
+//           onChanged: (val) => updateField(ref, "Relation $index", val),
+//         ),
+//         labelText('Phone No. $index'),
+//         inputPhoneField(
+//           hint: "Phone No. $index",
+//           readOnly: readOnly,
+//           controller: phoneController,
+//           isRequired: true,
+//           onChanged: (val) {
+//             updateField(
+//               ref,
+//               index == 3 ? "Phone No $index" : "Phone No. $index",
+//               val,
+//             );
+//           },
+//         ),
+//         labelText('Email Id $index'),
+//         inputField(
+//           hint: 'Email Id  $index',
+//           controller: emailController,
+//           readOnly: readOnly,
+//           onChanged: (val) => updateField(ref, "Email Id $index", val),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     nameCtrl1.dispose();
+//     relationCtrl1.dispose();
+//     phoneCtrl1.dispose();
+//
+//     nameCtrl2.dispose();
+//     relationCtrl2.dispose();
+//     phoneCtrl2.dispose();
+//
+//     nameCtrl3.dispose();
+//     relationCtrl3.dispose();
+//     phoneCtrl3.dispose();
+//     super.dispose();
+//   }
+// }}

@@ -16,9 +16,11 @@ import '../../../../core/common/loader.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/common_theme.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../../services/version_helper.dart';
 import '../models/punch_model.dart';
 import '../screens/widgets/clock.dart';
 import 'controller/liveLocation_controller.dart';
+import 'controller/version_check_controller.dart';
 
 //TODO is this correct or not? IDK
 
@@ -34,6 +36,18 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final versionAsync = ref.watch(versionFutureProvider);
+
+    versionAsync.when(
+      data: (version) {
+        // Call global version helper once
+        Future.microtask(
+          () => VersionHelper.checkAndShowUpdateDialog(context, version),
+        );
+      },
+      loading: () => const SizedBox(), // or loader
+      error: (e, st) => const SizedBox(), // ignore errors here or handle
+    );
     return Positioned(
       top: 120.h,
       left: 0,
@@ -49,13 +63,11 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
           child: Column(
             children: [
               Text(
-                "working_time".tr(),
+                "Real-Time Clock".tr(),
                 style: AppTextStyles.mediumFont(color: Colors.black54),
               ),
               10.heightBox,
-
               const RealTimeClock(),
-
               Text(
                 '${"employee_id".tr()} : ${ref.watch(userDataProvider)?.eminid} ',
                 style: AppTextStyles.smallFont(fontWeight: FontWeight.bold),

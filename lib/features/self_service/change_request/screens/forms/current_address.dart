@@ -55,7 +55,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     );
     void addListener(TextEditingController c, String field) {
       c.addListener(() {
-        updateField(ref, field, c.text, oldChvalu: c.text);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          updateField(ref, field, c.text);
+        });
       });
     }
 
@@ -80,7 +82,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(details, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value, oldChvalu: value);
+      updateField(ref, field, value);
     }
 
     // Set all fields
@@ -100,7 +102,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
     updateField(ref, "Country", countryCode ?? '', oldChvalu: countryCode);
 
     setState(() => comment = changeRequest.comment);
-    updateField(ref, "Comment", comment ?? '', oldChvalu: comment);
+    updateField(ref, "Comment", comment ?? '', oldChtext: comment);
     _isInitialized = true;
   }
 
@@ -128,34 +130,34 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
       data: (data) {
         // current address
         if (widget.reqId == null) {
-          addressLine1Controller.text = data.addressLine1 ?? '';
-          streetNameController.text = data.streetName ?? '';
-          cityController.text = data.townCityName ?? '';
-          stateController.text = data.stateName ?? '';
-          countryController.text = data.countryCode ?? '';
-          postBoxController.text = data.postBox ?? '';
-          phoneNumberController.text = data.phoneNumber ?? '';
-          mobileNumberController.text = data.mobileNumber ?? '';
-          personalEmailController.text = data.personalMailId ?? '';
-          officialEmailController.text = data.emailId ?? '';
-          countryCode ??= data.countryCode ?? 'IND';
+          addressLine1Controller.text = data?.addressLine1 ?? '';
+          streetNameController.text = data?.streetName ?? '';
+          cityController.text = data?.townCityName ?? '';
+          stateController.text = data?.stateName ?? '';
+          countryController.text = data?.countryCode ?? '';
+          postBoxController.text = data?.postBox ?? '';
+          phoneNumberController.text = data?.phoneNumber ?? '';
+          mobileNumberController.text = data?.mobileNumber ?? '';
+          personalEmailController.text = data?.personalMailId ?? '';
+          officialEmailController.text = data?.emailId ?? '';
+          countryCode ??= data?.countryCode ?? 'IND';
         }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             titleHeaderText('Old Value'),
-            detailInfoRow(title: "House No.", subTitle: data.addressLine1),
+            detailInfoRow(title: "House No.", subTitle: data?.addressLine1),
 
             detailInfoRow(
               title: "Street Name",
-              subTitle: data.streetName ?? "No value",
+              subTitle: data?.streetName ?? "No value",
             ),
             detailInfoRow(
               title: "Town/City",
-              subTitle: data.townCityName ?? "No value",
+              subTitle: data?.townCityName ?? "No value",
             ),
-            detailInfoRow(title: "State", subTitle: data.stateName ?? ''),
+            detailInfoRow(title: "State", subTitle: data?.stateName ?? ''),
             // TODO change this (special case with dropdown)
             Row(
               children: [
@@ -163,27 +165,33 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 8.widthBox,
                 Expanded(
                   child: CustomCountryDropDown(
-                    countryCode: data.countryCode ?? 'IND',
+                    countryCode: data?.countryCode ?? 'IND',
                   ),
                 ),
               ],
             ),
-            detailInfoRow(title: "Post box", subTitle: data.postBox ?? ''),
-            detailInfoRow(title: "Phone No.", subTitle: data.phoneNumber ?? ''),
+            detailInfoRow(title: "Post box", subTitle: data?.postBox ?? ''),
+            detailInfoRow(
+              title: "Phone No.",
+              subTitle: data?.phoneNumber ?? '',
+            ),
             detailInfoRow(
               title: "Mobile",
-              subTitle: data.mobileNumber ?? "No value",
+              subTitle: data?.mobileNumber ?? "No value",
             ),
             detailInfoRow(
               title: "Personal Email id",
-              subTitle: data.personalMailId ?? '',
+              subTitle: data?.personalMailId ?? '',
             ),
             detailInfoRow(
               title: "Official Email id",
-              subTitle: data.emailId ?? '', //TODO issue in backend
+              subTitle: data?.emailId ?? '', //TODO issue in backend
             ),
             SizedBox(height: 16.h),
-            _formSection(readOnly: widget.isLineManager ?? false, data: data),
+            _formSection(
+              readOnly: widget.isLineManager ?? false,
+              currentAddress: data,
+            ),
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
               Column(
@@ -202,8 +210,9 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
 
   Widget _formSection({
     required bool readOnly,
-    required AddressContactModel data,
+    AddressContactModel? currentAddress,
   }) {
+    final data = currentAddress;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -219,7 +228,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 ref,
                 "House No.",
                 val,
-                oldChvalu: data.addressLine1,
+                oldChtext: data?.addressLine1,
               ),
         ),
         labelText("Street Name"),
@@ -229,7 +238,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: streetNameController,
           onChanged:
               (val) =>
-                  updateField(ref, "Street.", val, oldChvalu: data.streetName),
+                  updateField(ref, "Street.", val, oldChtext: data?.streetName),
         ),
 
         labelText("Town/City"),
@@ -243,7 +252,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 ref,
                 "Town/City",
                 val,
-                oldChvalu: data.townCityName,
+                oldChtext: data?.townCityName,
               ),
         ),
 
@@ -255,7 +264,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: stateController,
           onChanged:
               (val) =>
-                  updateField(ref, "State", val, oldChvalu: data.stateName),
+                  updateField(ref, "State", val, oldChtext: data?.stateName),
         ),
 
         labelText("Country"),
@@ -286,7 +295,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: postBoxController,
           onChanged:
               (val) =>
-                  updateField(ref, "Post box", val, oldChvalu: data.postBox),
+                  updateField(ref, "Post box", val, oldChtext: data?.postBox),
         ),
         labelText("Phone No."),
         inputPhoneField(
@@ -295,7 +304,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: phoneNumberController,
           isRequired: true,
           onChanged: (val) {
-            updateField(ref, "Phone No.", val, oldChvalu: data.phoneNumber);
+            updateField(ref, "Phone No.", val, oldChtext: data?.phoneNumber);
           },
         ),
         labelText("Mobile"),
@@ -305,7 +314,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           controller: mobileNumberController,
           isRequired: true,
           onChanged: (val) {
-            updateField(ref, "Mobile", val, oldChvalu: data.mobileNumber);
+            updateField(ref, "Mobile", val, oldChtext: data?.mobileNumber);
           },
         ),
         labelText("Personal Email id"),
@@ -320,7 +329,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 ref,
                 "Official Email id.",
                 val,
-                oldChvalu: data.emailId,
+                oldChtext: data?.emailId,
               ),
         ),
         labelText("Official Email id"),
@@ -333,7 +342,7 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
                 ref,
                 "Personal Email id",
                 val,
-                oldChvalu: data.personalMailId,
+                oldChtext: data?.personalMailId,
               ),
 
           //TODO ESS THIS IS WRANNNG onChanged: (val) => updateField(ref, "Official Email id.", val),

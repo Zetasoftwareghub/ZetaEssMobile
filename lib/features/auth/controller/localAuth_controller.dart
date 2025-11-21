@@ -53,7 +53,7 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
 
   @override
   LocalAuthState build() {
-    loadInitialAuthState();
+    Future.microtask(() => loadInitialAuthState());
     return LocalAuthState();
   }
 

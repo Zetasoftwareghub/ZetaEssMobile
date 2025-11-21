@@ -224,9 +224,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             label.tr(),
-            style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+            style:
+                label.toLowerCase() == 'total'
+                    ? TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    )
+                    : TextStyle(fontSize: 14.sp, color: Colors.black54),
           ),
-          Text(value, style: TextStyle(fontSize: 14.sp, color: Colors.black)),
+          Text(
+            value,
+            style:
+                label.toLowerCase() == 'total'
+                    ? TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    )
+                    : TextStyle(fontSize: 14.sp, color: Colors.black54),
+          ),
         ],
       ),
     );

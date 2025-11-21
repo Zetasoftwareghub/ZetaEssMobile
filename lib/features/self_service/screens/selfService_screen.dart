@@ -11,6 +11,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/common/screens/attendanceHistory_screen.dart';
 import 'package:zeta_ess/features/common/screens/leaveBalances_screen.dart';
 import 'package:zeta_ess/features/providers/employeeSelfLineMenu_provider.dart';
+import 'package:zeta_ess/features/self_service/expense_claim/screens/expenseClaimListing_screen.dart';
 import 'package:zeta_ess/features/self_service/resumption_request/screens/resumptionListing_screen.dart';
 import 'package:zeta_ess/features/self_service/screens/providers/selfServiceExpansionProvider.dart';
 import 'package:zeta_ess/features/self_service/screens/widgets/customServiceListing_widget.dart';
@@ -48,7 +49,7 @@ class _SelfServicesScreenState extends ConsumerState<SelfServicesScreen> {
     'submit_leave': (key) => LeaveListingScreen(title: key),
     'resumption_request': (key) => ResumptionListingScreen(title: key),
     'lieu_day_request': (key) => LieuDayListingScreen(title: key),
-    // 'expense_claim_request': (key) => ClaimListingScreen(title: key),
+    'expense_claim_request': (key) => ExpenseClaimListingScreen(title: key),
     'salary_advance_requests': (key) => SalaryAdvanceListingScreen(title: key),
     'loan_request': (key) => LoanListingScreen(title: key),
     'leave_balances': (key) => LeaveBalancesScreen(title: key),

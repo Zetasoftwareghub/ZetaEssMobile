@@ -2,7 +2,7 @@ name: zeta_ess
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 3.0.6+13
+version: 3.0.6+17
 
 environment:
   sdk: ^3.7.2
@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   fpdart: ^1.1.1
   riverpod_annotation: ^2.6.1
-  dio: ^5.8.0+1
+  dio: ^5.8.0+1o
   geolocator: ^14.0.1
   permission_handler: ^12.0.0+1
   intl:
@@ -36,7 +36,6 @@ dependencies:
   firebase_core: ^3.13.1
   firebase_auth: ^5.5.4
   google_sign_in: ^6.3.0
-#  firebase_messaging: ^15.2.7
   shimmer: ^3.0.0
   network_info_plus: ^6.1.4
   hexcolor: ^3.0.1

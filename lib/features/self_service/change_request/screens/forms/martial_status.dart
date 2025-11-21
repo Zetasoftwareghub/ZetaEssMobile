@@ -53,8 +53,9 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
 
     final value =
         getValueFromDetails(changeRequest.detail, "Marital Status") ?? '';
-
-    updateField(ref, "Marital Status", value, oldChvalu: value);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateField(ref, "Marital Status", value, oldChvalu: value);
+    });
 
     ref.read(newMaritalStatusProvider.notifier).state = value;
 
@@ -127,7 +128,21 @@ class _MaritalStatusFormState extends ConsumerState<MaritalStatusForm> {
                       (widget.isLineManager ?? false)
                           ? null
                           : (value) {
-                            updateField(ref, "Marital Status", value ?? '');
+                            updateField(
+                              ref,
+                              "Marital Status",
+                              value ?? '',
+                              oldChvalu: maritalStatus,
+                              oldChtext:
+                                  maritalStatusOptions.firstWhere(
+                                    (element) =>
+                                        element["value"] == maritalStatus,
+                                  )["text"],
+                              chtext:
+                                  maritalStatusOptions.firstWhere(
+                                    (element) => element["value"] == value,
+                                  )["text"],
+                            );
                             ref.read(newMaritalStatusProvider.notifier).state =
                                 value;
                           },

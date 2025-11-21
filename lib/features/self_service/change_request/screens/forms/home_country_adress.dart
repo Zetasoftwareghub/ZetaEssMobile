@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +8,7 @@ import 'package:zeta_ess/core/utils.dart';
 import 'package:zeta_ess/features/self_service/change_request/providers/change_request_providers.dart';
 
 import '../../../../../core/common/common_ui_stuffs.dart';
+import '../../models/address_model.dart';
 import '../../models/change_request_model.dart';
 import '../../providers/form_provider.dart';
 import '../widgets/country_list_dropdown.dart';
@@ -47,18 +49,20 @@ class _HomeCountryAddressFormState
   bool _isInitialized = false;
   String? countryCode, comment;
 
-  void addListener(TextEditingController controller, String fieldName) {
-    controller.addListener(() {
-      updateField(ref, fieldName, controller.text);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
     Future.microtask(
       () => ref.read(changeRequestDetailsListProvider.notifier).state = [],
     );
+
+    void addListener(TextEditingController controller, String fieldName) {
+      controller.addListener(() {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          updateField(ref, fieldName, controller.text);
+        });
+      });
+    }
 
     // attach listeners once
     addListener(addressLine1Ctrl, "House No.");
@@ -71,24 +75,6 @@ class _HomeCountryAddressFormState
     addListener(mobileCtrl, "Mobile");
   }
 
-  //
-  // void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
-  //   if (_isInitialized) return;
-  //   final details = changeRequest.detail;
-  //   addressLine1Ctrl.text = getValueFromDetails(details, "House No.") ?? '';
-  //   streetNameCtrl.text = getValueFromDetails(details, "Street.") ?? '';
-  //   cityCtrl.text = getValueFromDetails(details, "Town/City") ?? '';
-  //   stateCtrl.text = getValueFromDetails(details, "State") ?? '';
-  //   countryCtrl.text = getValueFromDetails(details, "Country") ?? '';
-  //   postBoxCtrl.text = getValueFromDetails(details, "Post box") ?? '';
-  //   phoneNumberCtrl.text = getValueFromDetails(details, "Phone No.") ?? '';
-  //   mobileCtrl.text = getValueFromDetails(details, "Mobile") ?? '';
-  //
-  //   setState(() => countryCode = getValueFromDetails(details, "Country"));
-  //
-  //   _isInitialized = true;
-  //   setState(() => comment = changeRequest.comment);
-  // }
   void _initializeFromChangeRequest(ChangeRequestModel changeRequest) {
     if (_isInitialized) return;
     final details = changeRequest.detail;
@@ -114,9 +100,9 @@ class _HomeCountryAddressFormState
 
     // Update local state
     setState(() => countryCode = getValueFromDetails(details, "Country"));
-    updateField(ref, "Country", countryCode ?? '');
+    updateField(ref, "Country", countryCode ?? '', oldChvalu: countryCode);
     setState(() => comment = changeRequest.comment);
-    updateField(ref, "Comment", comment ?? '');
+    updateField(ref, "Comment", comment ?? '', oldChtext: comment);
     _isInitialized = true;
   }
 
@@ -133,7 +119,6 @@ class _HomeCountryAddressFormState
         });
       });
     }
-
     final detailsAsync = ref.watch(
       addressContactDetailsProvider(widget.employeeCode),
     );
@@ -155,16 +140,36 @@ class _HomeCountryAddressFormState
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            _formSection(
-              title: 'Old Value',
-              readOnly: true,
-              countryCode: data.countryCode ?? 'IND',
+            titleHeaderText('Old Value'),
+            detailInfoRow(title: 'House No', subTitle: data.homeAddressLine1),
+            detailInfoRow(title: 'Street', subTitle: data.homeStreetName),
+            detailInfoRow(title: 'Town/City', subTitle: data.homeTownCityName),
+            detailInfoRow(title: 'State', subTitle: data.homeStateName),
+            Row(
+              children: [
+                Text("Country".tr(), style: TextStyle(color: Colors.black54)),
+                8.widthBox,
+                Expanded(
+                  child: CustomCountryDropDown(
+                    countryCode: data.countryCode ?? 'IND',
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16.h),
+            detailInfoRow(title: 'Post box', subTitle: data.homePostBox),
+            detailInfoRow(title: 'Phone No', subTitle: data.phoneNumber),
+            detailInfoRow(title: 'Mobile', subTitle: data.mobileNumber),
+            detailInfoRow(title: 'Next Of Kin', subTitle: data.nextOfKinName),
+            detailInfoRow(
+              title: 'Next Of Kin Phone No',
+              subTitle: data.nextOfKinPhone,
+            ),
+            16.heightBox,
             _formSection(
               title: 'New Value',
               readOnly: widget.isLineManager ?? false,
               countryCode: (countryCode ?? data.countryCode) ?? 'IND',
+              data: data,
             ),
             if ((widget.isLineManager ?? false) &&
                 (comment?.isNotEmpty ?? false))
@@ -187,6 +192,7 @@ class _HomeCountryAddressFormState
     required String countryCode,
     required String title,
     required bool readOnly,
+    required AddressContactModel data,
   }) {
     return Container(
       padding: EdgeInsets.all(12.w),
@@ -201,7 +207,13 @@ class _HomeCountryAddressFormState
             hint: "House No.",
             controller: addressLine1Ctrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "House No.", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "House No.",
+                  val,
+                  oldChtext: data.homeAddressLine1,
+                ),
           ),
 
           labelText("Street"),
@@ -209,7 +221,13 @@ class _HomeCountryAddressFormState
             hint: "Street",
             controller: streetNameCtrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "Street.", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "Street.",
+                  val,
+                  oldChtext: data.homeStreetName,
+                ),
           ),
 
           labelText("Town/City"),
@@ -217,7 +235,13 @@ class _HomeCountryAddressFormState
             hint: "Town/City",
             controller: cityCtrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "Town/City", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "Town/City",
+                  val,
+                  oldChtext: data.homeTownCityName,
+                ),
           ),
 
           labelText("State"),
@@ -225,7 +249,13 @@ class _HomeCountryAddressFormState
             hint: "State",
             controller: stateCtrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "State", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "State",
+                  val,
+                  oldChtext: data.homeStateName,
+                ),
           ),
 
           labelText("Country"),
@@ -257,7 +287,13 @@ class _HomeCountryAddressFormState
             hint: "Post box",
             controller: postBoxCtrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "Post box", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "Post box",
+                  val,
+                  oldChtext: data.homePostBox,
+                ),
           ),
           labelText("Phone No."),
 
@@ -267,7 +303,7 @@ class _HomeCountryAddressFormState
             controller: phoneNumberCtrl,
             isRequired: true,
             onChanged: (val) {
-              updateField(ref, "Phone No.", val);
+              updateField(ref, "Phone No.", val, oldChtext: data.phoneNumber);
             },
           ),
           labelText("Mobile"),
@@ -277,7 +313,7 @@ class _HomeCountryAddressFormState
             controller: mobileCtrl,
             isRequired: true,
             onChanged: (val) {
-              updateField(ref, "Mobile", val);
+              updateField(ref, "Mobile", val, oldChvalu: data.mobileNumber);
             },
           ),
           labelText("Next Of Kin"),
@@ -285,7 +321,13 @@ class _HomeCountryAddressFormState
             hint: "Next Of Kin",
             controller: nexOfKinCtrl,
             readOnly: readOnly,
-            onChanged: (val) => updateField(ref, "Next of kin", val),
+            onChanged:
+                (val) => updateField(
+                  ref,
+                  "Next of kin",
+                  val,
+                  oldChtext: data.nextOfKinName,
+                ),
           ),
           labelText("Next Of Kin Phone No."),
           inputPhoneField(
@@ -294,7 +336,12 @@ class _HomeCountryAddressFormState
             controller: nexOfKinPhoneNumberCtrl,
             isRequired: true,
             onChanged: (val) {
-              updateField(ref, "Next of kin phone", val);
+              updateField(
+                ref,
+                "Next of kin phone",
+                val,
+                oldChtext: data.nextOfKinPhone,
+              );
             },
           ),
         ],

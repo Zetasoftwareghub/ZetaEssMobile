@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
 import 'package:zeta_ess/core/common/loader.dart';
 import 'package:dio/dio.dart';
 import 'package:zeta_ess/core/common/widgets/customTimePicker.dart';
@@ -717,7 +718,17 @@ class _SubmitEditOtherRequestState
     if (_formKey.currentState?.validate() ?? false) {
       // Build the submission data
       final formData = await _buildSubmissionData();
-
+      final allEmpty = formData.every(
+        (e) => e.rtenvl == null || e.rtenvl == "",
+      );
+      if (allEmpty) {
+        showCustomAlertBox(
+          context,
+          title: 'Please Give at least one value',
+          type: AlertType.error,
+        );
+        return;
+      }
       // Submit to your API
       ref
           .read(otherRequestControllerProvider.notifier)

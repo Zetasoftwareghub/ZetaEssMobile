@@ -59,7 +59,9 @@ class _OtherChangeRequestFormState
     void setController(TextEditingController controller, String field) {
       final value = getValueFromDetails(changeRequest.detail, field) ?? '';
       controller.text = value;
-      updateField(ref, field, value); // ⚡ sync with provider
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        updateField(ref, field, value); // ⚡ sync with provider
+      });
     }
 
     // Set the "Other Change Request" field

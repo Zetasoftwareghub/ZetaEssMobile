@@ -1,4 +1,5 @@
 {
+  "Real-Time Clock":"Real-Time Clock",
   "Dismiss": "Dismiss",
   "OK": "OK",
   "reject": "Reject",
@@ -96,7 +97,7 @@
   "enterPinForSafety": "Enter your Pin for account safety",
   "confirm": "Confirm",
   "fieldRequired": "This field is required",
-  "suggestions_feedback": "Suggestions & Feed Backs",
+  "suggestions_feedback": "Suggestions & Feedback",
   "downloads": "Downloads",
   "payslips": "Payslips",
   "change_pin": "Change PIN",
