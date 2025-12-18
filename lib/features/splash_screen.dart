@@ -477,7 +477,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Widget _buildToolsShowcase(Size screenSize) {
-    return Container(
+    return SizedBox(
       width: screenSize.width * 0.7,
       height: screenSize.width * 0.7,
       child: Stack(

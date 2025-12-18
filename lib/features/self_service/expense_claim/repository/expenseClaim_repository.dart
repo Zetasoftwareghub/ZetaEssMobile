@@ -86,8 +86,6 @@ class ExpenseClaimRepository {
         },
         options: dioHeader(token: userContext.jwtToken),
       );
-      print(response.data);
-      print('response.data');
       return response.data['data'].toString().toLowerCase() == 'true';
     });
   }

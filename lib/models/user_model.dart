@@ -9,7 +9,8 @@ class UserModel {
       userBaseUrl,
       baseDirectory,
       password,
-      userName;
+      userName,
+      currencyCode;
   final String? alternateID;
 
   UserModel({
@@ -22,6 +23,7 @@ class UserModel {
     required this.baseDirectory,
     required this.userBaseUrl,
     required this.userName,
+    required this.currencyCode,
     this.alternateID,
   });
 
@@ -36,6 +38,7 @@ class UserModel {
       userBaseUrl: json['Baseurl'].toString(),
       baseDirectory: json['Basicdirectory'].toString(),
       userName: json['username'].toString(),
+      currencyCode: json['crcode'].toString(),
       alternateID:
           (json['emalid'] == null || json['emalid'] is Map)
               ? null
@@ -55,6 +58,7 @@ class UserModel {
       'Baseurl': userBaseUrl,
       'Basicdirectory': baseDirectory,
       'username': userName,
+      'crcode': currencyCode,
     };
   }
 
@@ -70,9 +74,11 @@ class UserModel {
     String? userBaseUrl,
     String? baseDirectory,
     String? alternateID,
+    String? currencyCode,
   }) {
     return UserModel(
       esCode: esCode ?? this.esCode,
+      currencyCode: currencyCode ?? this.currencyCode,
       password: password ?? this.password,
       empName: empName ?? this.empName,
       emCode: emCode ?? this.emCode,

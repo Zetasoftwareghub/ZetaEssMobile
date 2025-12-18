@@ -76,10 +76,8 @@ class ExpenseClaimController extends Notifier<bool> {
         );
     state = false;
     return res.fold(
-      (l) {
-        state = false;
-        showSnackBar(context: context, content: 'Error occured in deleting');
-      },
+      (l) =>
+          showSnackBar(context: context, content: 'Error occured in deleting'),
       (deleted) {
         ref.invalidate(
           expenseClaimListProvider,

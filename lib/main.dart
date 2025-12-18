@@ -60,7 +60,6 @@ class ZetaApp extends StatelessWidget {
           builder:
               (context, child) => MaterialApp(
                 navigatorKey: navigatorKey,
-
                 navigatorObservers: [SnackBarNavigatorObserver()],
                 builder:
                     (context, child) => SafeArea(

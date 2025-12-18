@@ -40,7 +40,7 @@ class ClaimListResponse {
 
 class ClaimListData {
   ClaimListData({
-    num? expenseId,
+    int? expenseId,
     String? employeeId,
     String? requestDate,
     num? requestNumber,
@@ -85,7 +85,7 @@ class ClaimListData {
     _currencyDecimal = json['crdcml'];
   }
 
-  num? _expenseId;
+  int? _expenseId;
   String? _employeeId;
   String? _requestDate;
   num? _requestNumber;
@@ -100,7 +100,7 @@ class ClaimListData {
   num? _currencyDecimal;
 
   // Getters
-  num? get expenseId => _expenseId;
+  int? get expenseId => _expenseId;
   String? get employeeId => _employeeId;
   String? get requestDate => _requestDate;
   num? get requestNumber => _requestNumber;
@@ -116,7 +116,7 @@ class ClaimListData {
 
   // CopyWith
   ClaimListData copyWith({
-    num? expenseId,
+    int? expenseId,
     String? employeeId,
     String? requestDate,
     num? requestNumber,

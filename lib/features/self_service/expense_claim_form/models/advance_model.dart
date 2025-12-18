@@ -1,4 +1,3 @@
-/*
 //TODO  STATIC AI MODEL REMOVEEE == = = =
 
 class AdvancePaymentModel {
@@ -20,21 +19,22 @@ class AdvancePaymentModel {
 
   double get totalAmount => double.tryParse(amountInEmployeeCurrency) ?? 0.0;
 }
-*/
-class CashAdvanceDetail {
-  String? cashAdvance;
-  String? dummyAdvance;
 
-  CashAdvanceDetail({this.cashAdvance, this.dummyAdvance});
-
-  factory CashAdvanceDetail.fromJson(Map<String, dynamic> json) =>
-      CashAdvanceDetail(
-        cashAdvance: json['cshAdvnc'],
-        dummyAdvance: json['dummyAdvnc'],
-      );
-
-  Map<String, dynamic> toJson() => {
-    'cshAdvnc': cashAdvance,
-    'dummyAdvnc': dummyAdvance,
-  };
-}
+// todo api model
+// class CashAdvanceDetail {
+//   String? cashAdvance;
+//   String? dummyAdvance;
+//
+//   CashAdvanceDetail({this.cashAdvance, this.dummyAdvance});
+//
+//   factory CashAdvanceDetail.fromJson(Map<String, dynamic> json) =>
+//       CashAdvanceDetail(
+//         cashAdvance: json['cshAdvnc'],
+//         dummyAdvance: json['dummyAdvnc'],
+//       );
+//
+//   Map<String, dynamic> toJson() => {
+//     'cshAdvnc': cashAdvance,
+//     'dummyAdvnc': dummyAdvance,
+//   };
+// }

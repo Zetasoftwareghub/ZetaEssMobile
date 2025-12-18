@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../features/common/screens/notification_screen.dart';
 import '../main.dart';
 
+bool openNotificationScreenAfterLogin = false;
+
 class FCMService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _localNotifications =
@@ -102,6 +104,7 @@ class FCMService {
 
   /// ✅ Handles navigation when notification tapped
   static void _handleNotificationTap(String? payload) {
+    openNotificationScreenAfterLogin = true;
     if (navigatorKey.currentState == null) {
       debugPrint('⚠️ Navigator not ready');
       return;

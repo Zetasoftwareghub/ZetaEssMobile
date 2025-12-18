@@ -20,7 +20,9 @@ import '../../../core/providers/storage_repository_provider.dart';
 import '../../../core/services/NavigationService.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils.dart';
+import '../../../services/firebase_notification.dart';
 import '../../common/screens/main_screen.dart';
+import '../../common/screens/notification_screen.dart';
 import '../repository/auth_repository.dart';
 
 final authControllerProvider = NotifierProvider<AuthController, bool>(
@@ -146,8 +148,6 @@ class AuthController extends Notifier<bool> {
   }) async {
     state = true;
     final fcmToken = await FirebaseMessaging.instance.getToken();
-    debugPrint("FCM Token fetched: $fcmToken");
-
     final res = await ref
         .read(authRepositoryProvider)
         .loginUser(
@@ -189,10 +189,40 @@ class AuthController extends Notifier<bool> {
           userName: userName,
         );
 
-        NavigationService.navigateRemoveUntil(
-          context: context,
-          screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
-        );
+        // NavigationService.navigateRemoveUntil(
+        //   context: context,
+        //   screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
+        // );
+        // Navigation decision after successful login
+        // if (openNotificationScreenAfterLogin) {
+        //   openNotificationScreenAfterLogin = false; // reset
+        //   NavigationService.navigateToScreen(
+        //     context: context,
+        //     screen: NotificationsScreen(),
+        //   );
+
+        if (openNotificationScreenAfterLogin) {
+          openNotificationScreenAfterLogin = false; // reset immediately
+          // 1) Replace everything with MainScreen
+          await NavigationService.navigateRemoveUntil(
+            context: context,
+            screen: MainScreen(),
+          );
+          // 2) Ensure MainScreen has finished building, then push NotificationsScreen.
+          // Using addPostFrameCallback to be safe — avoids race where navigator isn't ready.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            NavigationService.navigateToScreen(
+              context: context,
+              screen: NotificationsScreen(),
+            );
+          });
+        } else {
+          NavigationService.navigateRemoveUntil(
+            context: context,
+            screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
+          );
+        }
+
         final userModel = jsonEncode(
           userData.copyWith(password: password, userName: userName).toJson(),
         );
@@ -208,8 +238,6 @@ class AuthController extends Notifier<bool> {
     required String email,
     required BuildContext context,
   }) async {
-    print(email);
-    print("email123");
     state = true;
     final res = await ref
         .read(authRepositoryProvider)

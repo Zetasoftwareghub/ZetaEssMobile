@@ -1,4 +1,5 @@
-class BusinessGiftDetail {
+// todo api model
+/*class BusinessGiftDetail {
   String? expenseDate;
   String? noOfGuests;
   String? companyName;
@@ -59,9 +60,9 @@ class BusinessGiftDetail {
   };
 }
 
-
+*/
 //TODO  STATIC AI MODEL REMOVEEE == = = =
-/*
+
 class BusinessGiftModel {
   final String id;
   final String date;
@@ -93,4 +94,3 @@ class BusinessGiftModel {
 
   double get totalAmount => double.tryParse(amountInEmployeeCurrency) ?? 0.0;
 }
-*/
