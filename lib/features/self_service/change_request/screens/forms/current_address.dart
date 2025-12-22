@@ -323,29 +323,29 @@ class _CurrentAddressFormState extends ConsumerState<CurrentAddressForm> {
           hint: "Personal Email id",
           controller: personalEmailController,
 
-          //TODO ESS THIS IS WRANNNG onChanged: (val) => updateField(ref, "Personal Email id", val),
-          onChanged:
-              (val) => updateField(
-                ref,
-                "Official Email id.",
-                val,
-                oldChtext: data?.emailId,
-              ),
+          //TODO ESS THIS IS WRANNNG    onChanged:
+          //               (val) => updateField(
+          //                 ref,
+          //                 "Official Email id.",
+          //                 val,
+          //                 oldChtext: data?.emailId,
+          //               ),
+          onChanged: (val) => updateField(ref, "Personal Email id", val),
         ),
         labelText("Official Email id"),
         inputField(
           readOnly: readOnly,
           hint: "Official Email id",
           controller: officialEmailController,
-          onChanged:
-              (val) => updateField(
-                ref,
-                "Personal Email id",
-                val,
-                oldChtext: data?.personalMailId,
-              ),
-
-          //TODO ESS THIS IS WRANNNG onChanged: (val) => updateField(ref, "Official Email id.", val),
+          //TODO ESS THIS IS WRANNNG
+          // onChanged:
+          //     (val) => updateField(
+          //       ref,
+          //       "Personal Email id",
+          //       val,
+          //       oldChtext: data?.personalMailId,
+          //     ),
+          onChanged: (val) => updateField(ref, "Official Email id.", val),
         ),
       ],
     );

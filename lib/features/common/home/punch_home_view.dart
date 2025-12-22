@@ -18,12 +18,12 @@ import '../../../../core/theme/common_theme.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../services/version_helper.dart';
 import '../models/punch_model.dart';
+import '../models/version_check.dart';
 import '../screens/widgets/clock.dart';
 import 'controller/liveLocation_controller.dart';
 import 'controller/version_check_controller.dart';
 
 //TODO is this correct or not? IDK
-
 class PunchHomeView extends ConsumerStatefulWidget {
   const PunchHomeView({super.key});
 
@@ -36,18 +36,17 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final versionAsync = ref.watch(versionFutureProvider);
-
-    versionAsync.when(
-      data: (version) {
-        // Call global version helper once
-        Future.microtask(
-          () => VersionHelper.checkAndShowUpdateDialog(context, version),
-        );
-      },
-      loading: () => const SizedBox(), // or loader
-      error: (e, st) => const SizedBox(), // ignore errors here or handle
-    );
+    ref.listen<AsyncValue<VersionModel?>>(versionFutureProvider, (
+      previous,
+      next,
+    ) {
+      next.whenData((version) {
+        if (version != null) {
+          // This only runs when the data is successfully fetched
+          VersionHelper.checkAndShowUpdateDialog(context, version);
+        }
+      });
+    });
     return Positioned(
       top: 120.h,
       left: 0,

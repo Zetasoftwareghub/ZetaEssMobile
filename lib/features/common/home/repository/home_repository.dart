@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zeta_ess/features/common/screens/widgets/clock.dart';
 
 import '../../../../../core/api_constants/common_apis/common_apis.dart';
 import '../../../../../core/api_constants/dio_headers.dart';
@@ -42,6 +43,7 @@ class HomeRepository {
 
   FutureEither<List<PunchModel>> getPunchDetails({
     required UserContext userContext,
+    String? locationDateTime,
   }) {
     return handleApiCall(() async {
       final response = await dio.post(
@@ -51,6 +53,7 @@ class HomeRepository {
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
           'userid': userContext.esCode,
+          'locationDateTime': locationDateTime,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

@@ -13,40 +13,13 @@ import '../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils.dart';
 import '../../common/screens/main_screen.dart';
+import '../models/local_auth.dart';
 import '../repository/auth_repository.dart';
 import 'auth_controller.dart';
 
 final localAuthProvider = NotifierProvider<LocalAuthNotifier, LocalAuthState>(
   () => LocalAuthNotifier(),
 );
-
-class LocalAuthState {
-  final bool hasPin;
-  final String? savedPin;
-  final bool isAuthenticated;
-  final bool urlExist;
-
-  LocalAuthState({
-    this.hasPin = false,
-    this.savedPin,
-    this.isAuthenticated = false,
-    this.urlExist = false,
-  });
-
-  LocalAuthState copyWith({
-    bool? hasPin,
-    bool? isAuthenticated,
-    bool? urlExist,
-    String? savedPin,
-  }) {
-    return LocalAuthState(
-      hasPin: hasPin ?? this.hasPin,
-      urlExist: urlExist ?? this.urlExist,
-      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-      savedPin: savedPin ?? this.savedPin,
-    );
-  }
-}
 
 class LocalAuthNotifier extends Notifier<LocalAuthState> {
   final LocalAuthentication auth = LocalAuthentication();
@@ -58,10 +31,6 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
   }
 
   Future<void> loadInitialAuthState() async {
-    // final jwtToken = await SecureStorageService.read(
-    //   key: StorageKeys.jwtToken,
-    // );
-
     final fcmToken = await FirebaseMessaging.instance.getToken();
     debugPrint("🔥 FCM Token fetched inside LocalAuthNotifier: $fcmToken");
 
@@ -150,6 +119,7 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
           content: 'Server error - redirecting to Login screen',
           color: AppTheme.errorColor,
         );
+        SecureStorageService.clearAll();
       },
       (activateResponse) {
         if (activateResponse["data"] != "Authorized") {
@@ -157,12 +127,12 @@ class LocalAuthNotifier extends Notifier<LocalAuthState> {
             context: context,
             screen: LoginScreen(),
           );
+          SecureStorageService.clearAll();
         } else {
           isAuthorized = true;
         }
       },
     );
-
     return isAuthorized;
   }
 }

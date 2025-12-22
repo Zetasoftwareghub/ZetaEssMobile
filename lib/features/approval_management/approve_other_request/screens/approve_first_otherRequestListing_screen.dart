@@ -111,9 +111,8 @@ class ApproveOtherRequestFirstListingScreen extends ConsumerWidget {
                         ),
                         onTap: () {
                           HapticFeedback.lightImpact();
-                          NavigationService.navigateToScreen(
+                          NavigationService.navigatePushReplacement(
                             context: context,
-                            //TODO make this approvel
                             screen: ApproveOtherRequestListingScreen(
                               title: item.menuName?.toUpperCase() ?? 'No Name',
                               requestId: item.requestId ?? '0',

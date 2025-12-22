@@ -11,12 +11,19 @@ import 'package:zeta_ess/features/self_service/other_request/screens/other_reque
 
 import '../providers/other_request_providers.dart';
 
-class OtherRequestFirstListingScreen extends ConsumerWidget {
+class OtherRequestFirstListingScreen extends ConsumerStatefulWidget {
   final String title;
   const OtherRequestFirstListingScreen({super.key, required this.title});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OtherRequestFirstListingScreen> createState() =>
+      _OtherRequestFirstListingScreenState();
+}
+
+class _OtherRequestFirstListingScreenState
+    extends ConsumerState<OtherRequestFirstListingScreen> {
+  @override
+  Widget build(BuildContext context) {
     final otherRequestAsync = ref.watch(otherRequestFirstListingProvider);
 
     final List<Color> borderColors = [
@@ -33,7 +40,7 @@ class OtherRequestFirstListingScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(title.tr())),
+      appBar: AppBar(title: Text(widget.title.tr())),
       backgroundColor: Colors.grey.shade50,
       body: otherRequestAsync.when(
         data: (list) {
@@ -110,7 +117,7 @@ class OtherRequestFirstListingScreen extends ConsumerWidget {
                         ),
                         onTap: () {
                           HapticFeedback.lightImpact();
-                          NavigationService.navigateToScreen(
+                          NavigationService.navigatePushReplacement(
                             context: context,
                             screen: OtherRequestListingScreen(
                               title: item.menuName?.toUpperCase() ?? 'No Name',

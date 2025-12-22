@@ -56,7 +56,6 @@ class VersionHelper {
     BuildContext context,
     VersionModel? version,
   ) async {
-    print(version?.message);
     if (version == null) return;
 
     final latestVersion = version.latestVersion;
@@ -68,6 +67,7 @@ class VersionHelper {
     final currentVersion = packageInfo.version;
 
     if (isNewer(latestVersion, currentVersion)) {
+      print('true');
       showCustomAlertBox(
         context,
         title: 'Update Available',

@@ -21,6 +21,7 @@ import '../../../services/version_helper.dart';
 import '../../self_service/attendance_regularisation/models/regularisation_models.dart';
 import '../../self_service/attendance_regularisation/repository/attendance_regularise_repository.dart';
 import '../../self_service/attendance_regularisation/screens/attendanceRegularisation_screen.dart';
+import '../models/version_check.dart';
 import '../screens/notification_screen.dart';
 import '../screens/widgets/customDrawer.dart';
 import 'controller/version_check_controller.dart';
@@ -804,199 +805,20 @@ class _CalendarHomeViewState extends ConsumerState<CalendarHomeView>
         return CupertinoIcons.info_circle_fill;
     }
   }
-  //CLAUDE old summary cards
-
-  // Widget _buildEnhancedSummarySection() {
-  //   if (_summaryData.isEmpty && _requestStatuses.isEmpty)
-  //     return const SizedBox();
-  //
-  //   return SlideTransition(
-  //     position: Tween<Offset>(
-  //       begin: const Offset(0, 0.5),
-  //       end: Offset.zero,
-  //     ).animate(_summaryAnimation),
-  //     child: FadeTransition(
-  //       opacity: _summaryAnimation,
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           if (_summaryData.isNotEmpty) ...[
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               children: [
-  //                 Text(
-  //                   'Attendance Summary',
-  //                   style: TextStyle(
-  //                     fontSize: 18.sp,
-  //                     fontWeight: FontWeight.bold,
-  //                     color: Colors.grey[800],
-  //                   ),
-  //                 ),
-  //                 if (_summaryData.length > 2)
-  //                   Row(
-  //                     children: List.generate(
-  //                       (_summaryData.length / 2).ceil(),
-  //                       (index) => AnimatedContainer(
-  //                         duration: const Duration(milliseconds: 300),
-  //                         width: _currentSummaryPage == index ? 20.w : 8.w,
-  //                         height: 4.h,
-  //                         margin: EdgeInsets.only(right: 4.w),
-  //                         decoration: BoxDecoration(
-  //                           borderRadius: BorderRadius.circular(2.r),
-  //                           color:
-  //                               _currentSummaryPage == index
-  //                                   ? AppTheme.primaryColor
-  //                                   : Colors.grey[300],
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //               ],
-  //             ),
-  //             SizedBox(height: 16.h),
-  //             SizedBox(
-  //               height: 140.h,
-  //               child: PageView.builder(
-  //                 controller: _summaryPageController,
-  //                 onPageChanged:
-  //                     (index) => setState(() => _currentSummaryPage = index),
-  //                 itemCount: (_summaryData.length / 2).ceil(),
-  //                 itemBuilder: (context, pageIndex) {
-  //                   final startIndex = pageIndex * 2;
-  //                   final endIndex = math.min(
-  //                     startIndex + 2,
-  //                     _summaryData.length,
-  //                   );
-  //
-  //                   return Row(
-  //                     children: [
-  //                       for (int i = startIndex; i < endIndex; i++) ...[
-  //                         Expanded(
-  //                           child: _buildEnhancedSummaryCard(_summaryData[i]),
-  //                         ),
-  //                         if (i < endIndex - 1) SizedBox(width: 12.w),
-  //                       ],
-  //                     ],
-  //                   );
-  //                 },
-  //               ),
-  //             ),
-  //             SizedBox(height: 24.h),
-  //           ],
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildEnhancedSummaryCard(AttendanceSummary summary) {
-  //   final color = Color(int.parse(summary.color.replaceAll('#', '0xFF')));
-  //
-  //   return Container(
-  //     padding: EdgeInsets.all(20.w),
-  //     decoration: BoxDecoration(
-  //       gradient: LinearGradient(
-  //         begin: Alignment.topLeft,
-  //         end: Alignment.bottomRight,
-  //         colors: [color.withOpacity(0.9), color, color.withOpacity(0.8)],
-  //       ),
-  //       borderRadius: BorderRadius.circular(24.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: color.withOpacity(0.4),
-  //           blurRadius: 20,
-  //           offset: const Offset(0, 10),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             Container(
-  //               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white.withOpacity(0.2),
-  //                 borderRadius: BorderRadius.circular(12.r),
-  //               ),
-  //               child: Text(
-  //                 summary.shortCode,
-  //                 style: TextStyle(
-  //                   color: Colors.white,
-  //                   fontSize: 11.sp,
-  //                   fontWeight: FontWeight.w700,
-  //                 ),
-  //               ),
-  //             ),
-  //             Icon(
-  //               _getIconForSummaryType(summary.shortCode),
-  //               color: Colors.white.withOpacity(0.8),
-  //               size: 20.sp,
-  //             ),
-  //           ],
-  //         ),
-  //         Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text(
-  //               '${summary.count}',
-  //               style: TextStyle(
-  //                 color: Colors.white,
-  //                 fontSize: 32.sp,
-  //                 fontWeight: FontWeight.w900,
-  //                 height: 1,
-  //               ),
-  //             ),
-  //             SizedBox(height: 4.h),
-  //             Text(
-  //               summary.name,
-  //               style: TextStyle(
-  //                 color: Colors.white.withOpacity(0.9),
-  //                 fontSize: 13.sp,
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //               maxLines: 2,
-  //               overflow: TextOverflow.ellipsis,
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // IconData _getIconForSummaryType(String shortCode) {
-  //   switch (shortCode.toLowerCase()) {
-  //     case 'p':
-  //       return CupertinoIcons.checkmark_circle;
-  //     case 'a':
-  //       return CupertinoIcons.xmark_circle;
-  //     case 'l':
-  //       return CupertinoIcons.calendar_badge_minus;
-  //     case 'h':
-  //       return CupertinoIcons.house;
-  //     default:
-  //       return CupertinoIcons.info_circle;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
-    final versionAsync = ref.watch(versionFutureProvider);
-
-    versionAsync.when(
-      data: (version) {
-        // Call global version helper once
-        Future.microtask(
-          () => VersionHelper.checkAndShowUpdateDialog(context, version),
-        );
-      },
-      loading: () => const SizedBox(), // or loader
-      error: (e, st) => const SizedBox(), // ignore errors here or handle
-    );
+    ref.listen<AsyncValue<VersionModel?>>(versionFutureProvider, (
+      previous,
+      next,
+    ) {
+      next.whenData((version) {
+        if (version != null) {
+          // This only runs when the data is successfully fetched
+          VersionHelper.checkAndShowUpdateDialog(context, version);
+        }
+      });
+    });
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFF5F7FA),

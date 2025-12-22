@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zeta_ess/features/common/screens/widgets/clock.dart';
 
 import '../../../../../core/common/alert_dialog/alertBox_function.dart';
 import '../../../../../core/providers/userContext_provider.dart';
@@ -14,8 +15,12 @@ class PunchDetailsProvider extends AutoDisposeAsyncNotifier<List<PunchModel>> {
   FutureOr<List<PunchModel>> build() async {
     final repo = ref.read(homeRepositoryProvider);
     final userContext = ref.read(userContextProvider);
+    final locTime = ref.read(locationTimeProvider);
 
-    final result = await repo.getPunchDetails(userContext: userContext);
+    final result = await repo.getPunchDetails(
+      userContext: userContext,
+      locationDateTime: locTime.toString(),
+    );
     return result.fold(
       (failure) => throw Exception(failure.errMsg),
       (data) => data,
