@@ -147,91 +147,103 @@ class AuthController extends Notifier<bool> {
     bool fromPinScreen = false,
   }) async {
     state = true;
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    final res = await ref
-        .read(authRepositoryProvider)
-        .loginUser(
-          userContext: ref.watch(userContextProvider),
-          userName: userName,
-          // fcmToken: ref.watch(fcmTokenProvider) ?? "noToken",
-          fcmToken: fcmToken ?? "noToken",
-          password: password,
-          context: context,
-        );
-    state = false;
-    return res.fold(
-      (l) async {
-        if (l.errMsg != '-1' && l.errMsg != '-2' && l.errMsg != '-3') {
-          showSnackBar(
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      final res = await ref
+          .read(authRepositoryProvider)
+          .loginUser(
+            userContext: ref.watch(userContextProvider),
+            userName: userName,
+            // fcmToken: ref.watch(fcmTokenProvider) ?? "noToken",
+            fcmToken: fcmToken ?? "noToken",
+            password: password,
             context: context,
-            content:
-                l.errMsg == '-4'
-                    ? 'Your license has expired. Please contact your administrator'
-                    : l.errMsg,
-            color: AppTheme.errorColor,
           );
-        }
+      state = false;
+      return res.fold(
+        (l) async {
+          if (l.errMsg != '-1' && l.errMsg != '-2' && l.errMsg != '-3') {
+            showSnackBar(
+              context: context,
+              content:
+                  l.errMsg == '-4'
+                      ? 'Your license has expired. Please contact your administrator'
+                      : l.errMsg,
+              color: AppTheme.errorColor,
+            );
+          }
 
-        if (fromPinScreen) {
-          await SecureStorageService.clearAll();
-          Future.delayed(const Duration(milliseconds: 700), () {
+          if (fromPinScreen) {
+            await SecureStorageService.clearAll();
+            Future.delayed(const Duration(milliseconds: 700), () {
+              NavigationService.navigateRemoveUntil(
+                context: context,
+                screen: LoginScreen(),
+              );
+            });
+          }
+        },
+        (userData) async {
+          // TODO get the JWT token to local storage !
+          ref.read(userDataProvider.notifier).state = userData.copyWith(
+            password: password,
+            userName: userName,
+          );
+
+          // NavigationService.navigateRemoveUntil(
+          //   context: context,
+          //   screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
+          // );
+          // Navigation decision after successful login
+          // if (openNotificationScreenAfterLogin) {
+          //   openNotificationScreenAfterLogin = false; // reset
+          //   NavigationService.navigateToScreen(
+          //     context: context,
+          //     screen: NotificationsScreen(),
+          //   );
+
+          if (openNotificationScreenAfterLogin) {
+            openNotificationScreenAfterLogin = false; // reset immediately
+            // 1) Replace everything with MainScreen
+            await NavigationService.navigateRemoveUntil(
+              context: context,
+              screen: MainScreen(),
+            );
+            // 2) Ensure MainScreen has finished building, then push NotificationsScreen.
+            // Using addPostFrameCallback to be safe — avoids race where navigator isn't ready.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              NavigationService.navigateToScreen(
+                context: context,
+                screen: NotificationsScreen(),
+              );
+            });
+          } else {
             NavigationService.navigateRemoveUntil(
               context: context,
-              screen: LoginScreen(),
+              screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
             );
-          });
-        }
-      },
-      (userData) async {
-        // TODO get the JWT token to local storage !
-        ref.read(userDataProvider.notifier).state = userData.copyWith(
-          password: password,
-          userName: userName,
-        );
+          }
 
-        // NavigationService.navigateRemoveUntil(
-        //   context: context,
-        //   screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
-        // );
-        // Navigation decision after successful login
-        // if (openNotificationScreenAfterLogin) {
-        //   openNotificationScreenAfterLogin = false; // reset
-        //   NavigationService.navigateToScreen(
-        //     context: context,
-        //     screen: NotificationsScreen(),
-        //   );
-
-        if (openNotificationScreenAfterLogin) {
-          openNotificationScreenAfterLogin = false; // reset immediately
-          // 1) Replace everything with MainScreen
-          await NavigationService.navigateRemoveUntil(
-            context: context,
-            screen: MainScreen(),
+          final userModel = jsonEncode(
+            userData.copyWith(password: password, userName: userName).toJson(),
           );
-          // 2) Ensure MainScreen has finished building, then push NotificationsScreen.
-          // Using addPostFrameCallback to be safe — avoids race where navigator isn't ready.
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            NavigationService.navigateToScreen(
-              context: context,
-              screen: NotificationsScreen(),
-            );
-          });
-        } else {
-          NavigationService.navigateRemoveUntil(
-            context: context,
-            screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
+          await SecureStorageService.write(
+            key: StorageKeys.userModel,
+            value: userModel,
           );
-        }
-
-        final userModel = jsonEncode(
-          userData.copyWith(password: password, userName: userName).toJson(),
-        );
-        await SecureStorageService.write(
-          key: StorageKeys.userModel,
-          value: userModel,
-        );
-      },
-    );
+        },
+      );
+    } catch (e, st) {
+      debugPrint('Login failed: $e');
+      debugPrintStack(stackTrace: st);
+      showSnackBar(
+        context: context,
+        content: 'Something went wrong. Please try again.',
+        color: AppTheme.errorColor,
+      );
+    } finally {
+      state = false; // 🔥 ALWAYS executed
+    }
   }
 
   Future<void> ssoLogin({

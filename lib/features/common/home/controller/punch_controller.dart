@@ -19,7 +19,7 @@ class PunchDetailsProvider extends AutoDisposeAsyncNotifier<List<PunchModel>> {
 
     final result = await repo.getPunchDetails(
       userContext: userContext,
-      locationDateTime: locTime.toString(),
+      locationDateTime: (locTime ?? "").toString(),
     );
     return result.fold(
       (failure) => throw Exception(failure.errMsg),

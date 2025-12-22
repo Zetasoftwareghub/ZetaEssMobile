@@ -45,6 +45,14 @@ class HomeRepository {
     required UserContext userContext,
     String? locationDateTime,
   }) {
+    print({
+      'sucode': userContext.companyCode,
+      'suconn': userContext.companyConnection,
+      'emcode': userContext.empCode,
+      'userid': userContext.esCode,
+      'locationDateTime': locationDateTime,
+    });
+    print('object1234');
     return handleApiCall(() async {
       final response = await dio.post(
         userContext.baseUrl + CommonApis.getPunchDetails,

@@ -27,7 +27,8 @@ class _ErrorHandlerState extends ConsumerState<ErrorText> {
       if (!mounted) return;
 
       final error = widget.error.toLowerCase();
-
+      print(error);
+      print("ERROR here server connection ");
       if (error.contains("no internet connection") ||
           error.contains("instance")) {
         _showNoInternetPopup();

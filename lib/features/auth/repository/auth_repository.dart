@@ -26,6 +26,7 @@ class AuthRepository {
     BaseOptions(
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 10),
     ),
   );
 
@@ -62,16 +63,11 @@ class AuthRepository {
         'suconn': userContext.companyConnection,
         'baseUrl': userContext.userBaseUrl,
       };
-      print(userContext.baseUrl);
-      print(fcmToken);
-      print("userContext.baseUrl");
-      print(payloadData);
       final response = await dio.post(
         '${userContext.baseUrl}${AuthApis.loginInApi}',
         data: payloadData,
       );
       final data = response.data;
-      print(data);
       // Defensive: ensure 'data' is a List and has at least one item
       final escodes = data['data'];
       if (escodes is String) {

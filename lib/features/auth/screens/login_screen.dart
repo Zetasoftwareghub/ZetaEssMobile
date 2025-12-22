@@ -191,11 +191,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const Loader(),
                   ] else ...[
                     CustomElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (isLoading) return;
                         if (_formKey.currentState!.validate() &&
                             ref.watch(userCompanyProvider) != null) {
-                          ref
+                          await ref
                               .read(authControllerProvider.notifier)
                               .loginUser(
                                 userName: userNameController.text,

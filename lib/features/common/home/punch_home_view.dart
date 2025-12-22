@@ -151,6 +151,8 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
       loading: () => const Loader(),
       error: (e, _) => ErrorText(error: e.toString()),
       data: (punchList) {
+        print(punchList);
+        print("punchList == = ==> $punchList");
         bool isCheckIn = _shouldCheckIn(punchList);
         final inTime = getFormattedPunchTime(punchList, 'in');
         final outTime = getFormattedPunchTime(punchList, 'out');
