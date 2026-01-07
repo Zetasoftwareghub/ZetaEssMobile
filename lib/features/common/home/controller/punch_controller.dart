@@ -9,17 +9,46 @@ import '../../../../../core/providers/userContext_provider.dart';
 import '../../models/punch_model.dart';
 import '../repository/home_repository.dart';
 import 'liveLocation_controller.dart';
+import 'package:dio/dio.dart';
+
+Future<void> refreshLocationTimeForPunch(WidgetRef ref) async {
+  final locationState = ref.read(liveLocationControllerProvider);
+
+  if (!locationState.hasValue) return;
+
+  final location = locationState.value!;
+  final dio = Dio();
+
+  try {
+    final response = await dio.get(
+      'http://api.timezonedb.com/v2.1/get-time-zone',
+      queryParameters: {
+        'key': 'EGZAA5DADGVE',
+        'format': 'json',
+        'by': 'position',
+        'lat': location.position.latitude,
+        'lng': location.position.longitude,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final timeStr = response.data['formatted'];
+      ref.read(locationTimeProvider.notifier).state = DateTime.parse(timeStr);
+    }
+  } catch (_) {}
+}
 
 class PunchDetailsProvider extends AutoDisposeAsyncNotifier<List<PunchModel>> {
   @override
   FutureOr<List<PunchModel>> build() async {
     final repo = ref.read(homeRepositoryProvider);
     final userContext = ref.read(userContextProvider);
-    final locTime = ref.read(locationTimeProvider);
-
+    final locTime = ref.read(locationTimeProvider) ?? "";
+    print(locTime);
+    print("locTime");
     final result = await repo.getPunchDetails(
       userContext: userContext,
-      locationDateTime: (locTime ?? "").toString(),
+      locationDateTime: (locTime).toString(),
     );
     return result.fold(
       (failure) => throw Exception(failure.errMsg),

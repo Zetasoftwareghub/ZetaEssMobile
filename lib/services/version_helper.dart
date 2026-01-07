@@ -67,6 +67,9 @@ class VersionHelper {
     final currentVersion = packageInfo.version;
 
     if (isNewer(latestVersion, currentVersion)) {
+      print(latestVersion);
+      print(currentVersion);
+      print("currentVersion");
       print('true');
       showCustomAlertBox(
         context,

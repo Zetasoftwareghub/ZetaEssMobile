@@ -21,6 +21,7 @@ import '../models/punch_model.dart';
 import '../models/version_check.dart';
 import '../screens/widgets/clock.dart';
 import 'controller/liveLocation_controller.dart';
+import 'controller/punch_controller.dart';
 import 'controller/version_check_controller.dart';
 
 //TODO is this correct or not? IDK
@@ -250,6 +251,9 @@ class _PunchHomeViewState extends ConsumerState<PunchHomeView> {
                                 liveLocationControllerProvider,
                               );
                               if (locationState.hasValue) {
+                                // 🔑 FORCE TIME REFRESH RIGHT BEFORE PUNCH
+                                await refreshLocationTimeForPunch(ref);
+
                                 final currentLocation = locationState.value!;
                                 final ipAddress = await getWifiIpAddress();
 

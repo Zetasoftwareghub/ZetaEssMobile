@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,12 @@ import 'features/splash_screen.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+@pragma('vm:entry-point')
+Future firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  debugPrint('📩 Background message: ${message.notification?.title}');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,15 +29,30 @@ Future<void> main() async {
       statusBarIconBrightness: Brightness.light,
     ),
   );
+
   await _initialise();
   await _setPreferredOrientations();
   runApp(const ZetaApp());
 }
 
 Future<void> _initialise() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await EasyLocalization.ensureInitialized();
-  await FCMService.initialize();
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await EasyLocalization.ensureInitialized();
+  // await FCMService.initialize();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await EasyLocalization.ensureInitialized();
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    // We initialize FCM but don't let it crash the app if it fails
+    await FCMService.initialize().catchError((e) {
+      debugPrint("FCM Initialization Error: $e");
+    });
+  } catch (e) {
+    debugPrint("Critical Initialization Error: $e");
+  }
 }
 
 Future<void> _setPreferredOrientations() async {
@@ -59,23 +81,23 @@ class ZetaApp extends StatelessWidget {
           designSize: const Size(393, 851),
           builder:
               (context, child) => MaterialApp(
-                navigatorKey: navigatorKey,
-                navigatorObservers: [SnackBarNavigatorObserver()],
-                builder:
-                    (context, child) => SafeArea(
-                      // child: child!,
-                      child: Directionality(
-                        textDirection: ui.TextDirection.ltr,
-                        child: child!,
-                      ),
-                    ),
-                locale: context.locale,
-                supportedLocales: context.supportedLocales,
-                localizationsDelegates: context.localizationDelegates,
-                theme: AppTheme.lightTheme,
-                debugShowCheckedModeBanner: false,
-                home: SplashScreen(),
+            navigatorKey: navigatorKey,
+            navigatorObservers: [SnackBarNavigatorObserver()],
+            builder:
+                (context, child) => SafeArea(
+              // child: child!,
+              child: Directionality(
+                textDirection: ui.TextDirection.ltr,
+                child: child!,
               ),
+            ),
+            locale: context.locale,
+            supportedLocales: context.supportedLocales,
+            localizationsDelegates: context.localizationDelegates,
+            theme: AppTheme.lightTheme,
+            debugShowCheckedModeBanner: false,
+            home: SplashScreen(),
+          ),
         ),
       ),
     );
