@@ -173,7 +173,8 @@ class AuthController extends Notifier<bool> {
             );
           }
 
-          if (fromPinScreen) {
+          /*  TODO check this   if (fromPinScreen) {
+      Claude done this in local auth itself
             await SecureStorageService.clearAll();
             Future.delayed(const Duration(milliseconds: 700), () {
               NavigationService.navigateRemoveUntil(
@@ -181,7 +182,7 @@ class AuthController extends Notifier<bool> {
                 screen: LoginScreen(),
               );
             });
-          }
+          }*/
         },
         (userData) async {
           // TODO get the JWT token to local storage !

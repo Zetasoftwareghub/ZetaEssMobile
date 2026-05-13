@@ -87,6 +87,8 @@ class SavePunchNotifier extends AsyncNotifier<String> {
         showCustomAlertBox(context, title: failure.errMsg);
       },
       (response) {
+        print(response);
+        print("response");
         AlertType alertType;
         String message = '';
         final responseString = isCheckIn ? "Checked In" : "Checked Out";

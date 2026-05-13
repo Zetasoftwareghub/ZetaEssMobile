@@ -454,15 +454,19 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
 
   void _save() {
     if (widget.isLieuDay) {
-      if (leaveConfigData.isEmpty ||
-          leaveConfigData.any(
-            (e) =>
-                e.lieuday == null ||
-                e.lieuday == "" ||
-                e.lieuday == "null" ||
-                e.lieuday == "0" ||
-                e.lieuday == "-- select --",
-          )) {
+      final hasInvalidLieuDay = leaveConfigData.any((e) {
+        final notHolidayOrOFF = e.dayType != 3 && e.dayType != 4;
+
+        final isLieuMissing =
+            e.lieuday == null ||
+            e.lieuday!.isEmpty ||
+            e.lieuday == "null" ||
+            e.lieuday == "0";
+
+        return notHolidayOrOFF && isLieuMissing;
+      });
+
+      if (leaveConfigData.isEmpty || hasInvalidLieuDay) {
         showCustomAlertBox(context, title: 'Please select lieu day!');
         return;
       }
@@ -768,7 +772,10 @@ class _LeaveConfigurationState extends ConsumerState<LeaveConfigurationEdit> {
               },
             ),
             DataCell(
-              widget.isLieuDay && editLieuDropDown.isNotEmpty
+              widget.isLieuDay &&
+                      editLieuDropDown.isNotEmpty &&
+                      i.dayType != 3 &&
+                      i.dayType != 4
                   ? Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

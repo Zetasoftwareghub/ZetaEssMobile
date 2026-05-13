@@ -176,9 +176,12 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("upload-keystore.jks")
-            storePassword = "zeta@123"
-            keyAlias = "upload"
-            keyPassword = "zeta@123"
+            storePassword = "Z112022v@*"
+            keyAlias = "zeta"
+            keyPassword = "Z112022v@*"
+//            storePassword = "zeta@123"
+//            keyAlias = "upload"
+//            keyPassword = "zeta@123"
         }
     }
 

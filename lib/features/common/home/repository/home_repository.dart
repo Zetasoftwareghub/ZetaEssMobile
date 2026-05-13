@@ -87,7 +87,8 @@ class HomeRepository {
         'suconn': userContext.companyConnection,
         'cocode': 0,
         'emcode': userContext.empCode,
-        'latLong': "${loc.position.latitude},${loc.position.longitude}",
+        'latlong': "25.2771,55.4611",
+        // 'latLong': "${loc.position.latitude},${loc.position.longitude}",
         "location": loc.placeName,
         'geotag': ipAddress,
         'locationTime': locationTime,
@@ -95,6 +96,7 @@ class HomeRepository {
 
       print(data);
       print('punch save');
+      print(userContext.jwtToken);
       final response = await dio.post(
         userContext.baseUrl + CommonApis.savePunch,
         data: data,

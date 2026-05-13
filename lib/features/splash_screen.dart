@@ -190,34 +190,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 
-  // Future<void> _startModernAnimation() async {
-  //   _mainController.forward();
-  //
-  //   // Start logo animation immediately
-  //   _logoController.forward();
-  //
-  //   // Add delay before tools showcase starts
-  //   await Future.delayed(const Duration(milliseconds: 600));
-  //   if (mounted) {
-  //     _toolsController.forward();
-  //
-  //     // Add additional delay before tools showcase begins
-  //     await Future.delayed(const Duration(milliseconds: 400));
-  //     if (mounted) {
-  //       await _startToolsShowcase(); // Wait for tools showcase to complete
-  //     }
-  //   }
-  //
-  //   // Show welcome message and navigate
-  //   if (mounted) {
-  //     setState(() {
-  //       _currentStatus = 'Welcome to Modern HRMS';
-  //     });
-  //     await Future.delayed(const Duration(milliseconds: 400));
-  //     _navigateWithEnterpriseTransition();
-  //   }
-  // }
-
   Future<void> _startModernAnimation() async {
     _mainController.forward();
     _logoController.forward();

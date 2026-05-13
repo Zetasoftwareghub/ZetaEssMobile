@@ -34,7 +34,10 @@ FutureEither<T> handleApiCall<T>(Future<T> Function() apiCall) async {
 
     return right(result);
   } on DioException catch (dioError, stack) {
+    print(dioError);
     final errMsg = handleDioException(dioError);
+    print(errMsg);
+    print("errMsg");
     return left(Failure(errMsg: errMsg));
   } on TimeoutException {
     return left(Failure(errMsg: "Request timed out. Please try again."));

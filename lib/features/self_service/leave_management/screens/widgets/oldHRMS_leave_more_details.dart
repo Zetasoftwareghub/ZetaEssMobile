@@ -459,7 +459,8 @@ class _LeaveMoreDetailsScreenState
           ),
           // Lieu Day Cell
           if (_isLieuDayEnabled())
-            Expanded(flex: 4, child: _buildEnhancedLieuDayCell(item)),
+            if (item.dayType != 3 && item.dayType != 4)
+              Expanded(flex: 4, child: _buildEnhancedLieuDayCell(item)),
         ],
       ),
     );

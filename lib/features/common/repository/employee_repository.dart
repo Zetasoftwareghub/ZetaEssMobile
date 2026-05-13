@@ -29,6 +29,7 @@ class EmployeeRepository {
           'sucode': userContext.companyCode,
           'suconn': userContext.companyConnection,
           'emcode': userContext.empCode,
+          "userid": userContext.esCode,
         },
         options: dioHeader(token: userContext.jwtToken),
       );

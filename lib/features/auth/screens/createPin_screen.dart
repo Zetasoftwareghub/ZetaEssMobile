@@ -107,8 +107,8 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(localAuthProvider);
-    final isLoading = ref.watch(authControllerProvider);
+    final authState = ref.read(localAuthProvider);
+    final isLoading = ref.read(authControllerProvider);
     final user = ref.watch(userDataProvider);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -299,7 +299,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
           context,
         );
         if (isValid && mounted) {
-          ref
+          await ref
               .read(authControllerProvider.notifier)
               .loginUser(
                 userName: user.userName,
@@ -310,7 +310,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
         } else {
           showCustomAlertBox(
             context,
-            title: 'invalidPin'.tr(),
+            title: '${'invalidPin'.tr()}Or Server Issue',
             content: 'pleaseTryAgain'.tr(),
             type: AlertType.error,
             primaryButtonText: 'retry'.tr(),
@@ -323,7 +323,7 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen>
       } else {
         await authNotifier.savePin(pinController.text);
         if (mounted) {
-          ref
+          await ref
               .read(authControllerProvider.notifier)
               .loginUser(
                 userName: user.userName,

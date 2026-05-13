@@ -153,7 +153,7 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     setState(() => isLoading = true);
     List<LeaveConfigurationData> d = [];
     List<LeaveConfigurationData> dSubLst = [];
-    List<LeaveConfigurationData> dCanLst = [];
+    List<LeaveConfigurationData> lieuDaystoDropDown = [];
 
     var responseJson = await getLeaveConfigurations(
       widget.dateFrom.toString(),
@@ -201,12 +201,13 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
     final canLst = data["canLst"] as List<dynamic>? ?? [];
     d = appLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
     dSubLst = subLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
-    dCanLst = canLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
+    lieuDaystoDropDown =
+        canLst.map((e) => LeaveConfigurationData.fromJson(e)).toList();
 
     setState(() {
       leaveConfigData = d;
       leaveConfigDataSubLst = dSubLst;
-      leaveConfigDataCanLst = dCanLst;
+      leaveConfigDataCanLst = lieuDaystoDropDown;
 
       leaveConfigDataCanLst.add(
         LeaveConfigurationData(
@@ -432,7 +433,10 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
       for (int i = 0; i <= (leaveConfigData.length - 1); i++) {
         String lVal = leaveConfigData[i].lieuday ?? '';
         if (lVal == '' || lVal == "null") {
-          result = true;
+          result =
+              leaveConfigData[i].dayType != 3 && leaveConfigData[i].dayType != 4
+                  ? true
+                  : false;
           break;
         }
       }
@@ -451,13 +455,19 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
 
   void _save() {
     if ((leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y") {
-      if (leaveConfigData.any(
-        (e) =>
+      final hasInvalidLieuDay = leaveConfigData.any((e) {
+        final notHolidayOrOFF = e.dayType != 3 && e.dayType != 4;
+
+        final isLieuMissing =
             e.lieuday == null ||
-            e.lieuday == "" ||
+            e.lieuday!.isEmpty ||
             e.lieuday == "null" ||
-            e.lieuday == "0",
-      )) {
+            e.lieuday == "0";
+
+        return notHolidayOrOFF && isLieuMissing;
+      });
+
+      if (hasInvalidLieuDay) {
         showCustomAlertBox(
           context,
           title: 'Please select lieu day!',
@@ -783,7 +793,9 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
               },
             ),
             DataCell(
-              (leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y"
+              (leaveConfigDataSubLst[0].isLieuDay ?? 'N') == "Y" &&
+                      i.dayType != 3 &&
+                      i.dayType != 4
                   ? Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -810,7 +822,6 @@ class _OLDLeaveConfigurationState extends ConsumerState<LeaveConfiguration> {
                         "-- Select --",
                         style: AppTextStyles.smallFont(),
                       ),
-
                       items:
                           leaveConfigDataCanLst
                               .map(
