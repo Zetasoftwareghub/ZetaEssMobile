@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -33,18 +34,18 @@ final isUserExistProvider = StateProvider<bool>((ref) => false);
 final userIdProvider = StateProvider<String>((ref) => '');
 
 final companyListProvider =
-    FutureProvider.family<List<CompanyModel>, BuildContext>((
-      ref,
-      context,
-    ) async {
-      return ref.read(authControllerProvider.notifier).getCompanies(context);
-    });
+    FutureProvider.family<List<CompanyModel>, BuildContext>(
+      (ref, context) async =>
+          ref.read(authControllerProvider.notifier).getCompanies(context),
+    );
 
 class AuthController extends Notifier<bool> {
   @override
-  bool build() {
-    return false;
-  }
+  bool build() => false;
+
+  // ─────────────────────────────────────────────
+  // Forgot password
+  // ─────────────────────────────────────────────
 
   Future<void> forgotPassword({
     required BuildContext context,
@@ -54,9 +55,9 @@ class AuthController extends Notifier<bool> {
     final res = await ref
         .read(authRepositoryProvider)
         .forgotPassword(
-          userContext: ref.watch(userContextProvider),
+          userContext: ref.read(userContextProvider),
           userId: userId,
-          sucode: ref.watch(userCompanyProvider)?.companyCode.toString() ?? '0',
+          sucode: ref.read(userCompanyProvider)?.companyCode.toString() ?? '0',
         );
     state = false;
     res.fold(
@@ -69,76 +70,82 @@ class AuthController extends Notifier<bool> {
     );
   }
 
+  // ─────────────────────────────────────────────
+  // URL activation
+  // ─────────────────────────────────────────────
+
   Future<void> activateUrl({
     required String url,
     required BuildContext context,
   }) async {
     state = true;
     final res = await ref.read(authRepositoryProvider).activateUrl(url: url);
-
     state = false;
+
     res.fold(
-      (l) {
-        showSnackBar(
-          content: l.errMsg,
-          context: context,
-          color: AppTheme.errorColor,
-        );
-      },
+      (l) => showSnackBar(
+        content: l.errMsg,
+        context: context,
+        color: AppTheme.errorColor,
+      ),
       (activateResponse) async {
-        if (activateResponse != null) {
-          ref.read(baseUrlProvider.notifier).state = url;
-          if (activateResponse["data"] != "Authorized") {
-            showSnackBar(
-              content: "unauthorized".tr(),
-              context: context,
-              color: AppTheme.errorColor,
-            );
-            return;
-          }
+        if (activateResponse == null) return;
+
+        ref.read(baseUrlProvider.notifier).state = url;
+
+        if (activateResponse['data'] != 'Authorized') {
           showSnackBar(
-            content: 'urlActivated'.tr(),
+            content: 'unauthorized'.tr(),
             context: context,
-            color: AppTheme.successColor,
+            color: AppTheme.errorColor,
           );
+          return;
+        }
+
+        showSnackBar(
+          content: 'urlActivated'.tr(),
+          context: context,
+          color: AppTheme.successColor,
+        );
+
+        await ref
+            .read(storageRepositoryProvider.notifier)
+            .writeValue(key: StorageKeys.baseUrl, value: url);
+
+        if (context.mounted) {
           NavigationService.navigateRemoveUntil(
             context: context,
             screen: const LoginScreen(),
           );
-          await ref
-              .read(storageRepositoryProvider.notifier)
-              .writeValue(key: StorageKeys.baseUrl, value: url);
         }
       },
     );
   }
+
+  // ─────────────────────────────────────────────
+  // Company list
+  // ─────────────────────────────────────────────
 
   Future<List<CompanyModel>> getCompanies(BuildContext context) async {
     final res = await ref
         .read(authRepositoryProvider)
         .getCompanies(userContext: ref.read(userContextProvider));
 
-    return res.fold(
-      (l) {
-        // NavigationService.navigateRemoveUntil(
-        //   context: context,
-        //   screen: ActivationUrlScreen(),
-        // );
-        throw Exception(l.errMsg);
-      },
-      (companies) async {
-        if (companies.length == 1) {
-          ref.read(userCompanyProvider.notifier).state = companies.first;
-
-          SecureStorageService.write(
-            key: StorageKeys.userCompanyModel,
-            value: jsonEncode(companies.first.toJson()),
-          );
-        }
-        return companies;
-      },
-    );
+    return res.fold((l) => throw Exception(l.errMsg), (companies) async {
+      if (companies.length == 1) {
+        ref.read(userCompanyProvider.notifier).state = companies.first;
+        await SecureStorageService.write(
+          key: StorageKeys.userCompanyModel,
+          value: jsonEncode(companies.first.toJson()),
+        );
+      }
+      return companies;
+    });
   }
+
+  // ─────────────────────────────────────────────
+  // Login
+  // ─────────────────────────────────────────────
 
   Future<void> loginUser({
     required String userName,
@@ -146,23 +153,32 @@ class AuthController extends Notifier<bool> {
     required BuildContext context,
     bool fromPinScreen = false,
   }) async {
+    // Guard: never run if widget is gone.
+    if (!context.mounted) return;
+
     state = true;
     try {
       final fcmToken = await FirebaseMessaging.instance.getToken();
+
       final res = await ref
           .read(authRepositoryProvider)
           .loginUser(
-            userContext: ref.watch(userContextProvider),
+            userContext: ref.read(userContextProvider),
             userName: userName,
-            // fcmToken: ref.watch(fcmTokenProvider) ?? "noToken",
-            fcmToken: fcmToken ?? "noToken",
+            fcmToken: fcmToken ?? 'noToken',
             password: password,
             context: context,
+            fromPinScreen: fromPinScreen,
           );
-      state = false;
+
+      // ✅ state = false lives only in finally — no duplicate assignments.
       return res.fold(
-        (l) async {
-          if (l.errMsg != '-1' && l.errMsg != '-2' && l.errMsg != '-3') {
+        (l) {
+          if (!context.mounted) return;
+
+          // -1 / -2 / -3 are internal codes the server uses for silent flows.
+          final silentCodes = {'-1', '-2', '-3'};
+          if (!silentCodes.contains(l.errMsg)) {
             showSnackBar(
               context: context,
               content:
@@ -172,80 +188,73 @@ class AuthController extends Notifier<bool> {
               color: AppTheme.errorColor,
             );
           }
-
-          /*  TODO check this   if (fromPinScreen) {
-      Claude done this in local auth itself
-            await SecureStorageService.clearAll();
-            Future.delayed(const Duration(milliseconds: 700), () {
-              NavigationService.navigateRemoveUntil(
-                context: context,
-                screen: LoginScreen(),
-              );
-            });
-          }*/
         },
         (userData) async {
-          // TODO get the JWT token to local storage !
-          ref.read(userDataProvider.notifier).state = userData.copyWith(
+          if (!context.mounted) return;
+
+          // Persist user data in memory and secure storage.
+          final enrichedUser = userData.copyWith(
             password: password,
             userName: userName,
           );
+          ref.read(userDataProvider.notifier).state = enrichedUser;
 
-          // NavigationService.navigateRemoveUntil(
-          //   context: context,
-          //   screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
-          // );
-          // Navigation decision after successful login
-          // if (openNotificationScreenAfterLogin) {
-          //   openNotificationScreenAfterLogin = false; // reset
-          //   NavigationService.navigateToScreen(
-          //     context: context,
-          //     screen: NotificationsScreen(),
-          //   );
+          await SecureStorageService.write(
+            key: StorageKeys.userModel,
+            value: jsonEncode(enrichedUser.toJson()),
+          );
 
+          if (!context.mounted) return;
+
+          // Navigate to the correct destination.
           if (openNotificationScreenAfterLogin) {
-            openNotificationScreenAfterLogin = false; // reset immediately
-            // 1) Replace everything with MainScreen
+            openNotificationScreenAfterLogin = false;
             await NavigationService.navigateRemoveUntil(
               context: context,
               screen: MainScreen(),
             );
-            // 2) Ensure MainScreen has finished building, then push NotificationsScreen.
-            // Using addPostFrameCallback to be safe — avoids race where navigator isn't ready.
+            // Push NotificationsScreen after MainScreen settles.
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              NavigationService.navigateToScreen(
-                context: context,
-                screen: NotificationsScreen(),
-              );
+              if (context.mounted) {
+                NavigationService.navigateToScreen(
+                  context: context,
+                  screen: NotificationsScreen(),
+                );
+              }
             });
           } else {
             NavigationService.navigateRemoveUntil(
               context: context,
-              screen: fromPinScreen ? MainScreen() : CreatePinScreen(),
+              screen: fromPinScreen ? MainScreen() : const CreatePinScreen(),
             );
           }
-
-          final userModel = jsonEncode(
-            userData.copyWith(password: password, userName: userName).toJson(),
-          );
-          await SecureStorageService.write(
-            key: StorageKeys.userModel,
-            value: userModel,
-          );
         },
+      );
+    } on DioException catch (dioError) {
+      if (!context.mounted) return;
+      showSnackBar(
+        context: context,
+        content: dioError.message ?? 'Network error. Please try again.',
+        color: AppTheme.errorColor,
       );
     } catch (e, st) {
       debugPrint('Login failed: $e');
       debugPrintStack(stackTrace: st);
+      if (!context.mounted) return;
       showSnackBar(
         context: context,
         content: 'Something went wrong. Please try again.',
         color: AppTheme.errorColor,
       );
     } finally {
-      state = false; // 🔥 ALWAYS executed
+      // ✅ Single, unconditional reset — no partial state left behind.
+      state = false;
     }
   }
+
+  // ─────────────────────────────────────────────
+  // SSO — shared post-login logic
+  // ─────────────────────────────────────────────
 
   Future<void> ssoLogin({
     required String email,
@@ -255,126 +264,101 @@ class AuthController extends Notifier<bool> {
     final res = await ref
         .read(authRepositoryProvider)
         .ssoLogin(
-          userContext: ref.watch(userContextProvider),
+          userContext: ref.read(userContextProvider),
           email: email,
           context: context,
         );
     state = false;
-    return res.fold(
+
+    res.fold(
       (l) {
+        if (!context.mounted) return;
         showSnackBar(
           context: context,
-          content: 'Please verify your email with HR ',
+          content: 'Please verify your email with HR',
           color: AppTheme.errorColor,
         );
       },
       (userData) async {
         ref.read(userDataProvider.notifier).state = userData;
-
+        await SecureStorageService.write(
+          key: StorageKeys.userModel,
+          value: jsonEncode(userData.toJson()),
+        );
+        if (!context.mounted) return;
         NavigationService.navigateRemoveUntil(
           context: context,
           screen: const CreatePinScreen(),
-        );
-        final userModel = jsonEncode(
-          userData.toJson(),
-        ); //todo ssologin dont have pass
-        await SecureStorageService.write(
-          key: StorageKeys.userModel,
-          value: userModel,
         );
       },
     );
   }
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // ─────────────────────────────────────────────
+  // Microsoft SSO
+  // ─────────────────────────────────────────────
 
-  //TODO need to work on these both SSO and make that perfectly working
-  //TODO microsoft from backend ! 🔒 Why You Can’t (Shouldn’t) Do Microsoft Sign-In Fully in Flutter Frontend
-  // 🔴 Problem 1: Firebase custom tokens must be created server-side
-  // Firebase only allows creating custom tokens using admin SDKs, which:
-  //
-  // Require a private service account key
-  //
-  // Cannot be exposed to the client (too sensitive)
-  //
-  // ✅ Only Firebase Admin SDK (Node.js, .NET, Java, etc.) can create custom tokens.
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<bool> loginWithMicrosoft({required BuildContext context}) async {
     try {
       state = true;
-      // Create Microsoft providers
-      MicrosoftAuthProvider microsoftProvider = MicrosoftAuthProvider();
-      //
-      // microsoftProvider.addScope('email');
-      // microsoftProvider.addScope('profile');
-      // microsoftProvider.addScope('openid');
-      //
-      // microsoftProvider.setCustomParameters({
-      //   'prompt': 'select_account',
-      //   'domain_hint':
-      //       'consumers', // Use 'organizations' for work accounts only
-      // });
-
-      UserCredential userCredential = await _auth.signInWithProvider(
-        microsoftProvider,
+      final userCredential = await _auth.signInWithProvider(
+        MicrosoftAuthProvider(),
       );
-
       state = false;
 
-      User? user = userCredential.user;
-
-      if (user != null && user.email != null) {
-        await ssoLogin(email: user.email!, context: context);
+      final user = userCredential.user;
+      if (user?.email != null && context.mounted) {
+        await ssoLogin(email: user!.email!, context: context);
       }
     } on FirebaseAuthException catch (e) {
       state = false;
-
-      String errorMessage = e.message ?? "";
-      snack(errorMessage, context);
+      if (context.mounted) {
+        showSnackBar(content: e.message ?? '', context: context);
+      }
       return false;
-    } catch (e) {
+    } catch (_) {
       state = false;
       return false;
     }
-
     return false;
   }
 
-  snack(c, context) {
-    showSnackBar(content: c, context: context);
-  }
+  // ─────────────────────────────────────────────
+  // Google SSO
+  // ─────────────────────────────────────────────
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+
   Future<void> loginWithGoogle({required BuildContext context}) async {
     try {
       state = true;
       await _googleSignIn.signOut();
 
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         state = false;
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
+      final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
       final userCredential = await _auth.signInWithCredential(credential);
-      final user = userCredential.user;
+      state = false;
 
-      if (user != null && user.email != null) {
-        await ssoLogin(email: user.email!, context: context);
+      final user = userCredential.user;
+      if (user?.email != null && context.mounted) {
+        await ssoLogin(email: user!.email!, context: context);
       }
     } catch (e, st) {
       state = false;
-      debugPrint('Google Sign-In Error: $e');
+      debugPrint('Google Sign-In error: $e');
       debugPrintStack(stackTrace: st);
-
+      if (!context.mounted) return;
       showSnackBar(
         context: context,
         content: 'Google Sign-In failed',

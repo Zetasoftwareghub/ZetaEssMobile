@@ -51,6 +51,7 @@ class AuthRepository {
     required String userName,
     required String password,
     required BuildContext context,
+    bool fromPinScreen = false,
   }) async {
     try {
       final deviceType = Platform.isAndroid ? 'android' : 'ios';
@@ -76,8 +77,19 @@ class AuthRepository {
       if (escodes is List && escodes.isNotEmpty) {
         final errorCode = escodes[0]['escode']?.toString();
 
-        if (ApiErrors.isError(errorCode, context)) {
-          return left(Failure(errMsg: "$errorCode"));
+        if (ApiErrors.isError(
+          errorCode,
+          context,
+          fromPinScreen: fromPinScreen,
+        )) {
+          return left(
+            Failure(
+              errMsg:
+                  fromPinScreen
+                      ? "Password changed so please re login !"
+                      : "$errorCode",
+            ),
+          );
         }
       }
       if (response.statusCode == 200 && data['success'] == true) {

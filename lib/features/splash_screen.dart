@@ -265,7 +265,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void _navigateWithEnterpriseTransition() {
     final authState = ref.read(localAuthProvider);
     Widget nextScreen;
-    if (authState.hasPin || authState.isAuthenticated && authState.urlExist) {
+    if ((authState.hasPin || authState.isAuthenticated) && authState.urlExist) {
       nextScreen = const CreatePinScreen();
     } else if (authState.urlExist) {
       nextScreen = LoginScreen();

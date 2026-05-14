@@ -40,6 +40,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final obscureTextProvider = StateProvider<bool>((ref) => true);
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(userDataProvider);
+
+      if (user != null) {
+        userNameController.text = user.userName ?? '';
+        passwordController.text = user.password ?? '';
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
     final obscureText = ref.watch(obscureTextProvider);

@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:zeta_ess/core/common/alert_dialog/alertBox_function.dart';
+import 'package:zeta_ess/core/services/NavigationService.dart';
+import 'package:zeta_ess/features/auth/screens/login_screen.dart';
 
 class ApiErrors {
   static const String userNotFound = '-1';
@@ -19,7 +21,11 @@ class ApiErrors {
     licenseExpired,
   };
 
-  static bool isError(String? errorCode, BuildContext context) {
+  static bool isError(
+    String? errorCode,
+    BuildContext context, {
+    bool fromPinScreen = false,
+  }) {
     if (errorCode == null || errorCode.isEmpty) return false;
 
     if (allErrors.contains(errorCode)) {
@@ -50,6 +56,13 @@ class ApiErrors {
         title: 'alert'.tr(),
         content: errorMessage,
         type: AlertType.error,
+        primaryButtonText: fromPinScreen ? 'logout'.tr() : 'ok'.tr(),
+        onPrimaryPressed: () {
+          NavigationService.navigateRemoveUntil(
+            context: context,
+            screen: LoginScreen(),
+          );
+        },
       );
 
       return true;

@@ -32,7 +32,7 @@ String handleDioException(DioException dioError) {
     case DioExceptionType.badCertificate:
       return "badCertificate".tr();
     case DioExceptionType.connectionError:
-      return "connectionError".tr();
+      return "serverError".tr();
     case DioExceptionType.unknown:
       return dioError.message ?? "unknownError".tr();
   }
