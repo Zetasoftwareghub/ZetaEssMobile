@@ -179,9 +179,6 @@ android {
             storePassword = "JJ@zeta@123"
             keyAlias = "upload"
             keyPassword = "JJ@zeta@123"
-//            storePassword = "zeta@123"
-//            keyAlias = "upload"
-//            keyPassword = "zeta@123"
         }
     }
 
